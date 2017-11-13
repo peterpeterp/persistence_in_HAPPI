@@ -1,7 +1,8 @@
-import os,sys,glob
+import os,sys,glob,time,collections
+import numpy as np
+from netCDF4 import Dataset,netcdftime,num2date
+import random as random
 import dimarray as da
-sys.path.append('/global/homes/p/pepflei/weather_persistence/')
-from persistence_functions import *
 
 in_path='/project/projectdirs/m1517/C20C/MIROC/MIROC5/'
 out_path='/global/cscratch1/sd/pepflei/MIROC/MIROC5/'
