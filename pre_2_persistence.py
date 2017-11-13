@@ -65,7 +65,7 @@ for model in model_dict.keys():
 						run_count+=1
 
 					except:
-						failed_files=open('output/step_5_period_fails.txt','w')
+						failed_files=open('out/step_5_period_fails.txt','w')
 						failed_files.write(state_file+'\n')
 						failed_files.close()
 						print '/!\---------------/!\ \n failed for',state_file,'\n/!\---------------/!\ '
