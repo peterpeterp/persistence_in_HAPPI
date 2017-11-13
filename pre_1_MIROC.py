@@ -10,7 +10,7 @@ for scenario in scenario_list:
 	tmp_path=in_path+scenario+'/*/*/day/atmos/tas/'
 	run_list=[path.split('/')[-1] for path in glob.glob(tmp_path+'*')]
 	print run_list
-	for run in sorted(run_list)[0:100]:
+	for run in run_list:
 		if scenario in ['All-Hist']:
 			out_file_name=out_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 			out_file_name_tmp=out_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
