@@ -21,7 +21,7 @@ grid=model_dict[model]['grid']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	run_count=0
-	all_files=glob.glob(working_path+scenario+'/*')
+	all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/').split('_'))==6]
 	for in_file in all_files:
 		test=da.read_nc(in_file)
 		if len(test.time/365.)>9.:
