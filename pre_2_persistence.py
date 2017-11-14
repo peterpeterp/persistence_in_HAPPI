@@ -67,7 +67,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 					run_count+=1
 
 				except:
-					failed_files=open('out/step_5_period_fails.txt','w')
+					failed_files=open('out/persistence_fails'+model+'.txt','w')
 					failed_files.write(state_file+'\n')
 					failed_files.close()
 					print '/!\---------------/!\ \n failed for',state_file,'\n/!\---------------/!\ '
