@@ -23,9 +23,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	run_count=0
 	all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/').split('_'))==6]
 	for in_file in all_files:
+		print in_file
 		test=da.read_nc(in_file)
 		if len(test.time/365.)>9.:
-			print in_file
 			if in_file.split('_')[-1]!='period.nc' and run_count<100:
 				print in_file
 				start_time=time.time()
