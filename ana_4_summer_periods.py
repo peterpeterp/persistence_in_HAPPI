@@ -25,7 +25,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
     for in_file in all_files:
         print in_file
         tas=da.read_nc(in_file.replace('_period',''))['tas']
-        tt=np.asarray(tas,np.float)
+        tt=np.asarray(tas.squeeze(),np.float)
         datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
         year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
 
@@ -34,12 +34,6 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
         ll=np.asarray(period['period_length'],np.int32)
         seas=np.asarray(period['period_season'],np.int32)
         state=np.asarray(period['period_state'],np.int32)
-
-        print mm,ll,seas,state
-        print mm.shape,ll.shape,seas.shape,state.shape
-        print tas.shape
-        print year
-
 
         time0=time.time()
         cum_heat,hot_shift,hot_temp,tasX,Ni_new,original_period_id=summer_period_analysis(ll,mm,seas,state,tt,year,len(period.lat),len(period.lon),len(period.period_id))
