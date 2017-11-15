@@ -16,6 +16,8 @@ model_dict={'MIROC':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC
 model=sys.argv[1]
 print model
 
+overwrite=True
+
 working_path=model_dict[model]['path']
 grid=model_dict[model]['grid']
 
@@ -40,7 +42,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
         print time.time()-time0
 
         out_file=in_file.replace('_period','_summer')
-        if True: os.system('rm '+out_file)
+        if overwrite and os.path.isfile(out_file): os.system('rm '+out_file)
         nc_out=Dataset(out_file,'w')
         nc_in=Dataset(in_file,'r')
         for dname, the_dim in nc_in.dimensions.iteritems():
