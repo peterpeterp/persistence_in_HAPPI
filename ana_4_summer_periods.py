@@ -23,6 +23,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:
+        print in_file
         tas=da.read_nc(in_file.replace('_period',''))['tas']
         tt=np.asarray(tas,np.float)
         datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
