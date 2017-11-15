@@ -20,9 +20,9 @@ working_path=model_dict[model]['path']
 grid=model_dict[model]['grid']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-	run_count=0
-	all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
-	for in_file in all_files:
+    run_count=0
+    all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
+    for in_file in all_files:
         tas=da.read_nc(in_file.replace('_period',''))['tas']
         tt=np.asarray(tas,np.float)
         datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
@@ -43,14 +43,14 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
         nc_out=Dataset(out_file,'w')
         nc_in=Dataset(in_file,'r')
         for dname, the_dim in nc_in.dimensions.iteritems():
-        	if dname in ['lon','lat']:nc_out.createDimension(dname, len(the_dim) if not the_dim.isunlimited() else None)
+            if dname in ['lon','lat']:nc_out.createDimension(dname, len(the_dim) if not the_dim.isunlimited() else None)
         nc_out.createDimension('ID', Ni_new)
 
         for v_name, varin in nc_in.variables.iteritems():
-        	if v_name in ['lon','lat']:
-        		outVar = nc_out.createVariable(v_name, varin.datatype, varin.dimensions)
-        		outVar.setncatts({k: varin.getncattr(k) for k in varin.ncattrs()})
-        		outVar[:] = varin[:]
+            if v_name in ['lon','lat']:
+                outVar = nc_out.createVariable(v_name, varin.datatype, varin.dimensions)
+                outVar.setncatts({k: varin.getncattr(k) for k in varin.ncattrs()})
+                outVar[:] = varin[:]
 
         outVar = nc_out.createVariable('cumulated_heat','f',('ID','lat','lon',))
         outVar.long_name='sum over temperature of days in period'
@@ -75,6 +75,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
         nc_out.close()
         nc_in.close()
         print time.time()-time0
+
+
+
         # for Ni in [1,5,10,100,len(period.period_id)]:
         #     print 'cython ',Ni,timeit.repeat('summer_period_analysis(ll,mm,seas,mask,tt,year,Ni,Nx,Ny)', setup="from __main__ import summer_period_analysis,ll,mm,seas,mask,tt,year,Ni,Nx,Ny", repeat=3,number=1)
         #
