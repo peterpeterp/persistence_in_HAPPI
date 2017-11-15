@@ -23,7 +23,6 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	run_count=0
 	all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
 	for in_file in all_files:
-        #in_file='data/tests/tas_Aday_ECHAM6-3-LR_Plus20-Future_CMIP5-MMM-est1_v2-0_run010_period.nc'
         tas=da.read_nc(in_file.replace('_period',''))['tas']
         tt=np.asarray(tas,np.float)
         datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
