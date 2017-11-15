@@ -8,3 +8,8 @@ setup(
     ext_modules=cythonize("cython_function.pyx"),
     include_dirs=[numpy.get_include()]
 )
+
+setup(
+    ext_modules=cythonize("persistence.pyx"),
+    include_dirs=[numpy.get_include()]
+)
