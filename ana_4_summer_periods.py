@@ -35,6 +35,12 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
         seas=np.asarray(period['period_season'],np.int32)
         state=np.asarray(period['period_state'],np.int32)
 
+        print mm,ll,seas,state
+        print mm.shape,ll.shape,seas.shape,state.shape
+        print tas.shape
+        print year
+
+
         time0=time.time()
         cum_heat,hot_shift,hot_temp,tasX,Ni_new,original_period_id=summer_period_analysis(ll,mm,seas,state,tt,year,len(period.lat),len(period.lon),len(period.period_id))
         print time.time()-time0
