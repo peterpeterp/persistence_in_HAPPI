@@ -13,7 +13,7 @@ except:
 def counter_to_list(counter):
 	tmp=[]
 	lengths=counter.keys()
-	if 0 in lengths: 
+	if 0 in lengths:
 		lengths.remove(0)
 	if len(lengths)>2:
 		for key in lengths:
@@ -21,7 +21,7 @@ def counter_to_list(counter):
 				tmp.append(key)
 		tmp=np.array(tmp)
 		return -tmp[tmp<0],tmp[tmp>0]
-	else: 
+	else:
 		return [],[]
 
 def quantile_from_cdf(x,qu):
@@ -46,7 +46,7 @@ types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_
 big_dict={}
 for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
 	pkl_file = open('data/'+dataset+'_'+scenario+'_counter.pkl', 'rb')
-	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()  
+	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
 lat=big_dict[scenario]['lat']
 lon=big_dict[scenario]['lon']
@@ -54,7 +54,7 @@ lon=big_dict[scenario]['lon']
 SummaryMeanQu=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(states),np.asarray(types),lat,lon],dims=['scenario','season','state','type','lat','lon'])
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-	distr_dict = big_dict[scenario] 
+	distr_dict = big_dict[scenario]
 
 	for iy in range(len(lat)):
 		for ix in range(len(lon)):
@@ -76,14 +76,3 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 
 ds=da.Dataset({'SummaryMeanQu':SummaryMeanQu})
 ds.write_nc('data/'+dataset+'_SummaryMeanQu.nc', mode='w')
-
-
-
-
-
-
-
-
-
-
-
