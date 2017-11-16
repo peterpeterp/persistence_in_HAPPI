@@ -28,8 +28,8 @@ grid=model_dict[model]['grid']
 
 
 
-#for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-for scenario in ['']:
+for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+# for scenario in ['']:
 	all_files=glob.glob(working_path+scenario+'/*period*')
 
 	# get time conversion
