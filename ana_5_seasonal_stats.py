@@ -71,14 +71,15 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 					tmp=summer_events[:,y,x]
 					tmp=tmp[0:np.argmax(tmp)+1]
 					for yr in year_boundaries.keys():
-						event_ids=tmp[np.where(per_year[tmp,y,x]==yr)[0]]
 						summer_ids=np.where(per_year[tmp,y,x]==yr)[0]
-						Xpers_id=np.argmax(per_len[event_ids,y,x])
-						stat_Xpers_cum_heat[run,yr,lat,lon]=cum_heat[summer_ids[Xpers_id],y,x]
-						stat_Xpers_hot_shift[run,yr,lat,lon]=hot_shift[summer_ids[Xpers_id],y,x]
-						stat_Xpers_hot_temp [run,yr,lat,lon]=hot_temp[summer_ids[Xpers_id],y,x]
-						if tasX[summer_ids[Xpers_id],y,x] in hot_temp[summer_ids,y,x]:
-							stat_tasX_pers_rank[run,yr,lat,lon]=np.where(sorted(range(len(per_len[event_ids,y,x])),key=lambda i:per_len[event_ids,y,x][i])[::-1]==np.argmax(hot_temp[summer_ids,y,x]))[0]
+						if len(summer_ids)!=0:
+							event_ids=tmp[np.where(per_year[tmp,y,x]==yr)[0]]
+							Xpers_id=np.argmax(per_len[event_ids,y,x])
+							stat_Xpers_cum_heat[run,yr,lat,lon]=cum_heat[summer_ids[Xpers_id],y,x]
+							stat_Xpers_hot_shift[run,yr,lat,lon]=hot_shift[summer_ids[Xpers_id],y,x]
+							stat_Xpers_hot_temp [run,yr,lat,lon]=hot_temp[summer_ids[Xpers_id],y,x]
+							if tasX[summer_ids[Xpers_id],y,x] in hot_temp[summer_ids,y,x]:
+								stat_tasX_pers_rank[run,yr,lat,lon]=np.where(sorted(range(len(per_len[event_ids,y,x])),key=lambda i:per_len[event_ids,y,x][i])[::-1]==np.argmax(hot_temp[summer_ids,y,x]))[0]
 
 
 		print time.time()-start_time
