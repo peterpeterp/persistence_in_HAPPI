@@ -4,22 +4,24 @@ from netCDF4 import Dataset,netcdftime,num2date
 import cPickle as pickle
 
 
-dataset='CanAM4'
+model_dict={'MIROC':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
+			'NorESM1':{'grid':'192x288','path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'},
+			'ECHAM6-3-LR':{'grid':'96x192','path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'},
+			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},
+}
 
-if dataset=='MIROC':	working_path='/global/cscratch1/sd/pepflei/MIROC/MIROC5/'
-if dataset=='NORESM1':	working_path='/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'
-if dataset=='ECHAM6':	working_path='/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'
-if dataset=='CanAM4':	working_path='/global/cscratch1/sd/pepflei/CCCma/CanAM4/'
-if dataset=='CAM4':	working_path='/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'
+model=sys.argv[1]
+print model
+
+overwrite=True
+
+working_path=model_dict[model]['path']
+grid=model_dict[model]['grid']
+
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
-scenarios=['Plus15-Future','Plus20-Future','All-Hist']
-scenarios=['Plus20-Future']
-#scenarios=['Plus15-Future']
-scenarios=['All-Hist']
-
-for scenario in scenarios:
+for scenario in ['Plus15-Future','Plus20-Future','All-Hist']:
 	all_files=glob.glob(working_path+scenario+'/*period*')
 
 	print all_files
@@ -61,27 +63,3 @@ for scenario in scenarios:
 	output = open('../data/'+dataset+'_'+scenario+'_counter.pkl', 'wb')
 	pickle.dump(distr_dict, output)
 	output.close()
-
-
-
-# pkl_file = open('Nat-Hist_summary.pkl', 'rb')
-# out_dict = pickle.load(pkl_file)	;	pkl_file.close()  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -17,16 +17,10 @@ model_dict={'MIROC':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC
 model=sys.argv[1]
 print model
 
-#model='ECHAM6-3-LR'
-
 overwrite=True
 
 working_path=model_dict[model]['path']
 grid=model_dict[model]['grid']
-
-#working_path='data/tests/'
-
-
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 # for scenario in ['']:
