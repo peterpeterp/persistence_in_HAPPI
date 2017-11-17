@@ -31,9 +31,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	all_files=glob.glob(working_path+scenario+'/*period*')
 	runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
-	stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-	stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-	stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 
 	for per_file in all_files:
 		start_time=time.time()
