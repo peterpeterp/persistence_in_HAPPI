@@ -14,14 +14,14 @@ model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIRO
 			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},
 }
 
-if True:
+try:
 	model=sys.argv[1]
 	print model
 	working_path=model_dict[model]['path']
 	grid=model_dict[model]['grid']
-# except:
-# 	model='ECHAM6-3-LR'
-# 	working_path='data/tests/'
+except:
+	model='ECHAM6-3-LR'
+	working_path='data/tests/'
 
 overwrite=True
 
@@ -29,16 +29,15 @@ qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','wa
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	all_files=glob.glob(working_path+scenario+'/*period*')
-	print working_path+scenario
-	runs=[int(ff.split('run')[-1].split('_')[0]) for ff in all_files]
+	runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
-	stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs,np.int32),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-	stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs,np.int32),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-	stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs,np.int32),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+	stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 
 	for per_file in all_files:
 		start_time=time.time()
-		run=int(per_file.split('run')[-1].split('_')[0])
+		run=str(per_file.split('_')[-2].split('.')[0])
 		print per_file,run
 		nc_in=Dataset(per_file,'r')
 		per_len=nc_in.variables['period_length'][:,:,:]
