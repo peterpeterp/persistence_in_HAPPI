@@ -6,7 +6,7 @@ import dimarray as da
 
 
 
-model_dict={'MIROC':{'grid':'128x256','working_path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/','in_path':'/project/projectdirs/m1517/C20C/MIROC/MIROC5/'},
+model_dict={'MIROC5':{'grid':'128x256','working_path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/','in_path':'/project/projectdirs/m1517/C20C/MIROC/MIROC5/'},
 			'NorESM1':{'grid':'192x288','working_path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/','in_path':'/project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/'},
 			'ECHAM6-3-LR':{'grid':'96x192','working_path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/','in_path':'/project/projectdirs/m1517/C20C/MPI-M/ECHAM6-3-LR/'},
 			'CAM4-2degree':{'grid':'96x144','working_path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/','in_path':'/project/projectdirs/m1517/C20C/ETH/CAM4-2degree/'},

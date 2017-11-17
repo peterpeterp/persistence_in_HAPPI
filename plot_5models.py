@@ -16,7 +16,7 @@ sum_dict={}
 tmp_1=da.read_nc('data/MIROC_SummaryMeanQu.nc')['SummaryMeanQu']
 tmp_2=da.read_nc('data/MIROC_SummaryKS.nc')['SummaryKS']
 tmp_3=da.read_nc('data/MIROC_SummaryFit.nc')['SummaryFit']
-sum_dict['MIROC']=da.concatenate((tmp_1,tmp_2,tmp_3),axis='type')
+sum_dict['MIROC5']=da.concatenate((tmp_1,tmp_2,tmp_3),axis='type')
 
 tmp_1=da.read_nc('data/NORESM1_SummaryMeanQu.nc')['SummaryMeanQu']
 tmp_2=da.read_nc('data/NORESM1_SummaryKS.nc')['SummaryKS']
@@ -48,7 +48,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 	axes=axes.flatten()
 	count=0
 
-	for dataset in ['HadGHCND','MIROC','NORESM1','CAM4','CanAM4']:
+	for dataset in ['HadGHCND','MIROC5','NORESM1','CAM4','CanAM4']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['All-Hist'][season][state]['mean'])
 
@@ -73,7 +73,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 	axes=axes.flatten()
 	count=0
 
-	for dataset in ['HadGHCND','MIROC','NORESM1','CAM4','CanAM4']:
+	for dataset in ['HadGHCND','MIROC5','NORESM1','CAM4','CanAM4']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['All-Hist'][season][state]['qu_95'])
 
@@ -112,8 +112,8 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 
 	color_range=[-0.5,0.5]
 
-	for dataset in ['MIROC','NORESM1','CAM4','CanAM4']:
-	#for dataset in ['MIROC','CanAM4']:
+	for dataset in ['MIROC5','NORESM1','CAM4','CanAM4']:
+	#for dataset in ['MIROC5','CanAM4']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['Plus20-Future'][season][state]['mean']-tmp['All-Hist'][season][state]['mean'])
 		significance=np.asarray(tmp['Plus20-Future'][season][state]['KS_vs_All-Hist'])
@@ -149,7 +149,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 
 	color_range=[-1.,1.]
 
-	for dataset in ['MIROC','NORESM1','CAM4','CanAM4']:
+	for dataset in ['MIROC5','NORESM1','CAM4','CanAM4']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['Plus20-Future'][season][state]['qu_95']-tmp['All-Hist'][season][state]['qu_95'])
 		significance=np.asarray(tmp['Plus20-Future'][season][state]['KS_vs_All-Hist'])

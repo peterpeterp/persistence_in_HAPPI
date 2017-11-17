@@ -2,7 +2,7 @@ import os,sys,glob,time,collections,gc
 import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import cPickle as pickle
-import matplotlib.pylab as plt 
+import matplotlib.pylab as plt
 import dimarray as da
 
 from scipy.optimize import curve_fit
@@ -18,8 +18,8 @@ os.chdir('../weather_persistence')
 from persistence_support import *
 os.chdir('../HAPPI_persistence')
 
-#dataset='MIROC'
-dataset='NORESM1'
+model=sys.argv[1]
+print model
 
 scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 seasons=['MAM','JJA','SON','DJF','year']
@@ -29,7 +29,7 @@ types=['sing_b','sing_a','sing_BIC','sing_error','doub_b1','doub_b2','doub_a1','
 big_dict={}
 for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
 	pkl_file = open('data/'+dataset+'_'+scenario+'_counter.pkl', 'rb')
-	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()  
+	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
 lat=big_dict[scenario]['lat']
 lon=big_dict[scenario]['lon']
@@ -37,7 +37,7 @@ lon=big_dict[scenario]['lon']
 SummaryFit=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(states),np.asarray(types),lat,lon],dims=['scenario','season','state','type','lat','lon'])
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-	distr_dict = big_dict[scenario] 
+	distr_dict = big_dict[scenario]
 
 	for iy in range(len(lat)):
 		for ix in range(len(lon)):
@@ -56,7 +56,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						pers_tmp=np.array(range(1,max([state*key+1 for key in counter.keys()])))
 						count,pers=[],[]
 						for pp,i in zip(pers_tmp,range(len(pers_tmp))):
-							if pp*state in counter.keys(): 
+							if pp*state in counter.keys():
 								count.append(counter[pp*state])
 								pers.append(pp)
 						count=np.array(count)
@@ -73,10 +73,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						SummaryFit[scenario][season][state_name]['doub_a1'][lat[iy]][lon[ix]]=tmp['double_exp']['params']['a1']
 						SummaryFit[scenario][season][state_name]['doub_thr'][lat[iy]][lon[ix]]=tmp['double_exp']['params']['thr']
 						SummaryFit[scenario][season][state_name]['doub_BIC'][lat[iy]][lon[ix]]=tmp['double_exp']['bic']
-							
+
 
 ds=da.Dataset({'SummaryFit':SummaryFit})
 ds.write_nc('data/'+dataset+'_SummaryFit.nc', mode='w')
-
-
-

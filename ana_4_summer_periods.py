@@ -7,7 +7,7 @@ sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 sys.path.append('/Users/peterpfleiderer/Documents/Projects/weather_persistence/')
 from summer_persistence_analysis import *
 
-model_dict={'MIROC':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
+model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
 			'NorESM1':{'grid':'192x288','path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'},
 			'ECHAM6-3-LR':{'grid':'96x192','path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'},
 			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},

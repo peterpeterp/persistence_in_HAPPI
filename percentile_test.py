@@ -22,7 +22,7 @@ except:
 
 
 big_dict={}
-for dataset in ['HadGHCND','MIROC','NORESM1']:
+for dataset in ['HadGHCND','MIROC5','NORESM1']:
 
 	pkl_file = open('data/'+dataset+'_regional_distrs.pkl', 'rb')
 	region_dict = pickle.load(pkl_file)	;	pkl_file.close()
@@ -30,7 +30,7 @@ for dataset in ['HadGHCND','MIROC','NORESM1']:
 	big_dict[dataset]=region_dict
 
 
-counter=big_dict['MIROC']['CEU']['All-Hist']['JJA']['warm']['counter']
+counter=big_dict['MIROC5']['CEU']['All-Hist']['JJA']['warm']['counter']
 
 cold,warm=counter_to_list(counter)
 

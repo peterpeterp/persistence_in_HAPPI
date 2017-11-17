@@ -8,7 +8,7 @@ try:
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-model_dict={'MIROC':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
+model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
 			'NorESM1':{'grid':'192x288','path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'},
 			'ECHAM6-3-LR':{'grid':'96x192','path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'},
 			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},
@@ -67,7 +67,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 					for yr in year_boundaries.keys():
 						summer_ids=np.where(per_year[tmp,y,x]==yr)[0]
 						if len(summer_ids)!=0:
-							event_ids=tmp[np.where(per_year[tmp,y,x]==yr)[0]]
+							event_ids=tmp[summer_ids]
 							Xpers_id=np.argmax(per_len[event_ids,y,x])
 							stat_Xpers_cum_heat[run,yr,lat,lon]=cum_heat[summer_ids[Xpers_id],y,x]
 							stat_Xpers_hot_shift[run,yr,lat,lon]=hot_shift[summer_ids[Xpers_id],y,x]
