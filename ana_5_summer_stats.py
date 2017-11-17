@@ -64,4 +64,4 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		print time.time()-start_time
 
 	ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp})
-	ds.write_nc('data/'+model+'_'+scenario+'_summer.nc', mode='w')
+	ds.write_nc('data/'+model+'_'+scenario+'_summerQ90.nc', mode='w')
