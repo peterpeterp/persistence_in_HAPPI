@@ -29,7 +29,12 @@ qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','wa
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	all_files=glob.glob(working_path+scenario+'/*period*')
+<<<<<<< HEAD
 	runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
+=======
+	print working_path+scenario
+	runs=[int(ff.split('run')[-1].split('_')[0]) for ff in all_files]
+>>>>>>> 719b5095afc25cf6590b5706750037c6c77a1654
 
 	stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 	stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(50),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
