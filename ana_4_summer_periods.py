@@ -25,8 +25,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:
+        out_file=in_file.replace('_period','_summer')
         if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
-        if os.path.isfile(out_file)==False: 
+        if os.path.isfile(out_file)==False:
             print in_file
             tas=da.read_nc(in_file.replace('_period',''))['tas']
             tt=np.asarray(tas.squeeze(),np.float)
@@ -42,8 +43,6 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
             time0=time.time()
             cum_heat,hot_shift,hot_temp,tasX,Ni_new,original_period_id=summer_period_analysis(ll,mm,seas,state,tt,year,len(period.lat),len(period.lon),len(period.period_id))
             print time.time()-time0
-
-            out_file=in_file.replace('_period','_summer')
 
             nc_out=Dataset(out_file,'w')
             nc_in=Dataset(in_file,'r')
