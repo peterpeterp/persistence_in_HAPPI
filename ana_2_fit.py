@@ -14,7 +14,7 @@ try:
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-os.chdir('weather_persistence')
+sys.path.append('weather_persistence')
 from persistence_support import *
 
 model=sys.argv[1]
