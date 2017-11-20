@@ -14,9 +14,8 @@ try:
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-os.chdir('../weather_persistence')
+os.chdir('weather_persistence')
 from persistence_support import *
-os.chdir('../HAPPI_persistence')
 
 model=sys.argv[1]
 print model
@@ -28,7 +27,7 @@ types=['sing_b','sing_a','sing_BIC','sing_error','doub_b1','doub_b2','doub_a1','
 
 big_dict={}
 for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
-	pkl_file = open('data/'+dataset+'_'+scenario+'_counter.pkl', 'rb')
+	pkl_file = open('data/'+model+'_'+scenario+'_counter.pkl', 'rb')
 	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
 lat=big_dict[scenario]['lat']
@@ -76,4 +75,4 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 
 
 ds=da.Dataset({'SummaryFit':SummaryFit})
-ds.write_nc('data/'+dataset+'_SummaryFit.nc', mode='w')
+ds.write_nc('data/'+model+'_SummaryFit.nc', mode='w')

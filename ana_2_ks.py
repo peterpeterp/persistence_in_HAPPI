@@ -35,7 +35,7 @@ types=['KS_vs_Plus20-Future','KS_vs_Plus15-Future','KS_vs_All-Hist']
 
 big_dict={}
 for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
-	pkl_file = open('data/'+dataset+'_'+scenario+'_counter.pkl', 'rb')
+	pkl_file = open('data/'+model+'_'+scenario+'_counter.pkl', 'rb')
 	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
 lat=big_dict[scenario]['lat']
@@ -76,4 +76,4 @@ for scenario_combi in [['Plus20-Future','All-Hist'],['Plus15-Future','All-Hist']
 								SummaryKS[scenario_store][season]['warm']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_warm
 
 ds=da.Dataset({'SummaryKS':SummaryKS})
-ds.write_nc('data/'+dataset+'_SummaryKS.nc', mode='w')
+ds.write_nc('data/'+model+'_SummaryKS.nc', mode='w')
