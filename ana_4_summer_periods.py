@@ -16,12 +16,18 @@ model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIRO
 model=sys.argv[1]
 print model
 
+try:
+    scenarios=[sys.argv[2]]
+except:
+    scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+print scenarios
+
 overwrite=False
 
 working_path=model_dict[model]['path']
 grid=model_dict[model]['grid']
 
-for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+for scenario in scenarios:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:

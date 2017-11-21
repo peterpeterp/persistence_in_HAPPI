@@ -23,7 +23,7 @@ except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
-overwrite=True
+overwrite=False	
 
 qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
