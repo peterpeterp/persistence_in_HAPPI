@@ -32,8 +32,9 @@ for scenario in scenarios:
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:
         out_file=in_file.replace('_period','_summer')
-        if os.path.isfile(claim_run)==False:
-            claim_run=open(out_file.replace('.nc','_woring_on'),'w')
+        claim_run_file=out_file.replace('.nc','_woring_on')
+        if os.path.isfile(claim_run_file)==False:
+            claim_run=open(claim_run_file,'w')
             if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
             if os.path.isfile(out_file)==False:
                 print in_file
@@ -88,7 +89,7 @@ for scenario in scenarios:
                 nc_in.close()
                 print time.time()-time0
                 claim_run.close()
-                os.system('rm '+claim_run)
+                os.system('rm '+claim_run_file)
 
 
 
