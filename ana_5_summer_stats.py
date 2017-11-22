@@ -69,6 +69,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 								print summer_ids
 								print per_len[event_ids,y,x]
 								print lon,lat
+								print len(summer_ids)
 								asdasd
 								stat_Xpers_cum_heat[run,:,lat,lon]=cum_heat[summer_ids[0:period_number_limit],y,x]
 								stat_Xpers_hot_shift[run,:,lat,lon]=hot_shift[summer_ids[0:period_number_limit],y,x]
