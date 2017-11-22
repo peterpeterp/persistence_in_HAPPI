@@ -28,7 +28,7 @@ period_number_limit=70
 qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-	out_file='data/'+model+'_'+scenario+'_summerQ90.nc'
+	out_file='working_path/'+model+'_'+scenario+'_summerQ90.nc'
 	if overwrite and os.path.isfile(out_file):	os.system('rm '+out_file)
 	if os.path.isfile(out_file)==False:
 		all_files=glob.glob(working_path+scenario+'/*period*')
