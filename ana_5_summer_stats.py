@@ -23,7 +23,7 @@ except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
-overwrite=False	
+overwrite=False
 
 qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
@@ -58,9 +58,18 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 					summer_ids=np.where(per_len[tmp,y,x]>=qu_90[scenario,lat,lon])[0]
 					if len(summer_ids)!=0:
 						event_ids=tmp[summer_ids]
-						stat_Xpers_cum_heat[run,0:len(summer_ids)-1,lat,lon]=cum_heat[summer_ids,y,x]
-						stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
-						stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
+						if len(summer_ids)<=60:
+							stat_Xpers_cum_heat[run,0:len(summer_ids)-1,lat,lon]=cum_heat[summer_ids,y,x]
+							stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
+							stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
+						else:
+							print summer_ids
+							print per_len[event_ids,y,x]
+							asdasd
+							stat_Xpers_cum_heat[run,:,lat,lon]=cum_heat[summer_ids[0:60],y,x]
+							stat_Xpers_hot_shift[run,:,lat,lon]=hot_shift[summer_ids[0:60],y,x]
+							stat_Xpers_hot_temp[run,:,lat,lon]=hot_temp[summer_ids[0:60],y,x]
+
 		print time.time()-start_time
 
 	ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp})
