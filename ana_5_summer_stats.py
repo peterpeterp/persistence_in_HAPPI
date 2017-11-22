@@ -24,7 +24,7 @@ except:
 	working_path='data/tests/'
 
 overwrite=False
-
+period_number_limit=70
 qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
@@ -34,9 +34,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		all_files=glob.glob(working_path+scenario+'/*period*')
 		runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
-		stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-		stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
-		stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(60),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+		stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+		stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+		stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 
 		for per_file in all_files:
 			start_time=time.time()
@@ -61,7 +61,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						summer_ids=np.where(per_len[tmp,y,x]>=qu_90[scenario,lat,lon])[0]
 						if len(summer_ids)!=0:
 							event_ids=tmp[summer_ids]
-							if len(summer_ids)<=60:
+							if len(summer_ids)<=period_number_limit:
 								stat_Xpers_cum_heat[run,0:len(summer_ids)-1,lat,lon]=cum_heat[summer_ids,y,x]
 								stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
 								stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
@@ -70,9 +70,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 								print per_len[event_ids,y,x]
 								print lon,lat
 								asdasd
-								stat_Xpers_cum_heat[run,:,lat,lon]=cum_heat[summer_ids[0:60],y,x]
-								stat_Xpers_hot_shift[run,:,lat,lon]=hot_shift[summer_ids[0:60],y,x]
-								stat_Xpers_hot_temp[run,:,lat,lon]=hot_temp[summer_ids[0:60],y,x]
+								stat_Xpers_cum_heat[run,:,lat,lon]=cum_heat[summer_ids[0:period_number_limit],y,x]
+								stat_Xpers_hot_shift[run,:,lat,lon]=hot_shift[summer_ids[0:period_number_limit],y,x]
+								stat_Xpers_hot_temp[run,:,lat,lon]=hot_temp[summer_ids[0:period_number_limit],y,x]
 
 			print time.time()-start_time
 
