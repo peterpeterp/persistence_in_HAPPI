@@ -54,12 +54,15 @@ for region in srex.keys():
 					for var in tmp[scenario].keys():
 						tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
 
+	n_events=0
+	for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
+		for scenario in scenarios:
+			if len(tmp[scenario][var])>n_events:
+				n_events=len(tmp[scenario][var])
+
 	reg_dict={}
 	for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
-		n_events=0
-		for scenario in scenarios:
-			if len(tmp[scenario][var])>n_events: n_events=len(tmp[scenario][var])
-		reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
+		reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events+2))],dims=['scenario','ID'])
 		for scenario in scenarios:
 			reg_dict[var][scenario,:]=tmp[scenario][var]
 
