@@ -40,7 +40,7 @@ for region in srex.keys():
 	tmp={}
 	for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		data=da.read_nc(working_path+'/'+model+'_'+scenario+'_summerQ90.nc')
-		tmp[scenario]={'stat_Xpers_cum_heat':np.array([]),'stat_Xpers_hot_shift':np.array([]),'stat_Xpers_hot_temp':np.array([]),'stat_tasX_pers_rank':np.array([])}
+		tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([])}
 		polygon=Polygon(srex[region]['points'])
 		for x in data.lon:
 			if x>180:
