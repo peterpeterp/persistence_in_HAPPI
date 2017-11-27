@@ -36,9 +36,11 @@ os.system('mkdir '+working_path+'/regional')
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
+scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+
 for region in srex.keys():
 	tmp={}
-	for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+	for scenario in scenarios:
 		data=da.read_nc(working_path+'/'+model+'_'+scenario+'_summerQ90.nc')
 		tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([])}
 		polygon=Polygon(srex[region]['points'])
