@@ -64,7 +64,7 @@ for region in srex.keys():
 	for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
 		reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
 		for scenario in scenarios:
-			reg_dict[var][scenario,0:len(tmp[scenario][var])]=tmp[scenario][var]
+			reg_dict[var][scenario,0:len(tmp[scenario][var])-1]=tmp[scenario][var]
 
 	ds=da.Dataset(reg_dict)
 	ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
