@@ -31,6 +31,8 @@ except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
+os.system('mkdir '+working_path+'/regional')
+
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
@@ -49,7 +51,7 @@ for region in srex.keys():
 				if polygon.contains(Point(x__,y)):
 					for var in tmp[scenario].keys():
 						tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
-						
+
 	reg_dict={}
 	for var in ['stat_Xpers_cum_heat','stat_Xpers_hot_shift','stat_Xpers_hot_temp','stat_tasX_pers_rank']:
 		reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(len(tmp[scenario][var])))],dims=['scenario','ID'])
@@ -57,4 +59,4 @@ for region in srex.keys():
 			reg_dict[var][scenario,:]=tmp[scenario][var]
 
 	ds=da.Dataset(reg_dict)
-	ds.write_nc(working_path+'/'+region+'_'+model+'_summer.nc', mode='w')
+	ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
