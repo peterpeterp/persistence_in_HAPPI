@@ -58,33 +58,3 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 	return region_dict
 
 #region_dict=get_regional_distribution('CAM4')
-
-def get_regional_summer_stats(model,scenarios=['Plus20-Future','Plus15-Future','All-Hist']):
-	for region in srex.keys():
-		tmp={}
-		for scenario in scenarios:
-			data=da.read_nc('data/'+model+'_'+scenario+'_SummerStats.nc')
-			tmp[scenario]={'stat_Xpers_cum_heat':np.array([]),'stat_Xpers_hot_shift':np.array([]),'stat_Xpers_hot_temp':np.array([]),'stat_tasX_pers_rank':np.array([])}
-			polygon=Polygon(srex[region]['points'])
-			for x in data.lon:
-				if x>180:
-					x__=x-360
-				else:
-					x__=x
-				for y in data.lat:
-					if polygon.contains(Point(x__,y)):
-						for var in tmp[scenario].keys():
-							tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
-
-
-
-		reg_dict={}
-		for var in ['stat_Xpers_cum_heat','stat_Xpers_hot_shift','stat_Xpers_hot_temp','stat_tasX_pers_rank']:
-			reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(len(tmp[scenario][var])))],dims=['scenario','ID'])
-			for scenario in scenarios:
-				reg_dict[var][scenario,:]=tmp[scenario][var]
-
-		ds=da.Dataset(reg_dict)
-		ds.write_nc('data/region/'+region+'_'+model+'_summer.nc', mode='w')
-
-stat_dict=get_regional_summer_stats('ECHAM6-3-LR')
