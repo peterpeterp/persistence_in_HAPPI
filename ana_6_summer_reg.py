@@ -53,7 +53,7 @@ for region in srex.keys():
 						tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
 
 	reg_dict={}
-	for var in ['stat_Xpers_cum_heat','stat_Xpers_hot_shift','stat_Xpers_hot_temp','stat_tasX_pers_rank']:
+	for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
 		reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(len(tmp[scenario][var])))],dims=['scenario','ID'])
 		for scenario in scenarios:
 			reg_dict[var][scenario,:]=tmp[scenario][var]
