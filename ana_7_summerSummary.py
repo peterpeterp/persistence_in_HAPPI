@@ -10,7 +10,7 @@ import init_dirs as init
 try:
 	model=sys.argv[1]
 	print model
-	working_path=init.model_dict[model]['path']+'/regional/'
+	working_path=init.model_dict[model]['path']+'regional/'
 except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
@@ -21,6 +21,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array([srex.keys()]),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
 for region in summary.region:
+    print working_path,region,model
     print working_path+region+'_'+model+'_summer.nc'
     dat=da.read_nc(working_path+region+'_'+model+'_summer.nc')
     for scenario in summary.scenarios:
