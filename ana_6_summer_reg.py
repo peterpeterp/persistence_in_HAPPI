@@ -42,7 +42,7 @@ scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 for region in srex.keys():
 	out_file=working_path+'/regional/'+region+'_'+model+'_summer.nc'
 	if overwrite and os.path.isfile(out_file): os.system('rm '+out_file)
-	if os.path.isfile(out_file):
+	if os.path.isfile(out_file)==False:
 		print region
 		tmp={}
 		for scenario in scenarios:
