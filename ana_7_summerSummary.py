@@ -19,7 +19,7 @@ print working_path
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
-summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array([srex.keys()]),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
+summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array(srex.keys()),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
 for region in summary.region:
     print working_path,region,model
     print working_path+region+'_'+model+'_summer.nc'
