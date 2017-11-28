@@ -18,7 +18,7 @@ except:
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
-summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array(srex.keys()),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
+summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array(list(srex.keys())),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
 for region in summary.region:
     dat=da.read_nc(working_path+region+'_'+model+'_summer.nc')
     summary[:,region,'mean_hot_shift']=dat['90X_hot_shift'].mean(axis='ID', skipna=True)
