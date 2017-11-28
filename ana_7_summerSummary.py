@@ -15,20 +15,18 @@ except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
-print working_path
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 summary=da.DimArray(axes=[np.asarray(['Plus20-Future','Plus15-Future','All-Hist']),np.array(srex.keys()),np.asarray(['mean_hot_shift','frac_pos_shift','mean_hot_temp','mean_cum_heat'])],dims=['scenario','region','stat'])
 for region in summary.region:
-    print working_path,region,model
-    print working_path+region+'_'+model+'_summer.nc'
     dat=da.read_nc(working_path+region+'_'+model+'_summer.nc')
+    summary[:,region,'mean_hot_shift']=dat['90X_hot_shift'].mean(axis='ID', skipna=True)
+    summary[:,region,'mean_hot_temp']=dat['90X_hot_temp'][scenario,:].mean(axis='ID', skipna=True)
+    summary[:,region,'mean_cum_heat']=dat['90X_cum_heat'][scenario,:].mean(axis='ID', skipna=True)
     for scenario in summary.scenario:
-        summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(len(dat['90X_hot_shift'][scenario,:]))
-        summary[scenario,region,'mean_hot_shift']=np.nanmean(dat['90X_hot_shift'][scenario,:])
-        summary[scenario,region,'mean_hot_temp']=np.nanmean(dat['90X_hot_temp'][scenario,:])
-        summary[scenario,region,'mean_cum_heat']=np.nanmean(dat['90X_cum_heat'][scenario,:])
+        summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(dat['90X_hot_shift'].shape[1])
+        print np.nanmean(dat['90X_hot_temp'][scenario,:])
 
     print np.asarray(summary[:,region,:])
     asdasd
