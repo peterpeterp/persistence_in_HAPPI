@@ -26,7 +26,6 @@ for region in summary.region:
     summary[:,region,'mean_cum_heat']=dat['90X_cum_heat'].mean(axis='ID', skipna=True)
     for scenario in summary.scenario:
         summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(dat['90X_hot_shift'].shape[1])
-        print np.nanmean(dat['90X_hot_temp'][scenario,:])
 
-    print np.asarray(summary[:,region,:])
-    asdasd
+ds=da.Dataset('summerStats':summary)
+ds.write_nc('data/'+model+'_SummarySummer.nc', mode='w')
