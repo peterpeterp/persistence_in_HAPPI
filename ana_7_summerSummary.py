@@ -11,11 +11,11 @@ try:
 	model=sys.argv[1]
 	print model
 	working_path=init.model_dict[model]['path']+'/regional/'
-    print working_path
 except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
+print working_path
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
