@@ -3,8 +3,6 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import matplotlib.pylab as plt
 import dimarray as da
-from statsmodels.sandbox.stats import multicomp
-import cPickle as pickle
 
 import init_dirs as init
 
