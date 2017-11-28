@@ -24,7 +24,7 @@ for region in summary.region:
     print working_path,region,model
     print working_path+region+'_'+model+'_summer.nc'
     dat=da.read_nc(working_path+region+'_'+model+'_summer.nc')
-    for scenario in summary.scenarios:
+    for scenario in summary.scenario:
         summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(len(dat['90X_hot_shift'][scenario,:]))
         summary[scenario,region,'mean_hot_shift']=np.nanmean(dat['90X_hot_shift'][scenario,:])
         summary[scenario,region,'mean_hot_temp']=np.nanmean(dat['90X_hot_temp'][scenario,:])
