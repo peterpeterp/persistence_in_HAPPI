@@ -27,5 +27,5 @@ for region in summary.region:
     for scenario in summary.scenario:
         summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(dat['90X_hot_shift'].shape[1])
 
-ds=da.Dataset('summerStats':summary)
+ds=da.Dataset({'summerStats':summary})
 ds.write_nc('data/'+model+'_SummarySummer.nc', mode='w')
