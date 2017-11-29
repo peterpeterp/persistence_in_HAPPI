@@ -6,10 +6,10 @@ import dimarray as da
 
 
 
-model_dict={'MIROC5':{'grid':'128x256','working_path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/','in_path':'/project/projectdirs/m1517/C20C/MIROC/MIROC5/'},
-			'NorESM1':{'grid':'192x288','working_path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/','in_path':'/project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/'},
-			'ECHAM6-3-LR':{'grid':'96x192','working_path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/','in_path':'/project/projectdirs/m1517/C20C/MPI-M/ECHAM6-3-LR/'},
-			'CAM4-2degree':{'grid':'96x144','working_path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/','in_path':'/project/projectdirs/m1517/C20C/ETH/CAM4-2degree/'},
+model_dict={'MIROC5':{'grid':'128x256','working_path':'/global/cscratch1/sd/pepflei/MIROC5/','in_path':'/project/projectdirs/m1517/C20C/MIROC/MIROC5/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
+			'NorESM1':{'grid':'192x288','working_path':'/global/cscratch1/sd/pepflei/NorESM1-HAPPI/','in_path':'/project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
+			'ECHAM6-3-LR':{'grid':'96x192','working_path':'/global/cscratch1/sd/pepflei/ECHAM6-3-LR/','in_path':'/project/projectdirs/m1517/C20C/MPI-M/ECHAM6-3-LR/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
+			'CAM4-2degree':{'grid':'96x144','working_path':'/global/cscratch1/sd/pepflei/CAM4-2degree/','in_path':'/project/projectdirs/m1517/C20C/ETH/CAM4-2degree/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
 }
 
 model=sys.argv[1]
@@ -22,7 +22,7 @@ grid=model_dict[model]['grid']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	os.system('mkdir '+working_path+scenario)
-	tmp_path=in_path+scenario+'/*/*/day/atmos/tas/'
+	tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 	run_list=[path.split('/')[-1] for path in glob.glob(tmp_path+'*')]
 	print run_list
 	for run in run_list:
