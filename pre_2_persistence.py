@@ -82,4 +82,4 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
 
 						claim_run.close()
-					    os.system('rm '+claim_run_file)
+						os.system('rm '+claim_run_file)
