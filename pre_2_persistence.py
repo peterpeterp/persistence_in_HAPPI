@@ -32,7 +32,8 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		        claim_run_file=in_file.replace('.nc','_working_on')
 		        if os.path.isfile(claim_run_file)==False:
 		            claim_run=open(claim_run_file,'w')
-					if os.path.isfile(in_file.replace('.nc','_period.nc')) and overwrite: os.system('rm '+in_file.replace('.nc','_period.nc'))
+					if os.path.isfile(in_file.replace('.nc','_period.nc')) and overwrite:
+						os.system('rm '+in_file.replace('.nc','_period.nc'))
 					if os.path.isfile(in_file.replace('.nc','_period.nc'))==False:
 						start_time=time.time()
 
