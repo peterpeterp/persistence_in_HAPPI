@@ -23,7 +23,7 @@ grid=model_dict[model]['grid']
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	os.system('mkdir '+working_path+scenario)
 	tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
-	run_list=[path.split('/')[-1] for path in glob.glob(tmp_path+'*')]
+	run_list=sorted([path.split('/')[-1] for path in glob.glob(tmp_path+'*')])[0:100]
 	print run_list
 	for run in run_list:
 		if scenario in ['All-Hist']:
