@@ -24,7 +24,7 @@ overwrite=False
 working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 grid=model_dict[model]['grid']
 
-for scenario in scenarios:
+for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:
