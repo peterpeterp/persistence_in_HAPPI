@@ -3,21 +3,12 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import cPickle as pickle
 
-
-model_dict={'MIROC5':{'grid':'128x256'},
-			'NorESM1':{'grid':'192x288'},
-			'ECHAM6-3-LR':{'grid':'96x192'},
-			'CAM4-2degree':{'grid':'96x144'},
-}
-
 model=sys.argv[1]
 print model
 
 overwrite=True
 
-working_path=model_dict[model]['path']
-grid=model_dict[model]['grid']
-
+working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 

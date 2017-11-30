@@ -10,19 +10,12 @@ from summer_persistence_analysis import *
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
-model_dict={'MIROC5':{'grid':'128x256'},
-			'NorESM1':{'grid':'192x288'},
-			'ECHAM6-3-LR':{'grid':'96x192'},
-			'CAM4-2degree':{'grid':'96x144'},
-}
-
 model=sys.argv[1]
 print model
 
 overwrite=False
 
 working_path='/global/cscratch1/sd/pepflei/'+model+'/'
-grid=model_dict[model]['grid']
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
     run_count=0
