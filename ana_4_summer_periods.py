@@ -7,24 +7,21 @@ sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 sys.path.append('/Users/peterpfleiderer/Documents/Projects/weather_persistence/')
 from summer_persistence_analysis import *
 
-model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
-			'NorESM1':{'grid':'192x288','path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'},
-			'ECHAM6-3-LR':{'grid':'96x192','path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'},
-			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},
+sys.path.append('/global/homes/p/pepflei/weather_persistence/')
+from persistence_functions import *
+
+model_dict={'MIROC5':{'grid':'128x256'},
+			'NorESM1':{'grid':'192x288'},
+			'ECHAM6-3-LR':{'grid':'96x192'},
+			'CAM4-2degree':{'grid':'96x144'},
 }
 
 model=sys.argv[1]
 print model
 
-try:
-    scenarios=[sys.argv[2]]
-except:
-    scenarios=['Plus20-Future','Plus15-Future','All-Hist']
-print scenarios
-
 overwrite=False
 
-working_path=model_dict[model]['path']
+working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 grid=model_dict[model]['grid']
 
 for scenario in scenarios:
