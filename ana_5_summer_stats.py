@@ -35,6 +35,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
 		stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
+		stat_Xpers_mean_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 		stat_Xpers_hot_shift=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 		stat_Xpers_hot_temp=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
 
@@ -63,6 +64,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 							event_ids=tmp[summer_ids]
 							if len(summer_ids)<=period_number_limit:
 								stat_Xpers_cum_heat[run,0:len(summer_ids)-1,lat,lon]=cum_heat[summer_ids,y,x]
+								stat_Xpers_mean_temp[run,0:len(summer_ids)-1,lat,lon]=cum_heat[summer_ids,y,x]/per_len[event_ids,y,x]
 								stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
 								stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
 							else:
@@ -77,5 +79,5 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 
 			print time.time()-start_time
 
-		ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp})
+		ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp})
 		ds.write_nc(out_file, mode='w')
