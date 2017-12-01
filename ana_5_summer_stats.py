@@ -8,22 +8,13 @@ try:
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-model_dict={'MIROC5':{'grid':'128x256','path':'/global/cscratch1/sd/pepflei/MIROC/MIROC5/'},
-			'NorESM1':{'grid':'192x288','path':'/global/cscratch1/sd/pepflei/NCC/NorESM1-HAPPI/'},
-			'ECHAM6-3-LR':{'grid':'96x192','path':'/global/cscratch1/sd/pepflei/MPI-M/ECHAM6-3-LR/'},
-			'CAM4-2degree':{'grid':'96x144','path':'/global/cscratch1/sd/pepflei/ETH/CAM4-2degree/'},
-}
+model=sys.argv[1]
+print model
 
-try:
-	model=sys.argv[1]
-	print model
-	working_path=model_dict[model]['path']
-	grid=model_dict[model]['grid']
-except:
-	model='ECHAM6-3-LR'
-	working_path='data/tests/'
+overwrite=True
 
-overwrite=False
+working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+
 period_number_limit=70
 qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
