@@ -20,9 +20,11 @@ qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','wa
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	out_file=working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
+	print out_file
 	if overwrite and os.path.isfile(out_file):	os.system('rm '+out_file)
 	if os.path.isfile(out_file)==False:
 		all_files=glob.glob(working_path+scenario+'/*period*')
+		print all_files
 		runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
 		stat_Xpers_cum_heat=da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),qu_90.lat,qu_90.lon],dims=['run','ID','lat','lon'])
