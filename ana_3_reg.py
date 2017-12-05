@@ -57,4 +57,6 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 	output.close()
 	return region_dict
 
-#region_dict=get_regional_distribution('CAM4')
+model=sys.argv[1]
+print model
+region_dict=get_regional_distribution(model)
