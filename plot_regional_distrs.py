@@ -2,7 +2,7 @@ import os,sys,glob,time,collections,gc
 import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import cPickle as pickle
-import matplotlib.pylab as plt 
+import matplotlib.pylab as plt
 import dimarray as da
 from scipy.optimize import curve_fit
 from lmfit import  Model
@@ -45,7 +45,7 @@ for dataset in ['HadGHCND','MIROC5','NORESM1','ECHAM6','CAM4','CanAM4']:
 						count=region_dict[region][scenario][season][state]['count']
 						pers=region_dict[region][scenario][season][state]['period_length']
 						region_dict[region][scenario][season][state]['fit']=all_fits(count,pers,plot=False)
-					except Exception,e: 
+					except Exception,e:
 						print region,dataset,scenario
 
 	big_dict[dataset]=region_dict
@@ -65,8 +65,8 @@ def example_plot(subax):
 	subax.set_yscale('log')
 	subax.set_xlim((0,40))
 	subax.set_ylim((0.0001,0.5))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on') 
+	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on')
+	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on')
 	subax.set_ylabel('PDF')
 	subax.set_xlabel('days')
 	subax.set_title('example')
@@ -88,8 +88,8 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None):
 	subax.set_yscale('log')
 	subax.set_xlim((0,40))
 	subax.set_ylim((0.0001,0.5))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off') 
+	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
+	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off')
 	subax.locator_params(axis = 'x', nbins = 5)
 
 	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points',ha='left', va='bottom')
@@ -117,8 +117,8 @@ def example_plot(subax):
 	subax.set_xlim((0,30))
 	subax.set_ylim((-10,10))
 	subax.plot([0,40],[0,0],'k')
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on') 
+	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on')
+	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on')
 	subax.set_title('example')
 	subax.set_ylabel('change [$\%$]')
 	subax.set_xlabel('days')
@@ -140,8 +140,8 @@ def scenario_diff(subax,region,arg1=None,arg2=None,arg3=None):
 	subax.plot([0,40],[0,0],'k')
 	subax.set_xlim((0,30))
 	subax.set_ylim((-10,10))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off') 
+	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
+	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off')
 	subax.locator_params(axis = 'y', nbins = 5)
 	subax.locator_params(axis = 'x', nbins = 5)
 	subax.annotate('              '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points',ha='left', va='bottom')
@@ -157,37 +157,37 @@ legend_plot(ax_legend)
 plt.savefig('plots/diff_20vsHist_legend_NH.png')
 plt.clf()
 
-
-# ------------------------- fits
-def example_plot(subax):
-	subax.plot([1,1],[1,1],label='projections')
-	subax.plot([1,1],[1,1],label='single-exp')
-	subax.plot([1,1],[1,1],label='double-exp')
-	subax.set_yscale('log')
-	subax.set_xlim((0,40))
-	subax.set_ylim((100,1000000))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on') 
-	subax.set_title('example')
-	subax.legend(loc='best',fontsize=12)
-
-def test_plot(subax,region):
-	tmp=region_dict[region]['DJF']['cold']
-	count=tmp['count']
-	pers=tmp['period_length']
-	subax.plot(pers[2::],count[2::])
-	subax.plot(pers[2::],tmp['single_exp']['best_fit'],label='single '+str(round(tmp['single_exp']['bic'],2)))
-	subax.plot(pers[2::],tmp['double_exp']['best_fit'],label='double '+str(round(tmp['double_exp']['bic'],2)))
-	#subax.plot(pers[2::],tmp['two_exp']['best_fit'],label='two '+str(round(tmp['two_exp']['bic'],2)))
-	subax.set_yscale('log')
-	subax.set_xlim((0,40))
-	subax.set_ylim((100,1000000))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off') 
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off') 
-	if tmp['double_exp']['params']['b2']>tmp['double_exp']['params']['b1']:
-		subax.plot([2,40],[1000,1000])
-	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points',ha='left', va='bottom')
-
-
-
-
+#
+# # ------------------------- fits
+# def example_plot(subax):
+# 	subax.plot([1,1],[1,1],label='projections')
+# 	subax.plot([1,1],[1,1],label='single-exp')
+# 	subax.plot([1,1],[1,1],label='double-exp')
+# 	subax.set_yscale('log')
+# 	subax.set_xlim((0,40))
+# 	subax.set_ylim((100,1000000))
+# 	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on')
+# 	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on')
+# 	subax.set_title('example')
+# 	subax.legend(loc='best',fontsize=12)
+#
+# def test_plot(subax,region):
+# 	tmp=region_dict[region]['DJF']['cold']
+# 	count=tmp['count']
+# 	pers=tmp['period_length']
+# 	subax.plot(pers[2::],count[2::])
+# 	subax.plot(pers[2::],tmp['single_exp']['best_fit'],label='single '+str(round(tmp['single_exp']['bic'],2)))
+# 	subax.plot(pers[2::],tmp['double_exp']['best_fit'],label='double '+str(round(tmp['double_exp']['bic'],2)))
+# 	#subax.plot(pers[2::],tmp['two_exp']['best_fit'],label='two '+str(round(tmp['two_exp']['bic'],2)))
+# 	subax.set_yscale('log')
+# 	subax.set_xlim((0,40))
+# 	subax.set_ylim((100,1000000))
+# 	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
+# 	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off')
+# 	if tmp['double_exp']['params']['b2']>tmp['double_exp']['params']['b1']:
+# 		subax.plot([2,40],[1000,1000])
+# 	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points',ha='left', va='bottom')
+#
+#
+#
+#
