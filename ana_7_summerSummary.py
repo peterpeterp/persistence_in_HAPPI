@@ -7,13 +7,10 @@ import cPickle as pickle
 
 import init_dirs as init
 
-try:
-	model=sys.argv[1]
-	print model
-	working_path=init.model_dict[model]['path']+'regional/'
-except:
-	model='ECHAM6-3-LR'
-	working_path='data/tests/'
+
+model=sys.argv[1]
+print model
+working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()

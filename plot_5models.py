@@ -15,13 +15,11 @@ sum_dict={}
 
 tmp_1=da.read_nc('data/MIROC5_SummaryMeanQu.nc')['SummaryMeanQu']
 tmp_2=da.read_nc('data/MIROC5_SummaryKS.nc')['SummaryKS']
-tmp_3=da.read_nc('data/MIROC5_SummaryFit.nc')['SummaryFit']
-sum_dict['MIROC5']=da.concatenate((tmp_1,tmp_2,tmp_3),axis='type')
+sum_dict['MIROC5']=da.concatenate((tmp_1,tmp_2),axis='type')
 
 tmp_1=da.read_nc('data/NORESM1_SummaryMeanQu.nc')['SummaryMeanQu']
 tmp_2=da.read_nc('data/NORESM1_SummaryKS.nc')['SummaryKS']
-tmp_3=da.read_nc('data/NORESM1_SummaryFit.nc')['SummaryFit']
-sum_dict['NORESM1']=da.concatenate((tmp_1,tmp_2,tmp_3),axis='type')
+sum_dict['NORESM1']=da.concatenate((tmp_1,tmp_2),axis='type')
 
 tmp_1=da.read_nc('data/ECHAM6-3-LR_SummaryMeanQu.nc')['SummaryMeanQu']
 tmp_2=da.read_nc('data/ECHAM6-3-LR_SummaryKS.nc')['SummaryKS']
@@ -40,7 +38,7 @@ sum_dict['HadGHCND']=da.concatenate((tmp_1,tmp_3),axis='type')
 
 # _________________________ clim mean
 for season,state in zip(['JJA','DJF'],['warm','cold']):
-	plt.clf()
+	plt.close()
 	fig,axes=plt.subplots(nrows=6,ncols=1,figsize=(5,6))
 	axes=axes.flatten()
 	count=0
@@ -65,7 +63,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 
 # _________________________ clim extreme
 for season,state in zip(['JJA','DJF'],['warm','cold']):
-	plt.clf()
+	plt.close()
 	fig,axes=plt.subplots(nrows=6,ncols=1,figsize=(5,6))
 	axes=axes.flatten()
 	count=0
@@ -88,11 +86,6 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 	#fig.tight_layout()
 	plt.savefig('plots/'+season+'_'+state+'_qu_95_.png',dpi=300)
 
-
-
-
-
-
 os.chdir('/Users/peterpfleiderer/Documents/Projects/Scripts/allgemeine_scripte')
 import plot_map as plot_map; reload(plot_map)
 from plot_map import col_conv
@@ -102,7 +95,7 @@ os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence')
 # _________________________ diff mean
 for season,state in zip(['JJA','DJF'],['warm','cold']):
 
-	plt.clf()
+	plt.close()
 	fig,axes=plt.subplots(nrows=5,ncols=1,figsize=(5,5))
 	axes=axes.flatten()
 	count=0
@@ -139,7 +132,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 # _________________________ diff 95th
 for season,state in zip(['JJA','DJF'],['warm','cold']):
 
-	plt.clf()
+	plt.close()
 	fig,axes=plt.subplots(nrows=5,ncols=1,figsize=(5,5))
 	axes=axes.flatten()
 	count=0
