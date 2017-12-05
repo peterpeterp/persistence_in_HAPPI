@@ -10,7 +10,7 @@ import init_dirs as init
 
 model=sys.argv[1]
 print model
-working_path='/global/cscratch1/sd/pepflei/'+model+'/region/'
+working_path='/global/cscratch1/sd/pepflei/'+model+'/regional/'
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
