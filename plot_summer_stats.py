@@ -30,7 +30,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 #region_dict=get_regional_distribution('HadGHCND',scenarios=['All-Hist'])
 
 big_dict={}
-for dataset in ['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
+for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	big_dict[dataset]=da.read_nc('data/'+dataset+'_SummarySummer.nc')['summerStats']
 
 
@@ -41,7 +41,7 @@ for dataset in ['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
 # ---------------------------- distr comparison
 def legend_plot(subax):
 	subax.axis('off')
-	for dataset,color in zip(['HadGHCND','MIROC5','NORESM1','CAM4','CanAM4'],['black','blue','green','magenta','orange']):
+	for dataset,color in zip(['HadGHCND','MIROC5','NorESM1','CAM4','CanAM4'],['black','blue','green','magenta','orange']):
 		subax.plot([1,1],[1,1],label=dataset,c=color)
 	subax.legend(loc='best',fontsize=12)
 
@@ -61,8 +61,8 @@ def annotate_plot(subax,arg1=None,arg2=None,arg3=None):
 	subax.text(0.5,0.5,arg1+' '+arg2,fontsize=14)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None):
-	for dataset,color in zip(['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
-		subax.plot([0,1,2],big_dict[dataset][['All-Hist','Plus15-Future','Plus20-Future'],region,'frac_pos_shift'],color=color)
+	for dataset,color in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
+		subax.plot([0,1,2],big_dict[dataset][['All-Hist','Plus15-Future','Plus20-Future'],region,'mean_hot_temp'],color=color)
 
 	# subax.set_yscale('log')
 	# subax.set_xlim((0,40))

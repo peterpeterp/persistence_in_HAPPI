@@ -43,7 +43,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 	axes=axes.flatten()
 	count=0
 
-	for dataset in ['HadGHCND','MIROC5','NORESM1','CAM4-2degree','ECHAM6-3-LR']:
+	for dataset in ['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['All-Hist'][season][state]['mean'])
 
@@ -68,7 +68,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 	axes=axes.flatten()
 	count=0
 
-	for dataset in ['HadGHCND','MIROC5','NORESM1','CAM4-2degree','ECHAM6-3-LR']:
+	for dataset in ['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['All-Hist'][season][state]['qu_95'])
 
@@ -93,39 +93,40 @@ os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence')
 
 
 # _________________________ diff mean
-for season,state in zip(['JJA','DJF'],['warm','cold']):
+for scenario in ['Plus15-Future','Plus20-Future']:
+	for season,state in zip(['JJA','DJF'],['warm','cold']):
 
-	plt.close()
-	fig,axes=plt.subplots(nrows=5,ncols=1,figsize=(5,5))
-	axes=axes.flatten()
-	count=0
+		plt.close()
+		fig,axes=plt.subplots(nrows=5,ncols=1,figsize=(5,5))
+		axes=axes.flatten()
+		count=0
 
-	color_range=[-0.5,0.5]
+		color_range=[-0.5,0.5]
 
-	for dataset in ['MIROC5','NORESM1','CAM4-2degree','ECHAM6-3-LR']:
-	#for dataset in ['MIROC5','ECHAM6-3-LR']:
-		tmp=sum_dict[dataset]
-		to_plot=np.asarray(tmp['Plus20-Future'][season][state]['mean']-tmp['All-Hist'][season][state]['mean'])
-		significance=np.asarray(tmp['Plus20-Future'][season][state]['KS_vs_All-Hist'])
-		#significance=multicomp.multipletests(significance.reshape((len(tmp.lat)*len(tmp.lon))), method='fdr_bh')[1].reshape((len(tmp.lat),len(tmp.lon)))
-		significance[significance>0.05]=0
-		significance[np.isfinite(significance)==False]=0
+		for dataset in ['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
+		#for dataset in ['MIROC5','ECHAM6-3-LR']:
+			tmp=sum_dict[dataset]
+			to_plot=np.asarray(tmp[scenario][season][state]['mean']-tmp['All-Hist'][season][state]['mean'])
+			significance=np.asarray(tmp[scenario][season][state]['KS_vs_All-Hist'])
+			#significance=multicomp.multipletests(significance.reshape((len(tmp.lat)*len(tmp.lon))), method='fdr_bh')[1].reshape((len(tmp.lat),len(tmp.lon)))
+			significance[significance>0.05]=0
+			significance[np.isfinite(significance)==False]=0
 
-		im1=plot_map.plot_map(to_plot,lat=tmp.lat,lon=tmp.lon,significance=significance,color_palette=plt.cm.PiYG_r,color_range=color_range,limits=[-180,180,20,80],ax=axes[count],show=False,color_bar=False)
-		axes[count].annotate(dataset, xy=(0, 0), xycoords='axes fraction', fontsize=9,xytext=(0.5, 0.5), textcoords='offset points',ha='left', va='bottom', fontweight='bold')
-		count+=1
+			im1=plot_map.plot_map(to_plot,lat=tmp.lat,lon=tmp.lon,significance=significance,color_palette=plt.cm.PiYG_r,color_range=color_range,limits=[-180,180,20,80],ax=axes[count],show=False,color_bar=False)
+			axes[count].annotate(dataset, xy=(0, 0), xycoords='axes fraction', fontsize=9,xytext=(0.5, 0.5), textcoords='offset points',ha='left', va='bottom', fontweight='bold')
+			count+=1
 
-	axes[count].axis('off')
+		axes[count].axis('off')
 
-	cbar_ax=fig.add_axes([0,0.2,1,0.15])
-	cbar_ax.axis('off')
-	cb=fig.colorbar(im1,orientation='horizontal',label='mean persistence [days]',ax=cbar_ax)
-	cb.set_ticks(np.linspace(color_range[0], color_range[1], num=5, endpoint=True))
-	cb.set_ticklabels(np.linspace(color_range[0], color_range[1], num=5, endpoint=True))
+		cbar_ax=fig.add_axes([0,0.2,1,0.15])
+		cbar_ax.axis('off')
+		cb=fig.colorbar(im1,orientation='horizontal',label='mean persistence [days]',ax=cbar_ax)
+		cb.set_ticks(np.linspace(color_range[0], color_range[1], num=5, endpoint=True))
+		cb.set_ticklabels(np.linspace(color_range[0], color_range[1], num=5, endpoint=True))
 
-	plt.suptitle(season+' '+state+' persistence', fontweight='bold')
-	#fig.tight_layout()
-	plt.savefig('plots/'+season+'_'+state+'_mean_change.png',dpi=300)
+		plt.suptitle(season+' '+state+' persistence', fontweight='bold')
+		#fig.tight_layout()
+		plt.savefig('plots/'+season+'_'+state+'_'+scenario+'_mean_change.png',dpi=300)
 
 
 
@@ -139,7 +140,7 @@ for season,state in zip(['JJA','DJF'],['warm','cold']):
 
 	color_range=[-1.,1.]
 
-	for dataset in ['MIROC5','NORESM1','CAM4-2degree','ECHAM6-3-LR']:
+	for dataset in ['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
 		tmp=sum_dict[dataset]
 		to_plot=np.asarray(tmp['Plus20-Future'][season][state]['qu_95']-tmp['All-Hist'][season][state]['qu_95'])
 		significance=np.asarray(tmp['Plus20-Future'][season][state]['KS_vs_All-Hist'])
