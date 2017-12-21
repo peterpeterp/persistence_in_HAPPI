@@ -24,7 +24,7 @@ except:
 	model='ECHAM6-3-LR'
 	working_path='data/tests/'
 
-overwrite=True
+overwrite=False
 os.system('mkdir '+working_path+'/regional')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
