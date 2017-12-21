@@ -28,57 +28,51 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 
 #region_dict=get_regional_distribution('HadGHCND',scenarios=['All-Hist'])
+tmp=da.read_nc('data/MIROC5_SummarySummer.nc')['summerStats']
+summer_stats=da.DimArray(axes=[['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],tmp.scenario,tmp.region,tmp.stat],dims=['model','scenario','region','stat'])
+for model in summer_stats.model:
+	summer_stats[model]=da.read_nc('data/'+dataset+'_SummarySummer.nc')['summerStats']
 
-big_dict={}
-for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-	big_dict[dataset]=da.read_nc('data/'+dataset+'_SummarySummer.nc')['summerStats']
+NH_regions=['ALA','WNA','CNA','ENA','CGI','CAM','NEU' ,'CEU','CAS','NAS','TIB','EAS','MED','WAS']
+
+# write table
+table=open('summer_stats.txt','w')
+for stat in summer_stats.stat:
+	table.write('\n'+stat+'\n')
+	table.write('region\tpresent\t+1.5°C\t+2°C\n')
+	for region in NH_regions:
+		table.write(region)
+		for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
+			table.write('\t'+str(np.nanmean(summer_stats[:,scenario,region,stat])))
+		table.write('\n')
+table.close()
+
+# plot
+fig,axes = plt.subplots(nrows=2,ncols=1,figsize=(10,8))
+
+for ax,stat,title in zip(axes,['mean_hot_temp','frac_pos_shift'],['hottest day in period','fraction of periods with the hottest day lying in the later half of the period']):
+	for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
+		ax.plot(np.arange(len(NH_regions))+0.5,np.nanmean(summer_stats[:,scenario,NH_regions,stat],axis=0))
+	ax.set_xticklabels(['','','','','',''])
+	ax.set_title(title)
+
+ax.set_xticks(np.arange(len(NH_regions))+0.5)
+ax.set_xticklabels(NH_regions)
+plt.savefig('plots/summer_stats.png')
 
 
 
 
 
 
-# ---------------------------- distr comparison
-def legend_plot(subax):
-	subax.axis('off')
-	for dataset,color in zip(['HadGHCND','MIROC5','NorESM1','CAM4','CanAM4'],['black','blue','green','magenta','orange']):
-		subax.plot([1,1],[1,1],label=dataset,c=color)
-	subax.legend(loc='best',fontsize=12)
 
-def example_plot(subax):
-	subax.set_yscale('log')
-	subax.set_xlim((0,40))
-	subax.set_ylim((0.0001,0.5))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='on')
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='on')
-	subax.set_ylabel('PDF')
-	subax.set_xlabel('days')
-	subax.set_title('example')
-	subax.locator_params(axis = 'x', nbins = 5)
 
-def annotate_plot(subax,arg1=None,arg2=None,arg3=None):
-	subax.axis('off')
-	subax.text(0.5,0.5,arg1+' '+arg2,fontsize=14)
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None):
-	for dataset,color in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
-		subax.plot([0,1,2],big_dict[dataset][['All-Hist','Plus15-Future','Plus20-Future'],region,'mean_hot_temp'],color=color)
 
-	# subax.set_yscale('log')
-	# subax.set_xlim((0,40))
-	# subax.set_ylim((0.0001,0.5))
-	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom='off')
-	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft='off')
-	subax.locator_params(axis = 'x', nbins = 5)
 
-	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points',ha='left', va='bottom')
 
-ax=srex_overview.srex_overview_NH(distrs,srex_polygons=srex,output_name='plots/summer_stats_NH.png')
 
-# fig = plt.figure(figsize=(10,2.5))
-# ax_example=fig.add_axes([0.1,0.3,0.15,0.5])
-# example_plot(ax_example)
-# ax_legend=fig.add_axes([0.3,0.4,0.2,0.5])
-# legend_plot(ax_legend)
-# plt.savefig('plots/summer_stats_NH_legend.png')
-# plt.clf()
+
+
+
+# asd
