@@ -21,6 +21,7 @@ for region in summary.region:
     summary[:,region,'mean_hot_shift']=dat['90X_hot_shift'].mean(axis='ID', skipna=True)
     summary[:,region,'mean_hot_temp']=dat['90X_hot_temp'].mean(axis='ID', skipna=True)
     summary[:,region,'mean_cum_heat']=dat['90X_cum_heat'].mean(axis='ID', skipna=True)
+    summary[:,region,'mean_mean_heat']=dat['90X_mean_temp'].mean(axis='ID', skipna=True)
     for scenario in summary.scenario:
         summary[scenario,region,'frac_pos_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(dat['90X_hot_shift'].shape[1])
         summary[scenario,region,'frac_neg_shift']=len(np.where(dat['90X_hot_shift'][scenario,:]<0)[0])/float(dat['90X_hot_shift'].shape[1])

@@ -41,7 +41,7 @@ for region in srex.keys():
 		for scenario in scenarios:
 			print working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
 			data=da.read_nc(working_path+'/'+model+'_'+scenario+'_summerQ90.nc')
-			tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([])}
+			tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([]),'90X_mean_temp':np.array([])}
 			polygon=Polygon(srex[region]['points'])
 			for x in data.lon:
 				if x>180:
@@ -54,13 +54,13 @@ for region in srex.keys():
 							tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
 
 		n_events=0
-		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
+		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp']:
 			for scenario in scenarios:
 				if len(tmp[scenario][var])>n_events:
 					n_events=len(tmp[scenario][var])
 
 		reg_dict={}
-		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp']:
+		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp']:
 			reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
 			for scenario in scenarios:
 				reg_dict[var][scenario,0:len(tmp[scenario][var])-1]=tmp[scenario][var]
