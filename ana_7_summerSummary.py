@@ -18,7 +18,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 summary=da.DimArray(axes=[['Plus20-Future','Plus15-Future','All-Hist'],list(srex.keys()),['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp','frac_pos_shift','frac_neg_shift'],['mean','qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu100']],dims=['scenario','region','var','stat'])
 for region in summary.region:
     dat=da.read_nc(working_path+region+'_'+model+'_summer.nc')
-    for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp']:
+    for var in ['90X_mean_temp','90X_cum_heat','90X_hot_shift','90X_hot_temp']:
         summary[:,region,var,'mean']=dat[var].mean(axis='ID', skipna=True)
         for qu,qu_name in zip([0,1/6.*100,25,50,75,5/6.*100,100],['mean','qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu100']):
             summary[:,region,var,qu_name]=np.nanpercentile(dat[var].values,qu,axis=1)
