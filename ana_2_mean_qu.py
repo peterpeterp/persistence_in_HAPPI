@@ -74,7 +74,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						SummaryMeanQu[scenario][season][state_name]['mean'][lat[iy]][lon[ix]]=np.mean(distr)
 						#SummaryMeanQu[scenario][season][state_name].ix[1:10,iy,ix]=np.percentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
 						SummaryMeanQu[scenario][season][state_name].ix[1:10,iy,ix]=quantile_from_cdf(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
-						SummaryMeanQu[scenario][season][state_name].ix[11:19,iy,ix]=np.nanpercentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
+						SummaryMeanQu[scenario][season][state_name].ix[11:20,iy,ix]=np.nanpercentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
 
 ds=da.Dataset({'SummaryMeanQu':SummaryMeanQu})
 ds.write_nc('data/'+model+'_SummaryMeanQu.nc', mode='w')
