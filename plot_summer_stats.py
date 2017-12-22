@@ -29,7 +29,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 #region_dict=get_regional_distribution('HadGHCND',scenarios=['All-Hist'])
 tmp=da.read_nc('data/MIROC5_SummarySummer.nc')['summerStats']
-summer_stats=da.DimArray(axes=[['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],tmp.scenario,tmp.region,tmp.stat],dims=['model','scenario','region','stat'])
+summer_stats=da.DimArray(axes=[['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],tmp.scenario,tmp.region,tmp.var,tmp.stat],dims=['model','scenario','region','var','stat'])
 for model in summer_stats.model:
 	summer_stats[model]=da.read_nc('data/'+dataset+'_SummarySummer.nc')['summerStats']
 
