@@ -30,7 +30,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 #region_dict=get_regional_distribution('HadGHCND',scenarios=['All-Hist'])
 
 big_dict={}
-for dataset in ['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
+for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	pkl_file = open('data/'+dataset+'_regional_distrs.pkl', 'rb')
 	big_dict[dataset]=region_dict = pickle.load(pkl_file)	;	pkl_file.close()
 
@@ -42,7 +42,7 @@ for dataset in ['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree']:
 # ---------------------------- distr comparison
 def legend_plot(subax):
 	subax.axis('off')
-	for dataset,color in zip(['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree'],['black','blue','green','magenta','orange']):
+	for dataset,color in zip(['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['black','blue','green','magenta','orange']):
 		subax.plot([1,1],[1,1],label=dataset,c=color)
 	subax.legend(loc='best',fontsize=12)
 
@@ -62,7 +62,7 @@ def annotate_plot(subax,arg1=None,arg2=None,arg3=None):
 	subax.text(0.5,0.5,arg1+' '+arg2,fontsize=14)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None):
-	for dataset,color in zip(['HadGHCND','MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree'],['black','blue','green','magenta','orange']):
+	for dataset,color in zip(['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['black','blue','green','magenta','orange']):
 		try:
 			tmp=big_dict[dataset][region]['All-Hist'][arg1][arg2]
 			count=np.asarray(tmp['count'])/float(sum(tmp['count']))
@@ -94,7 +94,7 @@ plt.close()
 # ---------------------------- changes
 def legend_plot(subax):
 	subax.axis('off')
-	for dataset,color in zip(['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
+	for dataset,color in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
 		subax.fill_between([1,1],[1,1],[1,1],label=dataset,facecolor=color,alpha=0.3)
 	subax.legend(loc='best',fontsize=12)
 
@@ -115,7 +115,7 @@ def annotate_plot(subax,arg1=None,arg2=None,arg3=None):
 	subax.text(0.5,0.5,arg1+' '+arg2,fontsize=14)
 
 def scenario_diff(subax,region,arg1=None,arg2=None,arg3=None):
-	for dataset,color in zip(['MIROC5','NORESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
+	for dataset,color in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange']):
 		tmp_20=big_dict[dataset][region]['Plus20-Future'][arg1][arg2]
 		tmp_h=big_dict[dataset][region]['All-Hist'][arg1][arg2]
 		count_20=np.asarray(tmp_20['count'])/float(np.nansum(tmp_20['count']))
