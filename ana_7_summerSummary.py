@@ -26,6 +26,7 @@ for region in summary.region:
             print values[0:100]
             print sorted(values)[0:100]
             print sorted(values)[-100:-1]
+            print np.nanpercentile(values,[0,25,50,75,100])
             print np.nanmean(values),len(values)
             for qu,qu_name in zip([0,1/6.*100,25,50,75,5/6.*100,100],['mean','qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu_100']):
                 summary[scenario,region,var,qu_name]=np.nanpercentile(values,qu)
