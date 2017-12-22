@@ -34,7 +34,7 @@ scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 
 print srex.keys()
 
-for region in srex.keys():
+def create_regional_distr(region):
 	out_file=working_path+'/regional/'+region+'_'+model+'_summer.nc'
 	if overwrite and os.path.isfile(out_file): os.system('rm '+out_file)
 	if os.path.isfile(out_file)==False:
@@ -69,3 +69,7 @@ for region in srex.keys():
 
 		ds=da.Dataset(reg_dict)
 		ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
+
+
+for region in srex.keys():
+	create_regional_distr(region)
