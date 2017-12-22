@@ -21,7 +21,7 @@ for region in summary.region:
     for var in ['90X_mean_temp','90X_cum_heat','90X_hot_shift','90X_hot_temp']:
         for scenario in summary.scenario:
             values=dat[var][scenario,:].values
-            values=values[np.isfinte(values)]
+            values=values[np.isfinite(values)]
             summary[scenario,region,var,'mean']=np.nanmean(values,axis=1)
             for qu,qu_name in zip([0,1/6.*100,25,50,75,5/6.*100,100],['mean','qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu_100']):
                 summary[scenario,region,var,qu_name]=np.nanpercentile(values,qu,axis=1)
