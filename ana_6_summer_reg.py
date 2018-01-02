@@ -77,7 +77,7 @@ def create_regional_distr(region):
 
 		reg_dict['TXx_in90Xpers']=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
 		for scenario in scenarios:
-			reg_dict['TXx_in90Xpers'][scenario,0:len(tmp[scenario][['TXx_in90Xpers'])-1]=tmp[scenario]['TXx_in90Xpers']
+			reg_dict['TXx_in90Xpers'][scenario,0:len(tmp[scenario]['TXx_in90Xpers'])-1]=tmp[scenario]['TXx_in90Xpers']
 
 		ds=da.Dataset(reg_dict)
 		ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
