@@ -66,22 +66,7 @@ for ax,var,title in zip(axes,['90X_hot_temp','90X_mean_temp'],['hottest day in p
 ax.set_xticklabels(NH_regions)
 plt.savefig('plots/summer_stats.png')
 
-# plot temps
-fig,axes = plt.subplots(nrows=2,ncols=1,figsize=(8,4))
-for ax,var,title in zip(axes,['90X_hot_temp','90X_mean_temp'],['hottest day in period','mean temperature during period']):
-	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['sandybrown',sns.color_palette()[2]]):
-		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
-			tmp=summer_stats[:,scenario,region,var,:]-summer_stats[:,'All-Hist',region,var,:]
-			ax.plot([x],[np.nanmean(tmp[:,'mean'],axis=0)],color=color,marker='*')
-			#ax.plot([x],[np.nanmean(tmp[:,'qu_100'],axis=0)],color=color,marker='*')
-	ax.set_xticks(np.arange(len(NH_regions))+0.5)
-	ax.set_xticklabels(['']*len(NH_regions))
-	ax.set_yticks([0,0.5,1,1.5,2])
-	ax.set_ylim((0,2))
-	ax.set_title(title)
 
-ax.set_xticklabels(NH_regions)
-plt.savefig('plots/summer_stats_changes.png')
 
 
 big_dict={}
@@ -96,23 +81,89 @@ def percentile_from_counts(y,count,qu):
 	x1=y[cum<qu][-1]
 	return x1+(qu-cum[cum<qu][-1])/(cum[cum>qu][0]-cum[cum<qu][-1])
 
+def per_above_qu(y,count,qu):
+	if qu>1:
+		qu/=100.
+	cum=np.cumsum(count)/float(np.sum(count))
+	x1=y[cum<qu][-1]
+	qu=x1+(qu-cum[cum<qu][-1])/(cum[cum>qu][0]-cum[cum<qu][-1])
+	periods=[]
+	for ll,cc in zip(y[y>qu],count[y>qu]):
+		periods+=[ll]*cc
+	return periods
+
+
+# plot temps
+fig,axes = plt.subplots(nrows=2,ncols=1,figsize=(8,4))
+for ax,var,title in zip(axes,['90X_hot_temp','90X_mean_temp'],['hottest day in period','mean temperature during period']):
+	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['sandybrown',sns.color_palette()[2]]):
+		tmp=summer_stats[:,scenario,:,var,:]-summer_stats[:,'All-Hist',:,var,:]
+		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
+			for model,marker in zip(summer_stats.model,['*','^','o','s']):
+				ax.plot([x],[tmp[model,region,'mean']],color=color,marker=marker)
+		ax.plot(np.arange(len(NH_regions))+0.5,np.nanmean(tmp[:,NH_regions,'mean'],axis=0),color=color,linestyle='-')
+	ax.set_xticks(np.arange(len(NH_regions))+0.5)
+	ax.set_xticklabels(['']*len(NH_regions))
+	ax.set_yticks([-0.5,0,0.5,1,1.5,2,2.5])
+	ax.set_ylim((-0.5,2.5))
+	ax.set_title(title)
+
+ax.set_xticklabels(NH_regions)
+plt.savefig('plots/summer_stats_changes.png')
+
+
 # plot pers
-fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+plt.close('all')
+fig,axes = plt.subplots(nrows=3,ncols=2,figsize=(10,6),gridspec_kw = {'width_ratios':[3,1]})
+for ax,var,title in zip(axes[0:2,0],['90X_hot_temp','90X_mean_temp'],['hottest day in long periods','mean temperature during long periods']):
+	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['sandybrown',sns.color_palette()[2]]):
+		tmp=summer_stats[:,scenario,:,var,:]-summer_stats[:,'All-Hist',:,var,:]
+		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
+			for model,marker in zip(summer_stats.model,['*','^','o','s']):
+				ax.plot([x],[tmp[model,region,'mean']],color=color,marker=marker)
+		ax.plot(np.arange(len(NH_regions))+0.5,np.nanmean(tmp[:,NH_regions,'mean'],axis=0),color=color,linestyle='-')
+	ax.set_xticks(np.arange(len(NH_regions))+0.5)
+	ax.set_xticklabels(['']*len(NH_regions))
+	ax.set_yticks([-0.5,0,0.5,1,1.5,2,2.5])
+	ax.set_ylim((-0.5,2.5))
+	ax.plot([0,len(NH_regions)],[0,0],'k--')
+	ax.set_title(title)
+
+ax=axes[2,0]
 for scenario,color in zip(['Plus15-Future','Plus20-Future'],['sandybrown',sns.color_palette()[2]]):
+	mod_mean=[]
 	for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
+		mods=[]
 		for model,marker in zip(summer_stats.model,['*','^','o','s']):
 			tmp_fu=big_dict[model][region][scenario]['JJA']['warm']
 			qu_fu=percentile_from_counts(tmp_fu['period_length'],tmp_fu['count'],95)
+			p90_mean_fu=np.mean(per_above_qu(tmp_fu['period_length'],tmp_fu['count'],90))
+
 			tmp_hist=big_dict[model][region]['All-Hist']['JJA']['warm']
 			qu_hist=percentile_from_counts(tmp_hist['period_length'],tmp_hist['count'],95)
+			p90_mean_hist=np.mean(per_above_qu(tmp_hist['period_length'],tmp_hist['count'],90))
+
 			ax.plot([x],[qu_fu-qu_hist],color=color,marker=marker)
-		#ax.plot([x],[np.nanmean(tmp[:,'qu_100'],axis=0)],color=color,marker='*')
+			#ax.plot([x],[p90_mean_fu-p90_mean_hist],color=color,marker=marker)
+			mods.append(qu_fu-qu_hist)
+		mod_mean.append(np.mean(mods))
+	ax.plot(np.arange(len(NH_regions))+0.5,mod_mean,color=color)
+
+ax.set_xlim(0,len(NH_regions)+1)
 ax.set_xticks(np.arange(len(NH_regions))+0.5)
-ax.set_xticklabels(['']*len(NH_regions))
+ax.set_xticklabels(NH_regions)
 ax.plot([0,len(NH_regions)],[0,0],'k--')
-#ax.set_yticks([0,0.5,1,1.5,2])
-#ax.set_ylim((0,2))
-ax.set_title('Changes in the 95th percentile of warm periods in JJA')
+ax.set_title('95th percentile')
+
+for ax in axes[:,1]:	ax.axis('off')
+
+ax=axes[1,1]
+for scenario,name,color in zip(['Plus15-Future','Plus20-Future'],['+1.5$^\circ$','+2.0$^\circ$'],['sandybrown',sns.color_palette()[2]]):
+	for model,marker in zip(summer_stats.model,['*','^','o','s']):
+		ax.plot([-90],[0],color=color,marker=marker,linestyle='',label=name+' '+model)
+
+ax.set_xlim((0,1))
+ax.legend()
 
 ax.set_xticklabels(NH_regions)
 plt.savefig('plots/summer_pers_changes.png')
