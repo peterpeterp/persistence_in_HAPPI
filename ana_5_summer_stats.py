@@ -73,7 +73,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
 										stat_TXx_in_Xpers[run,i,lat,lon]=1
-										print year,i,,lon,lat,stat_TXx_in_Xpers[run,i,lat,lon]
+										print year,i,lon,lat,stat_TXx_in_Xpers[run,i,lat,lon]
 										print hot_temp[summer_ids[year_ids],y,x]
 										print TXx[summer_ids[year_ids],y,x]
 
