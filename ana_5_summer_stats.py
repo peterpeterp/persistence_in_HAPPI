@@ -38,6 +38,10 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			nc_in=Dataset(per_file,'r')
 			per_len=nc_in.variables['period_length'][:,:,:]
 			per_mid=nc_in.variables['period_midpoints'][:,:,:]
+
+			nc_raw=Dataset(per_file.replace('_period',''),'r')
+			datevar = num2date(per_mid,units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
+			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
 			nc_in.close()
 
 			nc_in=Dataset(per_file.replace('period','summer'),'r')
@@ -62,9 +66,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 								stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
 								stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
 
-								mids=per_mid[event_ids,y,x]
-								for year,i in zip(sorted(set([int(yy) for yy in mids])),np.arange(0,10,1)):
-									year_ids=np.where((mids>=year) & (mids<year+1))
+								years=per_year[event_ids,y,x]
+								for year,i in zip(sorted(set(years)),np.arange(0,10,1)):
+									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
 										stat_TXx_in_Xpers[run,i,lat,lon]=1
 									else:
