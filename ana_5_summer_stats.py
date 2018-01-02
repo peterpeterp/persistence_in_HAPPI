@@ -40,12 +40,10 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			per_mid=nc_in.variables['period_midpoints'][:,:,:]
 
 			nc_raw=Dataset(per_file.replace('_period',''),'r')
-			print nc_raw
-			print nc_raw.variables['time'].units
-			print nc_raw.variables['time'].calendar
 			datevar = num2date(per_mid,units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
-			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
+			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:] if np.isfinite(date)])
 			nc_in.close()
+			nc_raw.close()
 
 			nc_in=Dataset(per_file.replace('period','summer'),'r')
 			hot_shift=nc_in.variables['hottest_day_shift'][:,:,:]
