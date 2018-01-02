@@ -43,7 +43,7 @@ def create_regional_distr(region):
 		for scenario in scenarios:
 			print working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
 			data=da.read_nc(working_path+'/'+model+'_'+scenario+'_summerQ90.nc')
-			tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([]),'90X_mean_temp':np.array([])}
+			tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([]),'90X_mean_temp':np.array([]),'TXx_in90Xpers':np.array([])}
 			polygon=Polygon(srex[region]['points'])
 			for x in data.lon:
 				if x>180:
