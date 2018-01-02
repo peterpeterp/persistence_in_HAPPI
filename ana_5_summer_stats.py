@@ -68,20 +68,17 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 
 								datevar = num2date(per_mid[event_ids,y,x],units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
 								years=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
-								print years
-								print per_len[event_ids,y,x]
-								print cum_heat[summer_ids,y,x]
-								print cum_heat[summer_ids,y,x]/per_len[event_ids,y,x]
 
 								for year,i in zip(sorted(set(years)),np.arange(0,10,1)):
 									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
 										stat_TXx_in_Xpers[run,i,lat,lon]=1
+										print year,i,,lon,lat,stat_TXx_in_Xpers[run,i,lat,lon]
+										print hot_temp[summer_ids[year_ids],y,x]
+										print TXx[summer_ids[year_ids],y,x]
+
 									else:
 										stat_TXx_in_Xpers[run,i,lat,lon]=0
-									print year,i,stat_TXx_in_Xpers[run,i,lat,lon]
-									print hot_temp[summer_ids[year_ids],y,x]
-									print TXx[summer_ids[year_ids],y,x]
 
 
 			print time.time()-start_time
