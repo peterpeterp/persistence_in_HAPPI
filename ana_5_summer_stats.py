@@ -65,10 +65,8 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 								stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
 								stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
 
-
 								datevar = num2date(per_mid[event_ids,y,x],units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
 								years=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
-
 								for year,i in zip(sorted(set(years)),np.arange(0,10,1)):
 									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
@@ -80,6 +78,5 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			print time.time()-start_time
 			nc_raw.close()
 
-			ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp,'TXx_in_90Xpers':stat_TXx_in_Xpers})
-			ds.write_nc(out_file, mode='w')
-			asdas
+	ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp,'TXx_in90Xpers':stat_TXx_in_Xpers})
+	ds.write_nc(out_file, mode='w')
