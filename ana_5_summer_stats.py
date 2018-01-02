@@ -73,10 +73,6 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
 										stat_TXx_in_Xpers[run,i,lat,lon]=1
-										print year,i,lon,lat,stat_TXx_in_Xpers[run,i,lat,lon]
-										print hot_temp[summer_ids[year_ids],y,x]
-										print TXx[summer_ids[year_ids],y,x]
-
 									else:
 										stat_TXx_in_Xpers[run,i,lat,lon]=0
 
@@ -84,5 +80,6 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			print time.time()-start_time
 			nc_raw.close()
 
-		ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp})
-		ds.write_nc(out_file, mode='w')
+			ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp,'TXx_in_90Xpers':stat_TXx_in_Xpers})
+			ds.write_nc(out_file, mode='w')
+			asdas
