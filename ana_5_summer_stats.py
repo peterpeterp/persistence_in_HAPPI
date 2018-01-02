@@ -39,11 +39,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			per_len=nc_in.variables['period_length'][:,:,:]
 			per_mid=nc_in.variables['period_midpoints'][:,:,:]
 			per_mid[np.isnan(per_mid)]=0
-			nc_raw=Dataset(per_file.replace('_period',''),'r')
-			datevar = num2date(per_mid,units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
-			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
 			nc_in.close()
-			nc_raw.close()
+
+			nc_raw=Dataset(per_file.replace('_period',''),'r')
 
 			nc_in=Dataset(per_file.replace('period','summer'),'r')
 			hot_shift=nc_in.variables['hottest_day_shift'][:,:,:]
@@ -67,7 +65,9 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 								stat_Xpers_hot_shift[run,0:len(summer_ids)-1,lat,lon]=hot_shift[summer_ids,y,x]
 								stat_Xpers_hot_temp[run,0:len(summer_ids)-1,lat,lon]=hot_temp[summer_ids,y,x]
 
-								years=per_year[event_ids,y,x]
+
+								datevar = num2date(per_mid[event_ids,y,x],units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
+								years=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
 								for year,i in zip(sorted(set(years)),np.arange(0,10,1)):
 									year_ids=np.where(years==year)
 									if np.max(hot_temp[summer_ids[year_ids],y,x])==np.max(TXx[summer_ids[year_ids],y,x]):
@@ -82,6 +82,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 							asdasd
 
 			print time.time()-start_time
+			nc_raw.close()
 
 		ds=da.Dataset({'90X_cum_heat':stat_Xpers_cum_heat,'90X_hot_shift':stat_Xpers_hot_shift,'90X_hot_temp':stat_Xpers_hot_temp,'90X_mean_temp':stat_Xpers_mean_temp})
 		ds.write_nc(out_file, mode='w')
