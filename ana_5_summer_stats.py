@@ -38,10 +38,10 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 			nc_in=Dataset(per_file,'r')
 			per_len=nc_in.variables['period_length'][:,:,:]
 			per_mid=nc_in.variables['period_midpoints'][:,:,:]
-
+			per_mid[np.isnan(per_mid)]=0
 			nc_raw=Dataset(per_file.replace('_period',''),'r')
 			datevar = num2date(per_mid,units = nc_raw.variables['time'].units,calendar = nc_raw.variables['time'].calendar)
-			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:] if np.isfinite(date)])
+			per_year=np.array([int(str(date).split("-")[0])	for date in datevar[:]])
 			nc_in.close()
 			nc_raw.close()
 
