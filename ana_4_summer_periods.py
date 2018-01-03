@@ -6,18 +6,21 @@ import dimarray as da
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 sys.path.append('/Users/peterpfleiderer/Documents/Projects/weather_persistence/')
 from summer_persistence_analysis import *
-
-sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
 model=sys.argv[1]
 print model
 
-overwrite=False
+overwrite=True
 
-working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+try:
+    os.chdir('/global/homes/p/pepflei/HAPPI_persistence/')
+    working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+except:
+    os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
+    working_path='/Users/peterpfleiderer/Documents/Projects/HadGHCND_persistence/'
 
-for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
     for in_file in all_files:

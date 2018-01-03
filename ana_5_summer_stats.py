@@ -3,22 +3,22 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import dimarray as da
 
-try:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
-except:
-	os.chdir('/global/homes/p/pepflei/')
-
 model=sys.argv[1]
 print model
 
 overwrite=True
 
-working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+try:
+    os.chdir('/global/homes/p/pepflei/')
+    working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+except:
+    os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
+    working_path='/Users/peterpfleiderer/Documents/Projects/'
 
 period_number_limit=70
-qu_90=da.read_nc('data/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
+qu_90=da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][:,'JJA','warm','qu_90']
 
-for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 	out_file=working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
 	if overwrite and os.path.isfile(out_file):	os.system('rm '+out_file)
 	if os.path.isfile(out_file)==False:
