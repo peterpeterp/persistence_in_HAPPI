@@ -28,6 +28,8 @@ for region in summary.region:
         summary[scenario,region,'frac_neg_shift','mean']=len(np.where(dat['90X_hot_shift'][scenario,:]<0)[0])/float(dat['90X_hot_shift'].shape[1])
 
     for scenario in summary.scenario:
+        print sceanrio
+        print dat['TXx_in90Xpers'][scenario,:]
         summary[scenario,region,'frac_TXx_inX90pers','mean']=len(np.where(dat['TXx_in90Xpers'][scenario,:]==0)[0])/float(dat['TXx_in90Xpers'].shape[1])
 
 ds=da.Dataset({'summerStats':summary})
