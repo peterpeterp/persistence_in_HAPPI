@@ -29,7 +29,8 @@ for region in summary.region:
 
     for scenario in summary.scenario:
         print scenario
-        print dat['TXx_in90Xpers'][scenario,:]
+        print dat['TXx_in90Xpers'][scenario,:].values
+        print np.where(dat['TXx_in90Xpers'][scenario,:]==0)[0]
         summary[scenario,region,'frac_TXx_inX90pers','mean']=len(np.where(dat['TXx_in90Xpers'][scenario,:]==0)[0])/float(dat['TXx_in90Xpers'].shape[1])
 
 ds=da.Dataset({'summerStats':summary})
