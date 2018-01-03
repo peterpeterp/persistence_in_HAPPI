@@ -7,22 +7,21 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
-sys.path.append('/Users/peterpfleiderer/Documents/Projects/weather_persistence/')
+sys.path.append('/Users/peterpfleiderer/Documents/Projects/Persistence/weather_persistence/')
 import persistence_support as persistence_support; reload(persistence_support)
 from persistence_support import *
 
-try:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
-except:
-	os.chdir('/global/homes/p/pepflei/')
+model=sys.argv[1]
+print model
 
 try:
-	model=sys.argv[1]
-	print model
+	os.chdir('/global/homes/p/pepflei/')
 	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+	scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 except:
-	model='ECHAM6-3-LR'
-	working_path='data/tests/'
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+	working_path='/Users/peterpfleiderer/Documents/Projects/Persistence/data/'+model+'/'
+	scenarios=['All-Hist']
 
 overwrite=False
 os.system('mkdir '+working_path+'/regional')
@@ -30,7 +29,7 @@ os.system('mkdir '+working_path+'/regional')
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
-scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+
 
 print srex.keys()
 
