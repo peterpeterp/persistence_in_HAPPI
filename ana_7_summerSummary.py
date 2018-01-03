@@ -28,7 +28,7 @@ for region in summary.region:
         summary[scenario,region,'frac_neg_shift','mean']=len(np.where(dat['90X_hot_shift'][scenario,:]<0)[0])/float(dat['90X_hot_shift'].shape[1])
 
     for scenario in summary.scenario:
-        print scenario
+        print region,scenario
         tmp=dat['TXx_in90Xpers'][scenario,:].values
         print tmp.shape
         tmp=tmp[np.isfinite(tmp)]
