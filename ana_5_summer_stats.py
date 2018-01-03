@@ -12,7 +12,7 @@ try:
     os.chdir('/global/homes/p/pepflei/')
     working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 except:
-    os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
+    os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
     working_path='/Users/peterpfleiderer/Documents/Projects/'
 
 period_number_limit=70
@@ -42,8 +42,8 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 			nc_in.close()
 
 			nc_raw=Dataset(per_file.replace('_period',''),'r')
-
-			nc_in=Dataset(per_file.replace('period','summer'),'r')
+            print per_file.replace('period','summer')
+            nc_in=Dataset(per_file.replace('period','summer'),'r')
 			hot_shift=nc_in.variables['hottest_day_shift'][:,:,:]
 			hot_temp=nc_in.variables['hottest_day_temp'][:,:,:]
 			cum_heat=nc_in.variables['cumulated_heat'][:,:,:]
