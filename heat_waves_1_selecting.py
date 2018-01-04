@@ -12,7 +12,7 @@ print model
 
 overwrite=True
 
-model='HadGHCND'
+model='ECHAM6-3-LR'
 
 try:
     os.chdir('/global/homes/p/pepflei/HAPPI_persistence/')
@@ -40,6 +40,12 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
                 datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
                 year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
                 year_uq=sorted(set(year))
+                day_in_year=[]
+                for yr in year_uq:
+                    day_in_year+=range(year[year==yr].shape[0])
+                day_in_year=np.array(day_in_year)
+
+                    #state_check=da.read_nc(in_file.replace('_period','_state'))['state']
 
                 period=da.read_nc(in_file)
                 per_mid=period['period_midpoints']
@@ -47,14 +53,12 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
                 seas=period['period_season']
                 state=period['period_state']
 
-                x90_hottest_day=da.DimArray(axes=[range(150),ll.lat,ll.lon],dims=['ID','lat','lon'])
-                x90_cum_temp=da.DimArray(axes=[range(150),ll.lat,ll.lon],dims=['ID','lat','lon'])
-                x90_mean_temp=da.DimArray(axes=[range(150),ll.lat,ll.lon],dims=['ID','lat','lon'])
-                x90_period_id=da.DimArray(axes=[range(150),ll.lat,ll.lon],dims=['ID','lat','lon'])
-                TXx_in_x90=da.DimArray(axes=[year_uq,ll.lat,ll.lon],dims=['ID','lat','lon'])
+                x90_hottest_day=da.DimArray(axes=[range(150),per_len.lat,per_len.lon],dims=['ID','lat','lon'])
+                x90_cum_temp=da.DimArray(axes=[range(150),per_len.lat,per_len.lon],dims=['ID','lat','lon'])
+                x90_mean_temp=da.DimArray(axes=[range(150),per_len.lat,per_len.lon],dims=['ID','lat','lon'])
+                x90_period_id=da.DimArray(axes=[range(150),per_len.lat,per_len.lon],dims=['ID','lat','lon'])
+                TXx_in_x90=da.DimArray(axes=[year_uq,per_len.lat,per_len.lon],dims=['ID','lat','lon'])
 
-                #X90_thresh=np.repeat(qu_90[scenario,:,:].values.reshape(1,per_len.shape[1],per_len.shape[2]),per_len.shape[0],axis=0)
-                #hw_id=np.where((seas==1) & (state==1) & (per_len>=X90_thresh) & np.isfinite(per_len))
 
                 for lat in per_len.lat:
                     print lat
@@ -64,20 +68,28 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
                             hw_years=year[per_mid[hw_id,lat,lon]-tas.time[0]]
                             for yr in set(hw_years):
                                 TX_hw=[]
+                                #plt.close()
+                                #plt.plot(range(len(tas[:,lat,lon].values[year==yr])),tas[:,lat,lon].values[year==yr])
+                                #plt.scatter(range(len(tas[:,lat,lon].values[year==yr])),state_check[:,lat,lon].values[year==yr])
                                 for period_id,i in zip(hw_id[hw_years==yr],range(len(hw_id[hw_years==yr]))):
-                                    days=np.arange(per_mid[period_id,lat,lon]-int(abs(per_len[period_id,lat,lon])/2.),per_mid[period_id,lat,lon]+int(round(abs(per_len[period_id,lat,lon])/2.)),dtype='int')
+                                    days=np.arange(per_mid[period_id,lat,lon]-int(abs(per_len[period_id,lat,lon])/2.),per_mid[period_id,lat,lon]+int(round(abs(per_len[period_id,lat,lon])/2.)))
                                     tmp=tas[days,lat,lon].values
                                     x90_hottest_day[i,lat,lon]=np.max(tmp)
                                     TX_hw.append(x90_hottest_day[i,lat,lon])
                                     x90_cum_temp[i,lat,lon]=np.sum(tmp)
                                     x90_mean_temp[i,lat,lon]=np.sum(tmp)/float(abs(per_len[period_id,lat,lon]))
                                     x90_period_id[i,lat,lon]=period_id
+                                    #plt.plot(day_in_year[np.array(days-tas.time[0],dtype='int')],tmp)
 
                                 Txx=np.nanmax(tas[:,lat,lon].values[year==yr])
                                 if Txx in TX_hw:
                                     TXx_in_x90[yr,lat,lon]=1
                                 else:
                                     TXx_in_x90[yr,lat,lon]=0
+
+                                print lat,Txx,TXx_in_x90[yr,lat,lon]
+                                #plt.savefig('test.png')
+
 
 
                 ds=da.Dataset({'x90_hottest_day':x90_hottest_day,'x90_cum_temp':x90_cum_temp,'x90_period_id':x90_period_id,'TXx_in_x90':TXx_in_x90,'x90_mean_temp':x90_mean_temp})

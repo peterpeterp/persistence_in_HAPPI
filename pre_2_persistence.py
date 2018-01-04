@@ -13,13 +13,24 @@ model_dict={'MIROC5':{'grid':'128x256'},
 			'CAM4-2degree':{'grid':'96x144'},
 }
 
-model=sys.argv[1]
-print model
+try:
+	model=sys.argv[1]
+	print model
+except:
+	model='ECHAM6-3-LR'
 
-overwrite=False
-
-working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 grid=model_dict[model]['grid']
+
+overwrite=True
+
+try:
+	os.chdir('/global/homes/p/pepflei/')
+	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+	land_mask_file='/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc'
+except:
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+	working_path='data/'+model+'/'
+	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
@@ -40,7 +51,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						try:
 							# mask ocean
 							land_file=in_file.replace('.nc','_land.nc')
-							os.system('cdo -O mul '+in_file+' /global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc '+land_file)
+							os.system('cdo -O mul '+in_file+' '+land_mask_file+' '+land_file)
 
 							# detrend
 							a=in_file.replace('.nc','_a.nc')
@@ -79,7 +90,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 							print '/!\---------------/!\ \n failed for',state_file,'\n/!\---------------/!\ '
 
 						# clean
-						os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
+						#os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
 
 						claim_run.close()
 						os.system('rm '+claim_run_file)
