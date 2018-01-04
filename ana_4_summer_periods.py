@@ -17,7 +17,7 @@ except:
 overwrite=True
 
 try:
-    os.chdir('/global/homes/p/pepflei/HAPPI_persistence/')
+    os.chdir('/global/homes/p/pepflei/')
     working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 except:
     os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
