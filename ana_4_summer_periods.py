@@ -31,9 +31,9 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
         if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
         if os.path.isfile(out_file)==False:
             print in_file
-            state_check=da.read_nc(in_file.replace('_period','_state'))['state']
-
-            tas=da.read_nc(in_file.replace('_period',''))['tas'][state_check.time,:,:]
+            #state_check=da.read_nc(in_file.replace('_period','_state'))['state']
+            #tas=da.read_nc(in_file.replace('_period',''))['tas'][state_check.time,:,:]
+            tas=da.read_nc(in_file.replace('_period',''))['tas'].ix[45:-45,::]
             tt=np.asarray(tas.squeeze(),np.float)
             datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
             year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
