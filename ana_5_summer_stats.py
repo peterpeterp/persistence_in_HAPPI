@@ -16,8 +16,6 @@ except:
     working_path='/Users/peterpfleiderer/Documents/Projects/Persistence/data/'+model+'/'
 
 period_number_limit=100
-summary=da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')
-lat,lon=summary.lat,summary.lon
 
 for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
     out_file=working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
@@ -26,13 +24,15 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
         all_files=glob.glob(working_path+scenario+'/*summer*')
         runs=[str(ff.split('_')[-2].split('.')[0]) for ff in all_files]
 
+        example=da.read_nc(all_files[0])
+        lat,lon=example.lat,example.lon
         ds=da.Dataset({
             'x90_cum_temp':da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),lat,lon],dims=['run','ID','lat','lon']),
             'x90_mean_temp':da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),lat,lon],dims=['run','ID','lat','lon']),
             'x90_hottest_day_shift':da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),lat,lon],dims=['run','ID','lat','lon']),
             'x90_hottest_day':da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),lat,lon],dims=['run','ID','lat','lon']),
             'original_period_id':da.DimArray(axes=[np.asarray(runs),np.asarray(range(period_number_limit),np.int32),lat,lon],dims=['run','ID','lat','lon']),
-            'TXx_in_x90':da.DimArray(axes=[np.asarray(runs),np.arange(0,10,1),lat,lon],dims=['run','year','lat','lon'])
+            'TXx_in_x90':da.DimArray(axes=[np.asarray(runs),example.year,lat,lon],dims=['run','year','lat','lon'])
         })
 
         print all_files
