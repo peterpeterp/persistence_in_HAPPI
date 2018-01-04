@@ -42,7 +42,11 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
             print summer_file,run
             summer=da.read_nc(summer_file)
 
-            for var in ds.keys():
-                ds[var][run,summer.ID,:,:]=summer[var]
+            ds['x90_cum_temp'][run,summer.ID,:,:]=summer['x90_cum_temp']
+            ds['x90_mean_temp'][run,summer.ID,:,:]=summer['x90_mean_temp']
+            ds['x90_hottest_day_shift'][run,summer.ID,:,:]=summer['x90_hottest_day_shift']
+            ds['x90_hottest_day'][run,summer.ID,:,:]=summer['x90_hottest_day']
+            ds['original_period_id'][run,summer.ID,:,:]=summer['original_period_id']
+            ds['TXx_in_x90'][run,:,:,:]=summer['TXx_in_x90']
 
         ds.write_nc(out_file, mode='w')
