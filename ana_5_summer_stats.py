@@ -47,6 +47,10 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
             ds['x90_hottest_day_shift'][run,summer.ID,:,:]=summer['x90_hottest_day_shift']
             ds['x90_hottest_day'][run,summer.ID,:,:]=summer['x90_hottest_day']
             ds['original_period_id'][run,summer.ID,:,:]=summer['original_period_id']
-            ds['TXx_in_x90'][run,summer.year,:,:]=summer['TXx_in_x90']
+            try:
+                ds['TXx_in_x90'][run,summer.year,:,:]=summer['TXx_in_x90']
+            except:
+                ds['TXx_in_x90'][run,:,:,:].values[0:len(summer.year),:,:]=summer['TXx_in_x90']
+
 
         ds.write_nc(out_file, mode='w')
