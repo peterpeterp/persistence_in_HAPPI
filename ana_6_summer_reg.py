@@ -43,7 +43,7 @@ def create_regional_distr(region):
 			print working_path+'/'+model+'_'+scenario+'_summerQ90.nc'
 			data=da.read_nc(working_path+'/'+model+'_'+scenario+'_summerQ90.nc')
 
-			tmp[scenario]={'90X_cum_heat':np.array([]),'90X_hot_shift':np.array([]),'90X_hot_temp':np.array([]),'90X_mean_temp':np.array([]),'TXx_in90Xpers':np.array([])}
+			tmp[scenario]={'x90_cum_temp':np.array([]),'x90_mean_temp':np.array([]),'x90_hottest_day_shift':np.array([]),'x90_hottest_day':np.array([]),'TXx_in_x90':np.array([])}
 			polygon=Polygon(srex[region]['points'])
 			for x in data.lon:
 				if x>180:
@@ -56,25 +56,25 @@ def create_regional_distr(region):
 							tmp[scenario][var]=np.append(tmp[scenario][var],data[var][:,:,y,x].flatten())
 
 		n_events=0
-		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp']:
+		for var in ['x90_hottest_day','x90_cum_temp','x90_mean_temp','x90_hottest_day_shift']:
 			for scenario in scenarios:
 				if len(tmp[scenario][var])>n_events:
 					n_events=len(tmp[scenario][var])
 
 		reg_dict={}
-		for var in ['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp']:
+		for var in ['x90_hottest_day','x90_cum_temp','x90_mean_temp','x90_hottest_day_shift']:
 			reg_dict[var]=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
 			for scenario in scenarios:
 				reg_dict[var][scenario,0:len(tmp[scenario][var])-1]=tmp[scenario][var]
 
 		n_events=0
 		for scenario in scenarios:
-			if len(tmp[scenario]['TXx_in90Xpers'])>n_events:
-				n_events=len(tmp[scenario]['TXx_in90Xpers'])
+			if len(tmp[scenario]['TXx_in_x90'])>n_events:
+				n_events=len(tmp[scenario]['TXx_in_x90'])
 
-		reg_dict['TXx_in90Xpers']=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
+		reg_dict['TXx_in_x90']=da.DimArray(axes=[np.asarray(scenarios),np.array(range(n_events))],dims=['scenario','ID'])
 		for scenario in scenarios:
-			reg_dict['TXx_in90Xpers'][scenario,0:len(tmp[scenario]['TXx_in90Xpers'])-1]=tmp[scenario]['TXx_in90Xpers']
+			reg_dict['TXx_in_x90'][scenario,0:len(tmp[scenario]['TXx_in_x90'])-1]=tmp[scenario]['TXx_in_x90']
 
 		ds=da.Dataset(reg_dict)
 		ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
