@@ -30,14 +30,14 @@ for region in summary.region:
         tmp=tmp[np.isfinite(tmp)]
         summary[scenario,region,'frac_pos_shift','mean']=len(np.where(tmp>0)[0])/float(len(tmp))
         summary[scenario,region,'frac_neg_shift','mean']=len(np.where(tmp<0)[0])/float(len(tmp))
-        print len(tmp),len(np.where(tmp>0)[0]),len(np.where(tmp<0)[0])
+        print len(tmp),len(np.where(tmp>0)[0]),len(np.where(tmp<0)[0]),len(np.where(tmp==0)[0])
 
     for scenario in summary.scenario:
         print scenario
         tmp=dat['TXx_in_x90'][scenario,:].values
         tmp=tmp[np.isfinite(tmp)]
         summary[scenario,region,'frac_TXx_in_X90','mean']=len(np.where(tmp==1)[0])/float(tmp.shape[0])
-        print len(np.where(tmp==1)[0]),len(np.where(tmp==0)[0]),float(tmp.shape[0]),len(np.where(tmp)[0])/float(tmp.shape[0])
+        print float(tmp.shape[0]),len(np.where(tmp==1)[0]),len(np.where(tmp==0)[0]),len(np.where(tmp)[0])/float(tmp.shape[0])
 
 ds=da.Dataset({'summerStats':summary})
 ds.write_nc('data/'+model+'/'+model+'_SummarySummer.nc', mode='w')
