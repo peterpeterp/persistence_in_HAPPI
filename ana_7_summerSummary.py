@@ -23,12 +23,17 @@ for region in summary.region:
         for qu,qu_name in zip([0,1/6.*100,25,50,75,5/6.*100,100],['qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu_100']):
             summary[:,region,var,qu_name]=np.nanpercentile(dat[var],qu,axis=1)
 
+    print region
     for scenario in summary.scenario:
-        summary[scenario,region,'frac_pos_shift','mean']=len(np.where(dat['x90_hottest_day_shift'][scenario,:]>0)[0])/float(dat['x90_hottest_day_shift'].shape[1])
-        summary[scenario,region,'frac_neg_shift','mean']=len(np.where(dat['x90_hottest_day_shift'][scenario,:]<0)[0])/float(dat['x90_hottest_day_shift'].shape[1])
+        print scenario
+        tmp=dat['x90_hottest_day_shift'][scenario,:].values
+        tmp=tmp[np.isfinite(tmp)]
+        summary[scenario,region,'frac_pos_shift','mean']=len(np.where(tmp>0)[0])/float(len(tmp))
+        summary[scenario,region,'frac_neg_shift','mean']=len(np.where(tmp<0)[0])/float(len(tmp))
+        print len(tmp),len(np.where(tmp>0)[0]),len(np.where(tmp<0)[0])
 
     for scenario in summary.scenario:
-        print region
+        print scenario
         tmp=dat['TXx_in_x90'][scenario,:].values
         tmp=tmp[np.isfinite(tmp)]
         summary[scenario,region,'frac_TXx_in_X90','mean']=len(np.where(tmp==1)[0])/float(tmp.shape[0])
