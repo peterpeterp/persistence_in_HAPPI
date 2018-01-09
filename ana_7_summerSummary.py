@@ -30,7 +30,7 @@ for region in summary.region:
         tmp=tmp[np.isfinite(tmp)]
         summary[scenario,region,'frac_pos_shift','mean']=len(np.where(tmp>0)[0])/float(len(tmp))
         summary[scenario,region,'frac_neg_shift','mean']=len(np.where(tmp<0)[0])/float(len(tmp))
-        print len(tmp),len(np.where(tmp>0)[0]),len(np.where(tmp<0)[0]),len(np.where(tmp==0)[0]),len(np.where(tmp<0)[0])+len(np.where(tmp==0)[0]),len(np.where(tmp>0)[0])/float(len(tmp))
+        print len(tmp),len(np.where(tmp>0)[0]),len(np.where(tmp<0)[0]),len(np.where(tmp==0)[0]),len(np.where(tmp>0)[0])+len(np.where(tmp<0)[0])+len(np.where(tmp==0)[0]),len(np.where(tmp>0)[0])/float(len(tmp))
 
     for scenario in summary.scenario:
         print scenario
