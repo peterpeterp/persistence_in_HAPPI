@@ -24,8 +24,8 @@ for region in summary.region:
             summary[:,region,var,qu_name]=np.nanpercentile(dat[var],qu,axis=1)
 
     for scenario in summary.scenario:
-        summary[scenario,region,'frac_pos_shift','mean']=len(np.where(dat['90X_hot_shift'][scenario,:]>0)[0])/float(dat['90X_hot_shift'].shape[1])
-        summary[scenario,region,'frac_neg_shift','mean']=len(np.where(dat['90X_hot_shift'][scenario,:]<0)[0])/float(dat['90X_hot_shift'].shape[1])
+        summary[scenario,region,'frac_pos_shift','mean']=len(np.where(dat['x90_hottest_day_shift'][scenario,:]>0)[0])/float(dat['x90_hottest_day_shift'].shape[1])
+        summary[scenario,region,'frac_neg_shift','mean']=len(np.where(dat['x90_hottest_day_shift'][scenario,:]<0)[0])/float(dat['x90_hottest_day_shift'].shape[1])
 
     for scenario in summary.scenario:
         print region
