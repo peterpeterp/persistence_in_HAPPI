@@ -14,6 +14,8 @@ from persistence_support import *
 model=sys.argv[1]
 print model
 
+region=sys.argv[2]
+
 try:
 	os.chdir('/global/homes/p/pepflei/')
 	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
@@ -26,7 +28,7 @@ except:
 overwrite=False
 os.system('mkdir '+working_path+'/regional')
 
-pkl_file = open('data/srex_dict.pkl', 'rb')
+pkl_file = open('data/SREX.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 
@@ -80,5 +82,8 @@ def create_regional_distr(region):
 		ds.write_nc(working_path+'/regional/'+region+'_'+model+'_summer.nc', mode='w')
 
 
-for region in srex.keys():
+if region is None:
+	for region in srex.keys():
+		create_regional_distr(region)
+else:
 	create_regional_distr(region)
