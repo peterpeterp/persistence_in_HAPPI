@@ -16,7 +16,7 @@ try:
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-pkl_file = open('data/srex_dict.pkl', 'rb')
+pkl_file = open('data/SREX.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','All-Hist']):
@@ -52,7 +52,7 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 						region_dict[region][scenario][season][state_name]['count']=count
 						region_dict[region][scenario][season]['counter']=tmp[season]
 
-	output = open('data/'+model+'_regional_distrs.pkl', 'wb')
+	output = open('data/'+model+'/'+model+'_regional_distrs.pkl', 'wb')
 	pickle.dump(region_dict, output)
 	output.close()
 	return region_dict
