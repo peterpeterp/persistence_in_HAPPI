@@ -14,7 +14,9 @@ from persistence_support import *
 model=sys.argv[1]
 print model
 
-region=sys.argv[2]
+try:
+	region=sys.argv[2]
+except: region=None
 
 try:
 	os.chdir('/global/homes/p/pepflei/')
