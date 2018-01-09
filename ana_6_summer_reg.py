@@ -27,7 +27,7 @@ except:
 	working_path='/Users/peterpfleiderer/Documents/Projects/Persistence/data/'+model+'/'
 	scenarios=['All-Hist']
 
-overwrite=True
+overwrite=False
 os.system('mkdir '+working_path+'/regional')
 
 pkl_file = open('data/SREX.pkl', 'rb')
