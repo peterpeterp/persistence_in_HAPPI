@@ -24,7 +24,7 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 	for region in srex.keys():
 		region_dict[region]={}
 		for scenario in scenarios:
-			pkl_file = open('data/'+model+'_'+scenario+'_counter.pkl', 'rb')
+			pkl_file = open('data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'rb')
 			distr_dict = pickle.load(pkl_file)	;	pkl_file.close()
 			region_dict[region][scenario]={}
 			tmp={}
