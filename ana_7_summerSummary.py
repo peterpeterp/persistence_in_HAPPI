@@ -12,7 +12,7 @@ model=sys.argv[1]
 print model
 working_path='/global/cscratch1/sd/pepflei/'+model+'/regional/'
 
-pkl_file = open('data/srex_dict.pkl', 'rb')
+pkl_file = open('data/SREX.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 summary=da.DimArray(axes=[['Plus20-Future','Plus15-Future','All-Hist'],list(srex.keys()),['90X_cum_heat','90X_hot_shift','90X_hot_temp','90X_mean_temp','frac_pos_shift','frac_neg_shift','frac_TXx_inX90pers'],['mean','qu_0','qu_66l','qu_25','qu_50','qu_75','qu_66h','qu_100']],dims=['scenario','region','variable','stat'])
