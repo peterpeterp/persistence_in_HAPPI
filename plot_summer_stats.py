@@ -72,7 +72,7 @@ for variable in summer_stats.variable:
 table.close()
 
 # plot temps clim
-fig,axes = plt.subplots(nrows=2,ncols=1,figsize=(8,8))
+fig,axes = plt.subplots(nrows=4,ncols=1,figsize=(8,8))
 for ax,var,title in zip(axes[0:2],['x90_hottest_day','x90_mean_temp'],['hottest day in period','mean temperature during period']):
 	for scenario,color,x_shift in zip(['All-Hist','Plus15-Future','Plus20-Future'],[sns.color_palette()[4],'sandybrown',sns.color_palette()[2]],[-0.3,0,0.3]):
 		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
@@ -89,13 +89,10 @@ for ax,var,title in zip(axes[2:],['frac_pos_shift','frac_TXx_in_X90'],['fraction
 		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
 			tmp=summer_stats[:,scenario,region,var,'mean']
 			x+=x_shift
-			ax.fill_between([x-0.15,x+0.15],[np.nanmean(tmp[:,'qu_66l'],axis=0),np.nanmean(tmp[:,'qu_66l'],axis=0)],[np.nanmean(tmp[:,'qu_66h'],axis=0),np.nanmean(tmp[:,'qu_66h'],axis=0)],color=color)
-			ax.plot([x-0.15,x+0.15],[np.nanmean(tmp[:,'qu_50'],axis=0),np.nanmean(tmp[:,'qu_50'],axis=0)],color='k')
-			ax.plot([x],[np.nanmean(tmp[:,'mean'],axis=0)],color='k',marker='*')
+			ax.plot([x],[np.nanmean(tmp,axis=0)],color='k',marker='*')
 	ax.set_xticks(np.arange(len(NH_regions))+0.5)
 	ax.set_xticklabels(['']*len(NH_regions))
 	ax.set_title(title)
-
 ax.set_xticklabels(NH_regions)
 plt.savefig('plots/summer_stats_clim.png')
 
@@ -121,7 +118,7 @@ plt.savefig('plots/summer_stats_changes.png')
 # plot all
 plt.close('all')
 fig,axes = plt.subplots(nrows=3,ncols=2,figsize=(10,6),gridspec_kw = {'width_ratios':[3,1]})
-for ax,var,title in zip(axes[0:2,0],['90X_hot_temp','90X_mean_temp'],['hottest day in long periods','mean temperature during long periods']):
+for ax,var,title in zip(axes[0:2,0],['x90_hottest_day','x90_mean_temp'],['hottest day in long periods','mean temperature during long periods']):
 	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['sandybrown',sns.color_palette()[2]]):
 		tmp=summer_stats[:,scenario,:,var,:]-summer_stats[:,'All-Hist',:,var,:]
 		for region,x in zip(NH_regions,np.arange(len(NH_regions))+0.5):
