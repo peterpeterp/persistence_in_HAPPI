@@ -13,12 +13,7 @@ model_dict={'MIROC5':{'grid':'128x256'},
 			'CAM4-2degree':{'grid':'96x144'},
 }
 
-overwrite=True
-
-try:
-	os.chdir('/global/homes/p/pepflei/')
-except:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+os.chdir('/global/homes/p/pepflei/')
 
 
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
