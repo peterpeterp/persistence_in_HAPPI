@@ -40,6 +40,7 @@ if args.region is None:
 else:
 	regions=[args.region]
 
+print args
 
 for scenario in scenarios:
 	for model in models:
