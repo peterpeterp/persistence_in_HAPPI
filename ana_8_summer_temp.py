@@ -42,6 +42,8 @@ else:
 
 print args
 
+
+asdas
 for scenario in scenarios:
 	for model in models:
 		print(model)
