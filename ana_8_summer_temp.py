@@ -19,7 +19,7 @@ os.chdir('/global/homes/p/pepflei/')
 for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	for model in model_dict.keys():
 		print(model)
-		os.chdir('/global/homes/p/pepflei/'+model+'/')
+		os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
 		os.system('mkdir tmp')
 		os.system('mkdir tmp/runs')
 		all_files=[raw for raw in glob.glob(working_path+scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
