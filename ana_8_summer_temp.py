@@ -22,11 +22,13 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 		os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
 		os.system('mkdir tmp')
 		os.system('mkdir tmp/runs')
+		os.system('mkdir tmp/masks')
 		all_files=[raw for raw in glob.glob(scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
 		for region in ['ALA','CGI','NEU','NAS','WNA','CNA','ENA','CEU','CAS','TIB','EAS','CAM','MED','WAS']:
-			for in_file in all_files[0:5]:
-				print('cdo timmean -fldsum -mul -selmon,6,7,8 '+in_file+' -select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/runs/'+in_file.split('/')[-1].replace('.nc','_reg_av_'+region+'.nc'))
-				os.system('cdo timmean -fldsum -mul -selmon,6,7,8 '+in_file+' -select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/runs/'+in_file.split('/')[-1].replace('.nc','_reg_av_'+region+'.nc'))
-			os.system('cdo ensmean tmp/runs/* tmp/tas_'+region+'.nc')
+			os.system('cdo select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc'))
+			for id_,in_file in zip(range(len(all_files[0:5])),all_files[0:5]):
+				os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'.nc'))
+				os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+region+'.nc')
+			os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'.nc')
 			asdas
 			os.system('rm tmp/runs/*')
