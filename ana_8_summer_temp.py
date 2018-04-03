@@ -29,7 +29,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 				working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 				os.system('mkdir tmp')
 				os.system('mkdir tmp/runs')
-				os.system('cdo timmean -fldsum -mul -selmon,6,7,8 '+in_file+' -select,name='+region+' srex_mask_'+model+'.nc tmp/runs/'+in_file.split('/')[-1].replace('.nc','_reg_av_'+region+'.nc'))
+				os.system('cdo timmean -fldsum -mul -selmon,6,7,8 '+in_file+' -select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/runs/'+in_file.split('/')[-1].replace('.nc','_reg_av_'+region+'.nc'))
 			os.system('cdo ensmean tmp/runs/* tmp/tas_'+region+'.nc')
 			asdas
 			os.system('rm tmp/runs/*')
