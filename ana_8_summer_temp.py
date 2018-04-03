@@ -42,8 +42,6 @@ else:
 
 print args
 
-
-asdas
 for scenario in scenarios:
 	for model in models:
 		print(model)
@@ -55,6 +53,7 @@ for scenario in scenarios:
 		for region in regions:
 			os.system('cdo select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
 			for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
+				print in_file
 				os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
 				os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
 			os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
