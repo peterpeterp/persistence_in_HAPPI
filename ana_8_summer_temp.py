@@ -56,6 +56,8 @@ for scenario in scenarios:
 				print in_file
 				os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
 				os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
+
+				asdasd
 			os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
 			os.system('rm tmp/runs/*_'+scenario+'.nc')
 			os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
