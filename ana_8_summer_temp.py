@@ -3,6 +3,7 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
+from subprocess import Popen
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
@@ -19,7 +20,7 @@ os.chdir('/global/homes/p/pepflei/')
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--overwrite",'-o', help="overwrite output files",action="store_true")
+parser.add_argument("--overwrite",'-o', help="overwrite output files",default=False)
 parser.add_argument('--scenario','-s',help='scneario in Plus20-Future Plus15-Future All-Hist',required=False)
 parser.add_argument('--model','-m',help='model',required=False)
 parser.add_argument('--region','-r',help='srex region',required=False)
@@ -40,6 +41,12 @@ if args.region is None:
 else:
 	regions=[args.region]
 
+class Alarm(Exception):
+    pass
+
+def alarm_handler(signum, frame):
+    raise Alarm
+
 print args
 
 for scenario in scenarios:
@@ -51,11 +58,32 @@ for scenario in scenarios:
 		os.system('mkdir tmp/masks')
 		all_files=[raw for raw in glob.glob(scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
 		for region in regions:
-			os.system('cdo select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
-			for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
-				print in_file
-				os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
-				os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
-			os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
-			os.system('rm tmp/runs/*_'+scenario+'.nc')
-			os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
+			if os.path.isdir('tmp/tas_'+region+'_'+scenario+'.nc')==False or args.overwrite:
+				os.system('cdo select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
+				for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
+					print in_file
+					signal.signal(signal.SIGALRM, alarm_handler)
+					signal.alarm(5*60)  # 5 minutes
+					try:
+						os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
+						os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
+						signal.alarm(0)
+					except Alarm:
+						print "Oops, taking too long!"
+				os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
+				os.system('rm tmp/runs/*_'+scenario+'.nc')
+				os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
