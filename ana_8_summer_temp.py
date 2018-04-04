@@ -52,38 +52,38 @@ print args
 
 for scenario in scenarios:
 	for model in models:
-		print(model)
-		os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
-		os.system('mkdir tmp')
-		os.system('mkdir tmp/runs')
-		os.system('mkdir tmp/masks')
-		for region in regions:
-			os.system('cdo -O select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
-		all_files=[raw for raw in glob.glob(scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
-		for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
-			if os.path.isfile('tmp/runs/tmp_'+id_+'_'+scenario+'.nc')==False or args.overwrite:
-				print in_file
-				signal.signal(signal.SIGALRM, alarm_handler)
-				signal.alarm(60)  # 1 minutes
-				try:
-					os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
-					signal.alarm(0)
-				except Alarm:
-					print "Oops, taking too long!"
+		# print(model)
+		# os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
+		# os.system('mkdir tmp')
+		# os.system('mkdir tmp/runs')
+		# os.system('mkdir tmp/masks')
+		# for region in regions:
+		# 	os.system('cdo -O select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
+		# all_files=[raw for raw in glob.glob(scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
+		# for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
+		# 	if os.path.isfile('tmp/runs/tmp_'+id_+'_'+scenario+'.nc')==False or args.overwrite:
+		# 		print in_file
+		# 		signal.signal(signal.SIGALRM, alarm_handler)
+		# 		signal.alarm(60)  # 1 minutes
+		# 		try:
+		# 			os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
+		# 			signal.alarm(0)
+		# 		except Alarm:
+		# 			print "Oops, taking too long!"
+        #
+		# 	for region in regions:
+		# 		if os.path.isfile('tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')==False or args.overwrite:
+		# 			os.system('cdo -L timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
+        #
+		# for region in regions:
+		# 	# remove broken files
+		# 	os.system('find tmp/runs/ -name "*_'+region+'.nc" -size -1k -delete')
+		# 	os.system('cdo -O ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
+		# 	#os.system('rm tmp/runs/*_'+scenario+'.nc')
+		# 	#os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
 
-			for region in regions:
-				if os.path.isfile('tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')==False or args.overwrite:
-					os.system('cdo -L timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
 
-		for region in regions:
-			# remove broken files
-			os.system('find tmp/runs/ -name "*_'+region+'.nc" -size -1k -delete')
-			os.system('cdo -O ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
-			#os.system('rm tmp/runs/*_'+scenario+'.nc')
-			#os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
-
-
-		summer_tas=open('tmp/summer_tas_'+scenario+'.nc','w')
+		summer_tas=open('tmp/summer_tas_'+scenario+'.txt','w')
 		for region in regions:
 			print(Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:])
 			summer_tas.write(region+'\t'+str(Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:])+'\n')
