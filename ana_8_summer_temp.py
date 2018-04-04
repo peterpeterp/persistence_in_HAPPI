@@ -58,7 +58,7 @@ for scenario in scenarios:
 		os.system('mkdir tmp/runs')
 		os.system('mkdir tmp/masks')
 		for region in regions:
-			os.system('cdo select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
+			os.system('cdo -O select,name='+region+' /global/homes/p/pepflei/masks/srex_mask_'+model+'.nc tmp/masks/'+region+'.nc')
 		all_files=[raw for raw in glob.glob(scenario+'/*') if len(raw.split('/')[-1].split('_'))==7]
 		for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
 			if os.path.isdir('tmp/runs/tmp_'+id_+'_'+scenario+'.nc')==False or args.overwrite:
@@ -77,7 +77,7 @@ for scenario in scenarios:
 		for region in regions:
 			# remove broken files
 			os.system('find tmp/runs/ -name "*_'+region+'.nc" -size -1k -delete')
-			os.system('cdo ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
+			os.system('cdo -O ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
 			#os.system('rm tmp/runs/*_'+scenario+'.nc')
 			os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
 
