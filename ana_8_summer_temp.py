@@ -4,6 +4,7 @@ from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
 from subprocess import Popen
+import signal
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
