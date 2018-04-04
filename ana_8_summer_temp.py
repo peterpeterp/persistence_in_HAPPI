@@ -97,7 +97,8 @@ if args.summarize:
 		for model in models:
 			summer_tas=open('/global/cscratch1/sd/pepflei/'+model+'/tmp/summer_tas_'+scenario+'.txt','r').read().split('\n')
 			for line in summer_tas:
-				summary[scenario,line.split('\t')[0],model]=float(line.split('\t')[-1])
+				print(line.split('\t')[-1])
+				summary[scenario,line.split('\t')[0],model]=line.split('\t')[-1]
 
 	ds=da.Dataset({'summerTas':summary})
 	ds.write_nc('data/'+model+'/'+model+'_SummaryTas.nc', mode='w')
