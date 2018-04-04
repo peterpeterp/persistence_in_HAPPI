@@ -93,7 +93,7 @@ if args.summarize==False:
 
 if arge.summarize:
 	summary=da.DimArray(axes=[scenarios,regions,models],dims=['scenario','region','model'])
-    for scenario in scenarios:
+	for scenario in scenarios:
 		for model in models:
 			summer_tas=open('/global/cscratch1/sd/pepflei/'+model+'/tmp/summer_tas_'+scenario+'.txt','r').read().split('\n')
 			for line in summer_tas:
