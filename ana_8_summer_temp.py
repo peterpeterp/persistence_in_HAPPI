@@ -82,7 +82,10 @@ for scenario in scenarios:
 			#os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
 
 
-
+		summer_tas=open('tmp/summer_tas_'+scenario+'.nc','w')
+		for region in regions:
+			summer_tas.write(region+'\t'+Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:]+'\n')
+		summer_tas.close()
 
 
 
