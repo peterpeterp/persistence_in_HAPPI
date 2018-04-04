@@ -95,10 +95,9 @@ if args.summarize:
 	summary=da.DimArray(axes=[scenarios,regions,models],dims=['scenario','region','model'])
 	for scenario in scenarios:
 		for model in models:
-			summer_tas=open('/global/cscratch1/sd/pepflei/'+model+'/tmp/summer_tas_'+scenario+'.txt','r').read().split('\n')
+			summer_tas=open('/global/cscratch1/sd/pepflei/'+model+'/tmp/summer_tas_'+scenario+'.txt','r').read().split('\n')[:-1]
 			for line in summer_tas:
-				print(line.split('\t')[-1])
-				summary[scenario,line.split('\t')[0],model]=line.split('\t')[-1]
+				summary[scenario,line.split('\t')[0],model]=float(line.split('\t')[-1])
 
 	ds=da.Dataset({'summerTas':summary})
 	ds.write_nc('data/'+model+'/'+model+'_SummaryTas.nc', mode='w')
