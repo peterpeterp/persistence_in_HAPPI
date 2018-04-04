@@ -100,7 +100,7 @@ if args.summarize:
 				summary[scenario,line.split('\t')[0],model]=float(line.split('\t')[-1])
 
 	ds=da.Dataset({'summerTas':summary})
-	ds.write_nc('data/'+model+'/'+model+'_SummaryTas.nc', mode='w')
+	ds.write_nc('data/SummerTas.nc', mode='w')
 
 
 
