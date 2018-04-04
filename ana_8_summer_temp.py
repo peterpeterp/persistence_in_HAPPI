@@ -79,7 +79,7 @@ for scenario in scenarios:
 			os.system('find tmp/runs/ -name "*_'+region+'.nc" -size -1k -delete')
 			os.system('cdo -O ensmean tmp/runs/*_'+region+'.nc tmp/tas_'+region+'_'+scenario+'.nc')
 			os.system('rm tmp/runs/*_'+scenario+'.nc')
-			#os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
+			os.system('rm tmp/runs/*_'+scenario+'_'+region+'.nc')
 
 
 
