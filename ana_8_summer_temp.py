@@ -84,7 +84,8 @@ for scenario in scenarios:
 
 		summer_tas=open('tmp/summer_tas_'+scenario+'.nc','w')
 		for region in regions:
-			summer_tas.write(region+'\t'+Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:]+'\n')
+			print(Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:])
+			summer_tas.write(region+'\t'+str(Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:])+'\n')
 		summer_tas.close()
 
 
