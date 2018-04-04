@@ -91,7 +91,7 @@ if args.summarize==False:
 				summer_tas.write(region+'\t'+str(Dataset('tmp/tas_'+region+'_'+scenario+'.nc').variables['tas'][:].flatten()[0])+'\n')
 			summer_tas.close()
 
-if arge.summarize:
+if args.summarize:
 	summary=da.DimArray(axes=[scenarios,regions,models],dims=['scenario','region','model'])
 	for scenario in scenarios:
 		for model in models:
