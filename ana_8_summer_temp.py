@@ -63,7 +63,7 @@ for scenario in scenarios:
 				for id_,in_file in zip([str(ii) for ii in range(len(all_files[:]))],all_files[:]):
 					print in_file
 					signal.signal(signal.SIGALRM, alarm_handler)
-					signal.alarm(5*60)  # 5 minutes
+					signal.alarm(60)  # 1 minutes
 					try:
 						os.system('cdo selmon,6,7,8 '+in_file+' tmp/runs/tmp_'+id_+'_'+scenario+'.nc')
 						os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
