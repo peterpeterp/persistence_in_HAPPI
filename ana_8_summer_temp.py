@@ -72,7 +72,7 @@ for scenario in scenarios:
 					print "Oops, taking too long!"
 
 			for region in regions:
-				os.system('cdo timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
+				os.system('cdo -L timmean -fldsum -mul tmp/runs/tmp_'+id_+'_'+scenario+'.nc tmp/masks/'+region+'.nc tmp/runs/'+id_+'_'+scenario+'_'+region+'.nc')
 
 		for region in regions:
 			# remove broken files
