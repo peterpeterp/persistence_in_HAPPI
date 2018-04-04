@@ -5,7 +5,7 @@ import cPickle as pickle
 import matplotlib.pylab as plt
 import dimarray as da
 from scipy.optimize import curve_fit
-from lmfit import  Model
+# from lmfit import  Model
 import pandas as pd
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
@@ -52,6 +52,7 @@ for model in summer_stats.model:
 NH_regions=['ALA','WNA','CNA','ENA','CGI','CAM','NEU' ,'CEU','CAS','NAS','TIB','EAS','MED','WAS']
 NH_regions=['ALA','CGI','NEU' ,'NAS','WNA','CNA','ENA','CEU','CAS','TIB','EAS','CAM','MED','WAS']
 
+summerTas=da.read_nc('data/SummerTas.nc')['summerTas']
 
 big_dict={}
 for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
