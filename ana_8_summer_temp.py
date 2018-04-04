@@ -53,7 +53,7 @@ print args
 for scenario in scenarios:
 	for model in models:
 		# print(model)
-		# os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
+		os.chdir('/global/cscratch1/sd/pepflei/'+model+'/')
 		# os.system('mkdir tmp')
 		# os.system('mkdir tmp/runs')
 		# os.system('mkdir tmp/masks')
