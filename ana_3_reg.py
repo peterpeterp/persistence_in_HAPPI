@@ -17,7 +17,7 @@ except:
 	os.chdir('/global/homes/p/pepflei/')
 
 
-def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-Future','All-Hist']):
+def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-Future','All-Hist'],add_name=''):
 	region_dict={}
 	for region in regions.keys():
 		region_dict[region]={}
@@ -50,15 +50,15 @@ def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-F
 						region_dict[region][scenario][season][state_name]['count']=count
 						region_dict[region][scenario][season]['counter']=tmp[season]
 
-	output = open('data/'+model+'/'+model+'_regional_distrs.pkl', 'wb')
+	output = open('data/'+model+'/'+model+'_regional_distrs_'+add_name+'.pkl', 'wb')
 	pickle.dump(region_dict, output)
 	output.close()
 	return region_dict
 
 model=sys.argv[1]
 print model
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model)
+region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model,add_name='mid-lat')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
-region_dict=get_regional_distribution(srex,model)
+region_dict=get_regional_distribution(srex,model,add_name='srex')
