@@ -7,21 +7,19 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
-sys.path.append('/Users/peterpfleiderer/Documents/Projects/weather_persistence/')
+sys.path.append('/Users/peterpfleiderer/Documents/Projects/Persistence/weather_persistence/')
 import persistence_support as persistence_support; reload(persistence_support)
 from persistence_support import *
 
 try:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/HAPPI_persistence/')
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
-pkl_file = open('data/SREX.pkl', 'rb')
-srex = pickle.load(pkl_file)	;	pkl_file.close()
 
-def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','All-Hist']):
+def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-Future','All-Hist']):
 	region_dict={}
-	for region in srex.keys():
+	for region in regions.keys():
 		region_dict[region]={}
 		for scenario in scenarios:
 			pkl_file = open('data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'rb')
@@ -32,7 +30,7 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 				print region,scenario,season
 				region_dict[region][scenario][season]={'cold':{},'warm':{}}
 				tmp[season]=collections.Counter()
-			polygon=Polygon(srex[region]['points'])
+			polygon=Polygon(regions[region]['points'])
 			for x in distr_dict['lon']:
 				if x>180:
 					x__=x-360
@@ -59,4 +57,8 @@ def get_regional_distribution(model,scenarios=['Plus20-Future','Plus15-Future','
 
 model=sys.argv[1]
 print model
-region_dict=get_regional_distribution(model)
+region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model)
+
+pkl_file = open('data/srex_dict.pkl', 'rb')
+srex = pickle.load(pkl_file)	;	pkl_file.close()
+region_dict=get_regional_distribution(srex,model)
