@@ -17,7 +17,7 @@ except:
 	os.chdir('/global/homes/p/pepflei/')
 
 
-def get_regional_distribution(regions,model,scenarios=['All-Hist'],add_name=''):
+def get_regional_distribution(regions,model,scenarios=['All-Hist','Plus20-Future','Plus15-Future'],add_name=''):
 	region_dict={}
 	for region in regions.keys():
 		region_dict[region]={}
