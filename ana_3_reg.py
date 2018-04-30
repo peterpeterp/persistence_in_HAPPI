@@ -17,7 +17,7 @@ except:
 	os.chdir('/global/homes/p/pepflei/')
 
 
-def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-Future','All-Hist'],add_name=''):
+def get_regional_distribution(regions,model,scenarios=['All-Hist'],add_name=''):
 	region_dict={}
 	for region in regions.keys():
 		region_dict[region]={}
@@ -57,8 +57,18 @@ def get_regional_distribution(regions,model,scenarios=['Plus20-Future','Plus15-F
 
 model=sys.argv[1]
 print model
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model,add_name='mid-lat')
+# wave_polys={'7_1':{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
+# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
+# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
+# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
+# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
+# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]}}
+# region_dict=get_regional_distribution(wave_polys,model,add_name='mid-lat')
 
-pkl_file = open('data/srex_dict.pkl', 'rb')
-srex = pickle.load(pkl_file)	;	pkl_file.close()
-region_dict=get_regional_distribution(srex,model,add_name='srex')
+region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
+
+#region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model,add_name='mid-lat')
+
+#pkl_file = open('data/srex_dict.pkl', 'rb')
+#srex = pickle.load(pkl_file)	;	pkl_file.close()
+#region_dict=get_regional_distribution(srex,model,add_name='srex')
