@@ -41,7 +41,7 @@ for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
 lat=big_dict[scenario]['lat']
 lon=big_dict[scenario]['lon']
 
-SummaryKS=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(states),np.asarray(types),lat,lon],dims=['scenario','season','state','type','lat','lon'])
+SummaryKS=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(states+'stateInd'),np.asarray(types),lat,lon],dims=['scenario','season','state','type','lat','lon'])
 
 for scenario in scenarios:
 	distr_dict = big_dict[scenario]
