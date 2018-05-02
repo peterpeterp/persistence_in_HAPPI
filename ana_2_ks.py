@@ -69,8 +69,8 @@ for scenario_combi in [['Plus20-Future','All-Hist'],['Plus15-Future','All-Hist']
 					ks_cold=stats.ks_2samp(cold_1, cold_2)[1]
 					ks_warm=stats.ks_2samp(warm_1, warm_2)[1]
 
-					stateInd_1=cold_1+warm_1
-					stateInd_2=cold_2+warm_2
+					stateInd_1=np.append(cold_1,warm_1)
+					stateInd_2=np.append(cold_2,warm_2)
 					ks_stateInd=stats.ks_2samp(stateInd_1, stateInd_2)[1]
 
 					for scenario_store in scenario_combi:
