@@ -69,11 +69,16 @@ for scenario_combi in [['Plus20-Future','All-Hist'],['Plus15-Future','All-Hist']
 					ks_cold=stats.ks_2samp(cold_1, cold_2)[1]
 					ks_warm=stats.ks_2samp(warm_1, warm_2)[1]
 
+					stateInd_1=cold_1+warm_1
+					stateInd_2=cold_2+warm_2
+					ks_stateInd=stats.ks_2samp(stateInd_1, stateInd_2)[1]
+
 					for scenario_store in scenario_combi:
 						for scenario_compare_to in scenario_combi:
 							if scenario_store!=scenario_compare_to:
 								SummaryKS[scenario_store][season]['cold']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_cold
 								SummaryKS[scenario_store][season]['warm']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_warm
+								SummaryKS[scenario_store][season]['stateInd']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_stateInd
 
 ds=da.Dataset({'SummaryKS':SummaryKS})
 ds.write_nc('data/'+model+'_SummaryKS.nc', mode='w')
