@@ -5,19 +5,15 @@ import random as random
 import dimarray as da
 import subprocess
 
+import settings
 
-
-model_dict={'MIROC5':{'grid':'128x256','working_path':'/global/cscratch1/sd/pepflei/TXx_pr_cor/MIROC5/','in_path':'/project/projectdirs/m1517/C20C/MIROC/MIROC5/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
-			'NorESM1':{'grid':'192x288','working_path':'/global/cscratch1/sd/pepflei/TXx_pr_cor/NorESM1/','in_path':'/project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/','version':{'Plus20-Future':'v1-0','Plus15-Future':'v1-0','All-Hist':'v1-0'}},
-			'ECHAM6-3-LR':{'grid':'96x192','working_path':'/global/cscratch1/sd/pepflei/TXx_pr_cor/ECHAM6-3-LR/','in_path':'/project/projectdirs/m1517/C20C/MPI-M/ECHAM6-3-LR/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
-			'CAM4-2degree':{'grid':'96x144','working_path':'/global/cscratch1/sd/pepflei/TXx_pr_cor/CAM4-2degree/','in_path':'/project/projectdirs/m1517/C20C/ETH/CAM4-2degree/','version':{'Plus20-Future':'v2-0','Plus15-Future':'v2-0','All-Hist':'v1-0'}},
-}
+model_dict=settings.model_dict
 
 model=sys.argv[1]
 print model
 
+working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
 in_path=model_dict[model]['in_path']
-working_path=model_dict[model]['working_path']
 grid=model_dict[model]['grid']
 
 
