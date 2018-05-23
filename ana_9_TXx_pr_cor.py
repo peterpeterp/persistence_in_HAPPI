@@ -5,9 +5,9 @@ import random as random
 import dimarray as da
 import subprocess
 
-import settings
+import __settings
 
-model_dict=settings.model_dict
+model_dict=__settings.model_dict
 
 model=sys.argv[1]
 print model
