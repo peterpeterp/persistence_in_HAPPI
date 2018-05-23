@@ -44,4 +44,5 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	# 	os.system('rm '+pr_file_name+' '+TXx_file_name)
 
 	for pctl in [str(qu) for qu in [0,5,10,50,90,95,100]]:
+		FNULL = open(working_path+'log_summary', 'w')
 		subprocess.Popen('cdo -O enspctl,'+pctl+' '+working_path+scenario+'/corTXxPr_* '+working_path+'/corTXxPr_'+model+'_'+scenario+'_'+pctl+'.nc', shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
