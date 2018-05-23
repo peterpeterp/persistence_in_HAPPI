@@ -51,8 +51,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	cor_JJA_name=working_path+'corTXxPr_'+model+'_'+scenario+'_JJA.nc'
 	subprocess.Popen('cdo -O timcor -selmon,6/8 '+TXx_file_name+'  -selmon,6/8 '+pr_file_name+' '+cor_JJA_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
-	cor_JJA_name=working_path+'corTXxPr_'+model+'_'+scenario+'_JJA.nc'
-	subprocess.Popen('cdo -O timcor -selmon,11,12,1 '+TXx_file_name+'  -selmon,11,12,1 '+pr_file_name+' '+cor_JJA_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+	cor_DJF_name=working_path+'corTXxPr_'+model+'_'+scenario+'_DJF.nc'
+	subprocess.Popen('cdo -O timcor -selmon,11,12,1 '+TXx_file_name+'  -selmon,11,12,1 '+pr_file_name+' '+cor_DJF_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 	# for pctl in [str(qu) for qu in [0,5,10,50,90,95,100]]:
 	# 	FNULL = open(working_path+'log_summary', 'w')
