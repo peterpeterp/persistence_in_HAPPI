@@ -47,7 +47,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 
 		# v wind
-		if os.path.isfile('tmp_va_Aday_MIROC5_All-Hist_est1_'+version+'_'+run+'.nc')==False:
+		if os.path.isfile('tmp_va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc')==False:
 			os.chdir('tmp')
 			out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/'+full_model+'/All-Hist/est1/'+version+'/day/atmos/va/'+run+'/va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 			os.chdir('../')
