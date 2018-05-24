@@ -12,6 +12,7 @@ model_dict=__settings.model_dict
 model=sys.argv[1]
 print model
 
+if os.path.isdir('/global/cscratch1/sd/pepflei/EKE/'+model)==False: os.system('mkdir '+'/global/cscratch1/sd/pepflei/EKE/'+model)
 working_path='/global/cscratch1/sd/pepflei/EKE/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
