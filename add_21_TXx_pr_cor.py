@@ -1,7 +1,6 @@
 import os,sys,glob,time,collections
 import numpy as np
-from netCDF4 import Dataset,netcdftime,num2date
-import random as random
+from netCDF4 import Dataset,num2date
 import dimarray as da
 import subprocess
 
@@ -27,7 +26,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-		if os.path.isfile(pr_file_name)==False:
+		if os.path.isfile(pr_file_name)==False or True:
 			command='cdo -O mergetime '
 			for subfile in glob.glob(model_path+'mon/atmos/pr/'+run+'/*'):
 				command+='-selyear,'+selyears+' '+subfile+' '
@@ -35,7 +34,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 		# TXx
 		TXx_file_name=working_path+scenario+'/'+glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')[0].split('/')[-1].split(run)[0].replace('tasmax','TXx')+run+'.nc'
-		if os.path.isfile(TXx_file_name)==False:
+		if os.path.isfile(TXx_file_name)==False or True:
 			command='cdo -O mergetime '
 			for subfile in glob.glob(model_path+'day/atmos/tasmax/'+run+'/*'):
 				command+='-selyear,'+selyears+' -monmax '+subfile+' '
