@@ -15,17 +15,53 @@ print model
 working_path='/global/cscratch1/sd/pepflei/EKE/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
+full_model=model_dict[model]['full_model']
 
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2116','2106/2116','2006/2016']):
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
+	os.chdir(working_path+scenario)
+	if os.path.isdir(working_path+scenario+'/tmp')==False: os.system('mkdir tmp')
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
+	version=model_dict[model]['version'][scenario]
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 	for run in run_list:
 		FNULL = open(working_path+scenario+'/log_'+run, 'w')
 
-		out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/MIROC/MIROC5/All-Hist/est1/v2-0/day/atmos/ua/'+run_name+'/ua_Aday_MIROC5_All-Hist_est1_v2-0_'+run_name+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-		os.chdir('../')
-		subprocess.Popen('cdo -O -mergetime raw/ua* ua_Aday_MIROC5_All-Hist_est1_v2-0_'+run_name+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-		subprocess.Popen('cdo -O -sellevel,85000 ua_Aday_MIROC5_All-Hist_est1_v2-0_'+run_name+'.nc ua_Aday_MIROC5_All-Hist_est1_v2-0_'+run_name+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+		# u wind
+		if os.path.isfile('tmp_ua_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc')==False:
+			os.chdir('tmp')
+			out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/'+full_model+'/All-Hist/est1/'+version+'/day/atmos/ua/'+run+'/ua_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			os.chdir('../')
+			print(glob.glob('tmp/ua*'))
+			for tmp_file in glob.glob('tmp/ua*'):
+				tmp_file=tmp_file.split('/')[-1]
+				subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+			subprocess.Popen('cdo -O -mergetime tmp/3_ua* tmp_ua_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			os.system('rm tmp/*')
+
+
+		# v wind
+		if os.path.isfile('tmp_va_Aday_MIROC5_All-Hist_est1_'+version+'_'+run+'.nc')==False:
+			os.chdir('tmp')
+			out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/'+full_model'/All-Hist/est1/'+version+'/day/atmos/va/'+run+'/va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			os.chdir('../')
+			print(glob.glob('tmp/va*'))
+			for tmp_file in glob.glob('tmp/va*'):
+				tmp_file=tmp_file.split('/')[-1]
+				subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+			subprocess.Popen('cdo -O -mergetime tmp/3_va* tmp_va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			os.system('rm tmp/*')
+
+		# EKE
+		subprocess.Popen('cdo -O -merge tmp_ua_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc UV_'+model+'_All-Hist_est1_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+		subprocess.Popen('cdo expr,EKE="(ua^2+va^2)/2" UV_'+model+'_All-Hist_est1_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_All-Hist_est1_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+		os.system('rm tmp_ua_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_All-Hist_est1_'+version+'_'+run+'.nc')

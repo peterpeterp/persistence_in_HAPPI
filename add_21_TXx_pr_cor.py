@@ -40,6 +40,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				command+='-selyear,'+selyears+' -monmax '+subfile+' '
 			subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
+
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
 	TXx_file_name=working_path+'TXx_'+model+'_'+scenario+'.nc'
@@ -61,3 +62,16 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	# for pctl in [str(qu) for qu in [0,5,10,50,90,95,100]]:
 	# 	FNULL = open(working_path+'log_summary', 'w')
 	# 	subprocess.Popen('cdo -O enspctl,'+pctl+' '+working_path+scenario+'/corTXxPr_* '+working_path+'/corTXxPr_'+model+'_'+scenario+'_'+pctl+'.nc', shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+
+'''
+bash alternative for NorESM1 ???
+
+
+pr:
+for run in {001..100};do cdo -O -selyear,2106/2116 /project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v2-0/mon/atmos/pr/run${run}/pr_Amon_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_run${run}_210601-211606.nc Plus20-Future/pr_Amon_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_run${run}.nc; done;
+
+TXx:
+for run in {001..100};do cdo -O -selyear,2106/2116 -monmax /project/projectdirs/m1517/C20C/NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/tasmax/run${run}/tasmax_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v1-0_run${run}_21060101-21160630.nc Plus20-Future/TXx_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_run${run}.nc; done;
+
+'''
