@@ -27,26 +27,31 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-		command='cdo -O mergetime '
-		for subfile in glob.glob(model_path+'mon/atmos/pr/'+run+'/*'):
-			command+='-selyear,'+selyears+' '+subfile+' '
-		subprocess.Popen(command+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+		if os.path.isfile(pr_file_name)==False:
+			command='cdo -O mergetime '
+			for subfile in glob.glob(model_path+'mon/atmos/pr/'+run+'/*'):
+				command+='-selyear,'+selyears+' '+subfile+' '
+			subprocess.Popen(command+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 		# TXx
 		TXx_file_name=working_path+scenario+'/'+glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')[0].split('/')[-1].split(run)[0].replace('tasmax','TXx')+run+'.nc'
-		command='cdo -O mergetime '
-		for subfile in glob.glob(model_path+'day/atmos/tasmax/'+run+'/*'):
-			command+='-selyear,'+selyears+' -monmax '+subfile+' '
-		subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+		if os.path.isfile(TXx_file_name)==False:
+			command='cdo -O mergetime '
+			for subfile in glob.glob(model_path+'day/atmos/tasmax/'+run+'/*'):
+				command+='-selyear,'+selyears+' -monmax '+subfile+' '
+			subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
 	TXx_file_name=working_path+'TXx_'+model+'_'+scenario+'.nc'
 	subprocess.Popen('cdo mergetime '+working_path+scenario+'/TXx_* '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-	os.system('rm '+working_path+scenario+'/TXx_*')
+	if os.path.isfile(TXx_file_name) and False:
+		os.system('rm '+working_path+scenario+'/TXx_*')
+
 	pr_file_name=working_path+'pr_'+model+'_'+scenario+'.nc'
 	subprocess.Popen('cdo mergetime '+working_path+scenario+'/pr_* '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-	os.system('rm '+working_path+scenario+'/pr_*')
+	if os.path.isfile(pr_file_name) and False:
+		os.system('rm '+working_path+scenario+'/pr_*')
 
 	cor_JJA_name=working_path+'corTXxPr_'+model+'_'+scenario+'_JJA.nc'
 	subprocess.Popen('cdo -O timcor -selmon,6/8 '+TXx_file_name+'  -selmon,6/8 '+pr_file_name+' '+cor_JJA_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()

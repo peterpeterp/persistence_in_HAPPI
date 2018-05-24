@@ -26,9 +26,9 @@ for model in out.model:
 	working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
 	grid=model_dict[model]['grid']
 
-	masks=da.read_nc('../masks/srex_mask_'+model+'.nc')
+	masks=da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 
-	for scenario,selyears in out.scenario:
+	for scenario in out.scenario:
 		for seas in out.season:
 			cor=da.read_nc(working_path+'corTXxPr_'+model+'_'+scenario+'_'+seas+'.nc')
 			for reg in out.region:
@@ -38,3 +38,6 @@ for model in out.model:
 				values=cor.copy()*mask
 				out[model,scenario,seas,reg,'mean']=np.nanmean(values)
 				out[model,scenario,seas,reg,['0','0.05','1/6','0.5','5/6.','0.95','1']]=np.nanpercentile(values,[0,5,1/6.*100,50,5/6.*100,95,100])
+
+				print(out[model,scenario,seas,reg,:])
+				asdas
