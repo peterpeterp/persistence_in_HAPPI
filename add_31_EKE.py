@@ -68,8 +68,11 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 						out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 					if tape_dict[model][scenario].split('.')[-1]=='nc':
 						out=subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+					if len(glob.glob(var+'*'+run+'*'))==1:
+						subprocess.Popen('cdo -O -splityear '+glob.glob(var+'*'+run+'*')[0],shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 					os.chdir('../')
-					for tmp_file in glob.glob('tmp/*'):
+					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
 						tmp_file=tmp_file.split('/')[-1]
 						subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 						subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
