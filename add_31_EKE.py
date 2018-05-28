@@ -23,7 +23,15 @@ full_model=model_dict[model]['full_model']
 DIFFERENT FILE STRUCTURES IN TAPE :(
 
 '''
+tape_dict={
+	'MIROC5':{
+		'Plus20-Future':'/home/s/stoned/C20C/MIROC/MIROC5/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus20-Future_CMIP5-MMM-est1_***version***_***run***.tar',
+		'Plus15-Future':'/home/s/stoned/C20C/MIROC/MIROC5/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus15-Future_CMIP5-MMM-est1_***version***_***run***.tar',
+		'All-Hist':'/home/s/stoned/C20C/MIROC/MIROC5/est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_All-Hist_est1_***version***_***run***.tar'
+	},
 
+
+}
 
 
 for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CMIP5-MMM-est1','CMIP5-MMM-est1','est1']):
@@ -34,39 +42,23 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 	version=model_dict[model]['version'][scenario]
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
-	for run in run_list:
+	for run in run_list[0:2]:
 		FNULL = open(working_path+scenario+'/log_'+run, 'w')
 
-		# u wind
-		if os.path.isfile('tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
-			os.chdir('tmp')
-			out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/'+full_model+'/'+scenario+'/'+est_thingi+'/'+version+'/day/atmos/ua/'+run+'/ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			os.chdir('../')
-			print(glob.glob('tmp/ua*'))
-			for tmp_file in glob.glob('tmp/ua*'):
-				tmp_file=tmp_file.split('/')[-1]
-				subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-				subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-				subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+		for var in ['ua','va']:
+			if os.path.isfile('tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
+				os.chdir('tmp')
+				out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				os.chdir('../')
+				print(glob.glob('tmp/'+var+'*'))
+				for tmp_file in glob.glob('tmp/'+var+'*'):
+					tmp_file=tmp_file.split('/')[-1]
+					subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
-			subprocess.Popen('cdo -O -mergetime tmp/3_ua* tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			os.system('rm tmp/*')
-
-
-		# v wind
-		if os.path.isfile('tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
-			os.chdir('tmp')
-			out=subprocess.Popen('htar -xvf /home/s/stoned/C20C/'+full_model+'/'+scenario+'/'+est_thingi+'/'+version+'/day/atmos/va/'+run+'/va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.tar',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			os.chdir('../')
-			print(glob.glob('tmp/va*'))
-			for tmp_file in glob.glob('tmp/va*'):
-				tmp_file=tmp_file.split('/')[-1]
-				subprocess.Popen('cdo -O -sellevel,85000 tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-				subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-				subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-
-			subprocess.Popen('cdo -O -mergetime tmp/3_va* tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			os.system('rm tmp/*')
+				subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				os.system('rm tmp/*')
 
 		# EKE
 		subprocess.Popen('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
