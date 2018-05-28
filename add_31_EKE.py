@@ -70,9 +70,10 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 						out=subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
-						subprocess.Popen('cdo -O -splityear '+glob.glob(var+'*'+run+'*')[0],shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						orig_file=glob.glob(var+'*'+run+'*')[0]
+						subprocess.Popen('cdo -O -splityear '+orig_file+' '+'_'.join([var,model,scenario,run])+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						os.system('rm '+orig_file)
 
-					asdasd
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
 						tmp_file=tmp_file.split('/')[-1]
