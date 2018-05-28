@@ -21,7 +21,7 @@ full_model=model_dict[model]['full_model']
 '''
 DIFFERENT FILE STRUCTURES IN TAPE:
 check with
-hsi -q "cd /home/s/stoned/C20C/ETH/CAM4-2degree/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/ua/ens0003/ ; ls ; quit"
+hsi -q "cd /home/s/stoned/C20C/ETH/CAM4-2degree/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/ua/ens0002/ ; ls ; quit"
 '''
 
 tape_dict={
@@ -64,7 +64,10 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 				if os.path.isfile('tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
 					os.system('rm tmp/*')
 					os.chdir('tmp')
-					out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					if tape_dict[model][scenario].split('.')[-1]=='tar':
+						out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					if tape_dict[model][scenario].split('.')[-1]=='nc':
+						out=subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/*'):
 						tmp_file=tmp_file.split('/')[-1]
