@@ -15,6 +15,8 @@ working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
+os.system('module load cdo/1.7.0')
+os.system('cdo -V')
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2116','2106/2116','2006/2016']):
 	os.system('export SKIP_SAME_TIME=1')

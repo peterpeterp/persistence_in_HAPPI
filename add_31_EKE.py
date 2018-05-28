@@ -18,6 +18,13 @@ in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 full_model=model_dict[model]['full_model']
 
+'''
+
+DIFFERENT FILE STRUCTURES IN TAPE :(
+
+'''
+
+
 
 for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CMIP5-MMM-est1','CMIP5-MMM-est1','est1']):
 	os.system('export SKIP_SAME_TIME=1')
