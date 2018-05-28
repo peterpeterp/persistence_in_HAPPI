@@ -71,6 +71,8 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
 						subprocess.Popen('cdo -O -splityear '+glob.glob(var+'*'+run+'*')[0],shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+
+					asdasd
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
 						tmp_file=tmp_file.split('/')[-1]
