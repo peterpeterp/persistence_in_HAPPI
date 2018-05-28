@@ -21,13 +21,14 @@ full_model=model_dict[model]['full_model']
 '''
 
 DIFFERENT FILE STRUCTURES IN TAPE :(
-
+check with
+hsi -q "cd /home/s/stoned/C20C/MIROC/MIROC5/Plus20-Future/CMIP5-MMM-est1/ ; ls ; quit"
 '''
 tape_dict={
 	'MIROC5':{
-		'Plus20-Future':'/home/s/stoned/C20C/MIROC/MIROC5/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus20-Future_CMIP5-MMM-est1_***version***_***run***.tar',
-		'Plus15-Future':'/home/s/stoned/C20C/MIROC/MIROC5/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus15-Future_CMIP5-MMM-est1_***version***_***run***.tar',
-		'All-Hist':'/home/s/stoned/C20C/MIROC/MIROC5/est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_All-Hist_est1_***version***_***run***.tar'
+		'Plus20-Future':'/home/s/stoned/C20C/MIROC/MIROC5/Plus20-Future/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus20-Future_CMIP5-MMM-est1_***version***_***run***.tar',
+		'Plus15-Future':'/home/s/stoned/C20C/MIROC/MIROC5/Plus15-Future/CMIP5-MMM-est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_Plus15-Future_CMIP5-MMM-est1_***version***_***run***.tar',
+		'All-Hist':'/home/s/stoned/C20C/MIROC/MIROC5/All-Hist/est1/***version***/day/atmos/***var***/***run***/***var***_Aday_MIROC5_All-Hist_est1_***version***_***run***.tar'
 	},
 
 
