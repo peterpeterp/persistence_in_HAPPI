@@ -15,7 +15,6 @@ working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
-os.system('module load cdo/1.7.0')
 os.system('cdo -V')
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2116','2106/2116','2006/2016']):
@@ -29,19 +28,26 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 		if os.path.isfile(pr_file_name)==False or True:
-			command='cdo -O mergetime '
-			for subfile in glob.glob(model_path+'mon/atmos/pr/'+run+'/*'):
-				command+='-selyear,'+selyears+' '+subfile+' '
-			subprocess.Popen(command+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
+			if len(run_files)>1:
+				command='cdo -O mergetime '
+				for subfile in run_files:
+					command+='-selyear,'+selyears+' '+subfile+' '
+				subprocess.Popen(command+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			else:
+				subprocess.Popen('scp '+run_files[0]+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 		# TXx
 		TXx_file_name=working_path+scenario+'/'+glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')[0].split('/')[-1].split(run)[0].replace('tasmax','TXx')+run+'.nc'
 		if os.path.isfile(TXx_file_name)==False or True:
-			command='cdo -O mergetime '
-			for subfile in glob.glob(model_path+'day/atmos/tasmax/'+run+'/*'):
-				command+='-selyear,'+selyears+' -monmax '+subfile+' '
-			subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-
+			run_files=glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')
+			if len(run_files)>1:
+				command='cdo -O mergetime '
+				for subfile in run_files:
+					command+='-selyear,'+selyears+' -monmax '+subfile+' '
+				subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			else:
+				subprocess.Popen('cdo -O monmax '+run_files[0+' ']+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
