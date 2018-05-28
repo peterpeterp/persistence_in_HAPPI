@@ -72,7 +72,6 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 					subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 				subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-				asdas
 				os.system('rm tmp/*')
 
 		# EKE
