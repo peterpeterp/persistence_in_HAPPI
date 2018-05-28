@@ -58,7 +58,7 @@ for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CM
 	version=model_dict[model]['version'][scenario]
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 	for run in run_list:
-		if os.path.ifile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
+		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			for var in ['ua','va']:
 				if os.path.isfile('tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
