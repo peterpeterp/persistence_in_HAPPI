@@ -57,7 +57,7 @@ tape_dict={
 
 
 for scenario in scenarios:
-	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}
+	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 	os.chdir(working_path+scenario)
