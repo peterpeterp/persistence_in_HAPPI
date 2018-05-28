@@ -15,6 +15,8 @@ working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
+overwrite=True
+
 os.system('cdo -V')
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
@@ -27,7 +29,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-		if os.path.isfile(pr_file_name)==False or True:
+		if os.path.isfile(pr_file_name)==False or overwrite:
 			run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
 			if len(run_files)>1:
 				command='cdo -O mergetime '
@@ -39,7 +41,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 		# TXx
 		TXx_file_name=working_path+scenario+'/'+glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')[0].split('/')[-1].split(run)[0].replace('tasmax','TXx')+run+'.nc'
-		if os.path.isfile(TXx_file_name)==False or True:
+		if os.path.isfile(TXx_file_name)==False or overwrite:
 			run_files=glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')
 			if len(run_files)>1:
 				command='cdo -O mergetime '
