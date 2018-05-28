@@ -10,7 +10,13 @@ import __settings
 model_dict=__settings.model_dict
 
 model=sys.argv[1]
-print model
+
+if sys.argv[2] is not None:
+	scenarios=[sys.argv[2]]
+else:
+	scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+
+print model,scenarios
 
 if os.path.isdir('/global/cscratch1/sd/pepflei/EKE/'+model)==False: os.system('mkdir '+'/global/cscratch1/sd/pepflei/EKE/'+model)
 working_path='/global/cscratch1/sd/pepflei/EKE/'+model+'/'
@@ -50,7 +56,8 @@ tape_dict={
 }
 
 
-for scenario,est_thingi in zip(['Plus20-Future','Plus15-Future','All-Hist'],['CMIP5-MMM-est1','CMIP5-MMM-est1','est1']):
+for scenario in scenarios:
+	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}:
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 	os.chdir(working_path+scenario)
