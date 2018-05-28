@@ -47,7 +47,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					command+='-selyear,'+selyears+' -monmax '+subfile+' '
 				subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 			else:
-				subprocess.Popen('cdo -O monmax '+run_files[0+' ']+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O monmax '+run_files[0]+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
