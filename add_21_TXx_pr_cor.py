@@ -17,7 +17,7 @@ grid=model_dict[model]['grid']
 
 os.system('cdo -V')
 
-for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2116','2106/2116','2006/2016']):
+for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
@@ -35,7 +35,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					command+='-selyear,'+selyears+' '+subfile+' '
 				subprocess.Popen(command+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 			else:
-				subprocess.Popen('scp '+run_files[0]+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 		# TXx
 		TXx_file_name=working_path+scenario+'/'+glob.glob(model_path+'day/atmos/tasmax/'+run+'/*')[0].split('/')[-1].split(run)[0].replace('tasmax','TXx')+run+'.nc'
@@ -47,7 +47,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					command+='-selyear,'+selyears+' -monmax '+subfile+' '
 				subprocess.Popen(command+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 			else:
-				subprocess.Popen('cdo -O monmax '+run_files[0]+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+				subprocess.Popen('cdo -O monmax -selyear,'+selyears+' '+run_files[0]+' '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
