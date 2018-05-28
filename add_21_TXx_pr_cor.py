@@ -52,12 +52,12 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	FNULL = open(working_path+scenario+'/log_all', 'w')
 	os.system('export SKIP_SAME_TIME=0')
 	TXx_file_name=working_path+'TXx_'+model+'_'+scenario+'.nc'
-	subprocess.Popen('cdo mergetime '+working_path+scenario+'/TXx_* '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+	subprocess.Popen('cdo -O mergetime '+working_path+scenario+'/TXx_* '+TXx_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 	if os.path.isfile(TXx_file_name) and False:
 		os.system('rm '+working_path+scenario+'/TXx_*')
 
 	pr_file_name=working_path+'pr_'+model+'_'+scenario+'.nc'
-	subprocess.Popen('cdo mergetime '+working_path+scenario+'/pr_* '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+	subprocess.Popen('cdo -O mergetime '+working_path+scenario+'/pr_* '+pr_file_name, shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 	if os.path.isfile(pr_file_name) and False:
 		os.system('rm '+working_path+scenario+'/pr_*')
 
