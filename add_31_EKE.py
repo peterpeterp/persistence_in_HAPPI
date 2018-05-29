@@ -3,7 +3,27 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
-import subprocess
+
+import subprocess as sub
+import threading
+
+class RunCmd(threading.Thread):
+    def __init__(self, cmd, timeout):
+        threading.Thread.__init__(self)
+        self.cmd = cmd
+        self.timeout = timeout
+
+    def run(self):
+        self.p = sub.Popen(self.cmd)
+        self.p.wait()
+
+    def Run(self):
+        self.start()
+        self.join(self.timeout)
+
+        if self.is_alive():
+            self.p.terminate()      #use self.p.kill() if process needs a kill -9
+            self.join()
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
@@ -73,30 +93,30 @@ for scenario in scenarios:
 					os.system('rm tmp/'+var+'*'+run+'*')
 					os.chdir('tmp')
 					if tape_dict[model][scenario].split('.')[-1]=='tar':
-						out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						RunCmd('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),300).Run()
 					if tape_dict[model][scenario].split('.')[-1]=='nc':
-						out=subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						RunCmd('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',300).Run()
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
 						orig_file=glob.glob(var+'*'+run+'*')[0]
-						out=subprocess.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-						out=subprocess.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						RunCmd('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),300).Run()
+						RunCmd('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',300).Run()
 						out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
 						tmp_file=tmp_file.split('/')[-1]
-						out=subprocess.Popen('cdo -O -sellevel,85000 -selyear,'+selyears+' tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-						out=subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-						out=subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						RunCmd('cdo -O -sellevel,85000 -selyear,'+selyears+' tmp/'+tmp_file+' tmp/1_'+tmp_file,300).Run()
+						RunCmd('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,300).Run()
+						RunCmd('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,300).Run()
 
-					out=subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					RunCmd('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',300).Run()
 					out=os.system('rm tmp/*'+var+'*'+run+'*')
 
 			# EKE
-			out=subprocess.Popen('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			out=subprocess.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-			out=subprocess.Popen('cdo -O -monmean tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			RunCmd('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',600).Run()
+			RunCmd('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',600).Run()
+			RunCmd('cdo -O -monmean tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',300).Run()
 
 			process = psutil.Process(os.getpid())
 			print(process.memory_info()[0])
