@@ -56,7 +56,8 @@ tape_dict={
 }
 
 
-for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
+for scenario in scenarios:
+	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
 	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
