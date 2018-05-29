@@ -80,8 +80,9 @@ for scenario in scenarios:
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
 						orig_file=glob.glob(var+'*'+run+'*')[0]
-						subprocess.Popen('cdo -O -splityear -selyear,'+selyears+' '+orig_file+' '+'_'.join([var,model,scenario,run])+'_',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-						os.system('rm '+orig_file)
+						subprocess.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						subprocess.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
