@@ -1,4 +1,4 @@
-import os,sys,glob,time,collections,gc
+import os,sys,glob,time,collections,gc,psutil
 import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
@@ -67,37 +67,43 @@ for scenario in scenarios:
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 	for run in run_list:
 		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
+			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			for var in ['ua','va']:
 				if os.path.isfile('tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
 					os.system('rm tmp/'+var+'*'+run+'*')
 					os.chdir('tmp')
 					if tape_dict[model][scenario].split('.')[-1]=='tar':
-						subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True).wait()
+						out=subprocess.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run), stdout=FNULL, stderr=subprocess.STDOUT).wait()
 					if tape_dict[model][scenario].split('.')[-1]=='nc':
-						subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True).wait()
+						out=subprocess.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"', stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
 						orig_file=glob.glob(var+'*'+run+'*')[0]
-						subprocess.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),shell=True).wait()
-						subprocess.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',shell=True).wait()
-						os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
+						out=subprocess.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'), stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						out=subprocess.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_', stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
 					os.chdir('../')
 					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
 						tmp_file=tmp_file.split('/')[-1]
-						subprocess.Popen('cdo -O -sellevel,85000 -selyear,'+selyears+' tmp/'+tmp_file+' tmp/1_'+tmp_file,shell=True).wait()
-						subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,shell=True).wait()
-						subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True).wait()
+						out=subprocess.Popen('cdo -O -sellevel,85000 -selyear,'+selyears+' tmp/'+tmp_file+' tmp/1_'+tmp_file, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						out=subprocess.Popen('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						out=subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
-					subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True).wait()
-					os.system('rm tmp/*'+var+'*'+run+'*')
+					out=subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc', stdout=FNULL, stderr=subprocess.STDOUT).wait()
+					out=os.system('rm tmp/*'+var+'*'+run+'*')
 
 			# EKE
-			subprocess.Popen('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True).wait()
-			subprocess.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True).wait()
-			subprocess.Popen('cdo -O -monmean tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True).wait()
+			out=subprocess.Popen('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc', stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			out=subprocess.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc', stdout=FNULL, stderr=subprocess.STDOUT).wait()
+			out=subprocess.Popen('cdo -O -monmean tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc', stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
+			process = psutil.Process(os.getpid())
+			print(process.memory_info()[0])
 			del out
 			gc.collect()
+			FNULL.close()
+			process = psutil.Process(os.getpid())
+			print(process.memory_info()[0])
 
 			os.system('rm tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')
