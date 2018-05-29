@@ -14,7 +14,7 @@ class RunCmd(threading.Thread):
         self.timeout = timeout
 
     def run(self):
-        self.p = sub.Popen(self.cmd)
+        self.p = sub.Popen(self.cmd,shell=True)
         self.p.wait()
 
     def Run(self):
