@@ -80,7 +80,7 @@ for scenario in scenarios:
 
 					if len(glob.glob(var+'*'+run+'*'))==1:
 						orig_file=glob.glob(var+'*'+run+'*')[0]
-						subprocess.Popen('cdo -O -splityear '+orig_file+' '+'_'.join([var,model,scenario,run])+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
+						subprocess.Popen('cdo -O -splityear -selyear,'+selyears+' '+orig_file+' '+'_'.join([var,model,scenario,run])+'_',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 						os.system('rm '+orig_file)
 
 					os.chdir('../')
@@ -91,7 +91,7 @@ for scenario in scenarios:
 						subprocess.Popen('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
 
 					subprocess.Popen('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
-					os.system('rm tmp/'+var+'*'+run+'*')
+					os.system('rm tmp/*'+var+'*'+run+'*')
 
 			# EKE
 			subprocess.Popen('cdo -O -merge -selyear,'+selyears+' tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc -selyear,'+selyears+' tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',shell=True, stdout=FNULL, stderr=subprocess.STDOUT).wait()
