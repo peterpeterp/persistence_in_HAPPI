@@ -89,9 +89,9 @@ for scenario in scenarios:
 				os.system('rm tmp/'+var+'*'+run+'*')
 				os.chdir('tmp')
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
-					proc=sub.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True); wait_timeout(proc,60)
+					proc=sub.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True); wait_timeout(proc,600)
 				if tape_dict[model][scenario].split('.')[-1]=='nc':
-					proc=sub.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True); wait_timeout(proc,60)
+					proc=sub.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True); wait_timeout(proc,600)
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file=glob.glob(var+'*'+run+'*')[0]
