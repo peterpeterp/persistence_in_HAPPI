@@ -7,23 +7,20 @@ import dimarray as da
 import subprocess as sub
 import threading
 
-class RunCmd(threading.Thread):
-    def __init__(self, cmd, timeout):
-        threading.Thread.__init__(self)
-        self.cmd = cmd
-        self.timeout = timeout
+def wait_timeout(proc, seconds):
+    """Wait for a process to finish, or raise exception after timeout"""
+    start = time.time()
+    end = start + seconds
+    interval = min(seconds / 1000.0, .25)
 
-    def run(self):
-        self.p = sub.Popen(self.cmd,shell=True)
-        self.p.wait()
+    while True:
+        result = proc.poll()
+        if result is not None:
+            return result
+        if time.time() >= end:
+            raise RuntimeError("Process timed out")
+        time.sleep(interval)
 
-    def Run(self):
-        self.start()
-        self.join(self.timeout)
-
-        if self.is_alive():
-            self.p.terminate()      #use self.p.kill() if process needs a kill -9
-            self.join()
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
@@ -89,41 +86,48 @@ for scenario in scenarios:
 		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			for var in ['ua','va']:
-				if os.path.isfile('tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc')==False:
-					os.system('rm tmp/'+var+'*'+run+'*')
-					os.chdir('tmp')
-					if tape_dict[model][scenario].split('.')[-1]=='tar':
-						RunCmd('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),300).Run()
-					if tape_dict[model][scenario].split('.')[-1]=='nc':
-						RunCmd('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',300).Run()
+				os.system('rm tmp/'+var+'*'+run+'*')
+				os.chdir('tmp')
+				if tape_dict[model][scenario].split('.')[-1]=='tar':
+					proc=sub.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True); wait_timeout(proc,60)
+				if tape_dict[model][scenario].split('.')[-1]=='nc':
+					proc=sub.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True); wait_timeout(proc,60)
 
-					if len(glob.glob(var+'*'+run+'*'))==1:
-						orig_file=glob.glob(var+'*'+run+'*')[0]
-						RunCmd('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),300).Run()
-						RunCmd('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',300).Run()
-						out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
+				if len(glob.glob(var+'*'+run+'*'))==1:
+					orig_file=glob.glob(var+'*'+run+'*')[0]
+					proc=sub.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),shell=True); wait_timeout(proc,60)
+					proc=sub.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',shell=True); wait_timeout(proc,60)
+					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
-					os.chdir('../')
-					for tmp_file in glob.glob('tmp/'+var+'*'+run+'*'):
-						tmp_file=tmp_file.split('/')[-1]
-						RunCmd('cdo -O -sellevel,85000 -selyear,'+selyears+' tmp/'+tmp_file+' tmp/1_'+tmp_file,300).Run()
-						RunCmd('cdo -O -setmisstoc,0 tmp/1_'+tmp_file+' tmp/2_'+tmp_file,300).Run()
-						RunCmd('cdo -O bandpass,36,180 tmp/2_'+tmp_file+' tmp/3_'+tmp_file,300).Run()
 
-					RunCmd('cdo -O -mergetime tmp/3_'+var+'* tmp_'+var+'_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc',300).Run()
-					out=os.system('rm tmp/*'+var+'*'+run+'*')
+				for tmp_file in glob.glob(var+'*'+run+'*'):
+					tmp_file=tmp_file.split('/')[-1]
+					proc=sub.Popen('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,shell=True); wait_timeout(proc,60)
+					proc=sub.Popen('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,shell=True); wait_timeout(proc,60)
+					proc=sub.Popen('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,shell=True); wait_timeout(proc,600)
 
-			# EKE
-			RunCmd('cdo -O -merge tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',600).Run()
-			RunCmd('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 UV_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',600).Run()
-			RunCmd('cdo -O -monmean tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc',300).Run()
+            for tmp_file in glob.glob('3_ua*'+run+'*'):
+                proc=sub.Popen('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),shell=True); wait_timeout(proc,60)
+                proc=sub.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),shell=True); wait_timeout(proc,60)
+                proc=sub.Popen('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),shell=True); wait_timeout(proc,60)
 
-			process = psutil.Process(os.getpid())
-			print(process.memory_info()[0])
-			del out
-			gc.collect()
-			FNULL.close()
-			process = psutil.Process(os.getpid())
-			print(process.memory_info()[0])
+			out=os.system('rm tmp/*'+var+'*'+run+'*')
 
-			os.system('rm tmp_ua_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_va_Aday_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'.nc tmp_EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
