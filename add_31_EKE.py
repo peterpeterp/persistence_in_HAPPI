@@ -8,18 +8,18 @@ import subprocess as sub
 import threading
 
 def wait_timeout(proc, seconds):
-    """Wait for a process to finish, or raise exception after timeout"""
-    start = time.time()
-    end = start + seconds
-    interval = min(seconds / 1000.0, .25)
+	"""Wait for a process to finish, or raise exception after timeout"""
+	start = time.time()
+	end = start + seconds
+	interval = min(seconds / 1000.0, .25)
 
-    while True:
-        result = proc.poll()
-        if result is not None:
-            return result
-        if time.time() >= end:
-            raise RuntimeError("Process timed out")
-        time.sleep(interval)
+	while True:
+		result = proc.poll()
+		if result is not None:
+			return result
+		if time.time() >= end:
+			raise RuntimeError("Process timed out")
+		time.sleep(interval)
 
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
@@ -106,10 +106,10 @@ for scenario in scenarios:
 					proc=sub.Popen('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,shell=True); wait_timeout(proc,60)
 					proc=sub.Popen('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,shell=True); wait_timeout(proc,600)
 
-            for tmp_file in glob.glob('3_ua*'+run+'*'):
-                proc=sub.Popen('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),shell=True); wait_timeout(proc,60)
-                proc=sub.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),shell=True); wait_timeout(proc,60)
-                proc=sub.Popen('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),shell=True); wait_timeout(proc,60)
+			for tmp_file in glob.glob('3_ua*'+run+'*'):
+				proc=sub.Popen('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),shell=True); wait_timeout(proc,60)
+				proc=sub.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),shell=True); wait_timeout(proc,60)
+				proc=sub.Popen('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),shell=True); wait_timeout(proc,60)
 
 			out=os.system('rm tmp/*'+var+'*'+run+'*')
 
