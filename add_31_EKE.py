@@ -122,7 +122,8 @@ for scenario in scenarios:
 				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
 			out=os.system('rm tmp/*'+run+'*')
 
-
+	os.chdir('../')
+	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario'/*EKE*" EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
 
 
 
