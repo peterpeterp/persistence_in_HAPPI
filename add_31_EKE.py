@@ -110,7 +110,7 @@ for scenario in scenarios:
 
 				for tmp_file in glob.glob(var+'*'+run+'*'):
 					tmp_file=tmp_file.split('/')[-1]
-					result=try_several_times('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 '+tmp_file+' 1_'+tmp_file,5,60)
 					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
 					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
 
@@ -118,6 +118,7 @@ for scenario in scenarios:
 				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
 				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
 				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),5,60)
+			os.chdir('../')
 			out=os.system('rm tmp/*'+var+'*'+run+'*')
 
 
