@@ -1,11 +1,9 @@
-import os,sys,glob,time,collections,gc,psutil
+import os,sys,glob,time,collections,gc,psutil,signal
 import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
-
 import subprocess as sub
-import threading
 
 def wait_timeout(proc, seconds):
 	"""Wait for a process to finish, or raise exception after timeout"""
@@ -18,8 +16,18 @@ def wait_timeout(proc, seconds):
 		if result is not None:
 			return result
 		if time.time() >= end:
-			raise RuntimeError("Process timed out")
+			os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+			return 'failed'
 		time.sleep(interval)
+
+
+def try_several_times(command,trials,seconds):
+	for trial in range(trials):
+		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
+		result=wait_timeout(proc,seconds)
+		if result!='failed':
+			break
+	return(result)
 
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
@@ -89,28 +97,21 @@ for scenario in scenarios:
 				os.system('rm tmp/'+var+'*'+run+'*')
 				os.chdir('tmp')
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
-					proc=sub.Popen('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),shell=True); wait_timeout(proc,600)
+					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
 				if tape_dict[model][scenario].split('.')[-1]=='nc':
-					proc=sub.Popen('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',shell=True); wait_timeout(proc,600)
+					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file=glob.glob(var+'*'+run+'*')[0]
-					proc=sub.Popen('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),shell=True); wait_timeout(proc,60)
-					proc=sub.Popen('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',shell=True); wait_timeout(proc,60)
-					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
 
 				for tmp_file in glob.glob(var+'*'+run+'*'):
 					tmp_file=tmp_file.split('/')[-1]
-					proc=sub.Popen('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,shell=True); wait_timeout(proc,60)
-					proc=sub.Popen('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,shell=True); wait_timeout(proc,60)
-					proc=sub.Popen('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,shell=True); wait_timeout(proc,600)
+					result=try_several_times('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,5,60)					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
 
 			for tmp_file in glob.glob('3_ua*'+run+'*'):
-				proc=sub.Popen('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),shell=True); wait_timeout(proc,60)
-				proc=sub.Popen('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),shell=True); wait_timeout(proc,60)
-				proc=sub.Popen('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),shell=True); wait_timeout(proc,60)
-
+				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),5,60)
 			out=os.system('rm tmp/*'+var+'*'+run+'*')
 
 
