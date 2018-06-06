@@ -103,15 +103,21 @@ for scenario in scenarios:
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file=glob.glob(var+'*'+run+'*')[0]
-					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)
+					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)
+					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
 
 				for tmp_file in glob.glob(var+'*'+run+'*'):
 					tmp_file=tmp_file.split('/')[-1]
-					result=try_several_times('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,5,60)					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
+					result=try_several_times('cdo -O -sellevel,85000 -selyear,'+selyears+' '+tmp_file+' 1_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
+					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
 
 			for tmp_file in glob.glob('3_ua*'+run+'*'):
-				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),5,60)
+				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
+				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
+				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),5,60)
 			out=os.system('rm tmp/*'+var+'*'+run+'*')
 
 
