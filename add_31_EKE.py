@@ -123,7 +123,7 @@ for scenario in scenarios:
 			out=os.system('rm tmp/*'+run+'*')
 
 	os.chdir('../')
-	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario'/*EKE*" EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
+	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
 
 
 
