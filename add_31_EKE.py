@@ -90,12 +90,11 @@ for scenario in scenarios:
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 	version=model_dict[model]['version'][scenario]
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
+	os.chdir('tmp')
 	for run in run_list:
 		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			for var in ['ua','va']:
-				os.system('rm tmp/'+var+'*'+run+'*')
-				os.chdir('tmp')
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
 					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
 				if tape_dict[model][scenario].split('.')[-1]=='nc':
@@ -118,8 +117,7 @@ for scenario in scenarios:
 				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
 				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
 				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+'../'+tmp_file.replace('3_ua','monEKE'),5,60)
-			os.chdir('../')
-			out=os.system('rm tmp/*'+var+'*'+run+'*')
+			out=os.system('rm *'+var+'*'+run+'*')
 
 
 
