@@ -119,7 +119,7 @@ for scenario in scenarios:
 			for tmp_file in glob.glob('tmp/3_ua*'+run+'*'):
 				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
 				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
-				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' ../'+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
+				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
 			out=os.system('rm tmp/*'+run+'*')
 
 
