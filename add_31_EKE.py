@@ -94,6 +94,7 @@ for scenario in scenarios:
 	for run in run_list:
 		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
+			out=os.system('rm tmp/*'+run+'*')
 			os.chdir('tmp')
 			for var in ['ua','va']:
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
