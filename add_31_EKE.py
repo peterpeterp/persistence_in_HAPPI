@@ -111,7 +111,8 @@ for scenario in scenarios:
 
 				for tmp_file in glob.glob(var+'*'+run+'*'):
 					tmp_file=tmp_file.split('/')[-1]
-					result=try_several_times('cdo -O -sellevel,85000 '+tmp_file+' 1_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+tmp_file+' 0_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 0_'+tmp_file+' 1_'+tmp_file,5,60)
 					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
 					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
 
