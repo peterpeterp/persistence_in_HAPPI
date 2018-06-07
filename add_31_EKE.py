@@ -92,7 +92,7 @@ for scenario in scenarios:
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 
 	for run in run_list:
-		if os.path.isfile('EKE_'+model+'_'+scenario+'_'+est_thingi+'_'+version+'_'+run+'_850mbar.nc')==False:
+		if len(glob.glob('monEKE*'+run+'*'))==0:
 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			out=os.system('rm tmp/*'+run+'*')
 			os.chdir('tmp')
