@@ -47,4 +47,9 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	os.system('export SKIP_SAME_TIME=1')
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/mon/atmos/pr/'
-	result=try_several_times('cdo -O -ymonmean -selyear,'+selyears+' -ensmean -cat "'+model_path+'/*/*" pr_'+model+'_'+scenario+'_monClim.nc',5,600)
+	result=try_several_times('cdo -O -ymonmean -selyear,'+selyears+' -ensmean -cat "'+model_path+'/*/*" ../data/pr_'+model+'_'+scenario+'_monClim.nc',5,600)
+
+
+'''
+could think about a changedir in this script
+'''
