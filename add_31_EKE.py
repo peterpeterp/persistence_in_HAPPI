@@ -122,7 +122,7 @@ for scenario in scenarios:
 		# 		result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
 		# 	out=os.system('rm tmp/*'+run+'*')
 
-		result=try_several_times('cdo -O mergetime monEKE_*'+model+'_'+scenario+'_'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
+		result=try_several_times('cdo -O mergetime monEKE_*'+model+'*'+scenario+'*'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		if result!='failed':
 			os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
 	#
