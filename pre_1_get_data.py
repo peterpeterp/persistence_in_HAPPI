@@ -57,6 +57,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(tmp_path+'*')])[0:10]
 	for run in run_list:
+		run='ens0098'
 		start_time=time.time()
 
 		# get daily temp
