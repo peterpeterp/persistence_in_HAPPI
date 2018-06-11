@@ -126,6 +126,7 @@ tape_dict={
 # 	os.chdir('../')
 # 	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" /global/homes/p/pepflei/data/EKE/EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
 
+
 for scenario in scenarios:
 	os.system('export SKIP_SAME_TIME=1')
 	os.chdir(working_path+scenario)

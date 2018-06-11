@@ -90,7 +90,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
 
 		# persistence
-		get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True)
+		eke=da.read_nc('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc')['EKE'].values.squeeze()
+		get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True,EKE=eke)
 		print 'processing time:',time.time()-start_time
 
 		if os.path.isfile(raw_file.replace('.nc','_period.nc')):
