@@ -35,7 +35,7 @@ model_dict=__settings.model_dict
 model=sys.argv[1]
 print model
 
-working_path='/global/cscratch1/sd/pepflei/TXx_pr_cor/'+model+'/'
+working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
@@ -49,7 +49,6 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 	for run in run_list:
-		FNULL = open(working_path+scenario+'/log_'+run, 'w')
 
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
