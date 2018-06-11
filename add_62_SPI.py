@@ -46,7 +46,7 @@ os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
-	if scenario=sys.argv[2]:
+	if scenario==sys.argv[2]:
 		if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 		model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 		run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
