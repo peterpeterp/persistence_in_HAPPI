@@ -21,7 +21,7 @@ def wait_timeout(proc, seconds):
 		time.sleep(interval)
 
 
-def try_several_times(command,trials,seconds):
+def try_several_times(command,trials=1,seconds=60):
 	for trial in range(trials):
 		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
 		result=wait_timeout(proc,seconds)
