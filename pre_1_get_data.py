@@ -33,6 +33,9 @@ sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
 model_dict=__settings.model_dict
 
+sys.path.append('/global/homes/p/pepflei/weather_persistence/')
+from persistence_functions import *
+
 model=sys.argv[1]
 print model
 
