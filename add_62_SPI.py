@@ -57,9 +57,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			if len(run_files)>1:
 				command='cdo -O mergetime '
 				for subfile in run_files:
-					command+='-selyear,'+selyears+' '+subfile+' '
-				print(command)
-				result=try_several_times(command+' '+pr_file_name)
+					command+=subfile+' '
+				result=try_several_times(command+' '+pr_file_name.replace('.nc','_tmp.nc'))
+				result=try_several_times('cdo -selyear,'+selyears+' '+pr_file_name.replace('.nc','_tmp.nc')+' '+pr_file_name)
+				os.system('rm '+pr_file_name.replace('.nc','_tmp.nc'))
 			else:
 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
