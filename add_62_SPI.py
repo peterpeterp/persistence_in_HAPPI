@@ -35,6 +35,7 @@ model_dict=__settings.model_dict
 model=sys.argv[1]
 print model
 
+
 working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
@@ -42,27 +43,28 @@ grid=model_dict[model]['grid']
 overwrite=True
 
 os.system('cdo -V')
+os.system('export SKIP_SAME_TIME=1')
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
-	os.system('export SKIP_SAME_TIME=1')
-	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
-	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
-	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
-	for run in run_list:
+	if scenario=sys.argv[2]:
+		if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
+		model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
+		run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
+		for run in run_list:
 
-		# precipitation monthly
-		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-		if os.path.isfile(pr_file_name)==False or overwrite:
-			run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
-			if len(run_files)>1:
-				command='cdo -O mergetime '
-				for subfile in run_files:
-					command+=subfile+' '
-				result=try_several_times(command+' '+pr_file_name.replace('.nc','_tmp.nc'))
-				result=try_several_times('cdo -selyear,'+selyears+' '+pr_file_name.replace('.nc','_tmp.nc')+' '+pr_file_name)
-				os.system('rm '+pr_file_name.replace('.nc','_tmp.nc'))
-			else:
-				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
+			# precipitation monthly
+			pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			if os.path.isfile(pr_file_name)==False or overwrite:
+				run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
+				if len(run_files)>1:
+					command='cdo -O mergetime '
+					for subfile in run_files:
+						command+=subfile+' '
+					result=try_several_times(command+' '+pr_file_name.replace('.nc','_tmp.nc'))
+					result=try_several_times('cdo -selyear,'+selyears+' '+pr_file_name.replace('.nc','_tmp.nc')+' '+pr_file_name)
+					os.system('rm '+pr_file_name.replace('.nc','_tmp.nc'))
+				else:
+					result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
 
-			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/add_61_SPI.r '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' '+working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+				result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/add_61_SPI.r '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' '+working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
