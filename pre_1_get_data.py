@@ -35,6 +35,9 @@ model_dict=__settings.model_dict
 model=sys.argv[1]
 print model
 
+in_path=model_dict[model]['in_path']
+grid=model_dict[model]['grid']
+
 try:
 	os.chdir('/global/homes/p/pepflei/')
 	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
@@ -44,9 +47,6 @@ except:
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
-in_path=model_dict[model]['in_path']
-grid=model_dict[model]['grid']
-working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 	os.system('mkdir '+working_path+scenario)
