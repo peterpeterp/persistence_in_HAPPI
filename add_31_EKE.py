@@ -93,7 +93,6 @@ for scenario in scenarios:
 
 	for run in run_list:
 		if len(glob.glob('monEKE*'+run+'*'))==0:
-			FNULL = open(working_path+scenario+'/log_'+run, 'w')
 			out=os.system('rm tmp/*'+run+'*')
 			os.chdir('tmp')
 			for var in ['ua','va']:
@@ -126,7 +125,6 @@ for scenario in scenarios:
 		result=try_several_times('cdo -O mergetime monEKE_'+model+'_'+scenario+'_'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		if result!='failed':
 			os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
-
 
 	os.chdir('../')
 	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" /global/homes/p/pepflei/data/EKE/EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
