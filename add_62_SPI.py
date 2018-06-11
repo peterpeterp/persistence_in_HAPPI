@@ -58,6 +58,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				command='cdo -O mergetime '
 				for subfile in run_files:
 					command+='-selyear,'+selyears+' '+subfile+' '
+				print(command)
 				result=try_several_times(command+' '+pr_file_name)
 			else:
 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
