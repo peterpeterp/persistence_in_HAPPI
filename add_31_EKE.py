@@ -130,7 +130,7 @@ tape_dict={
 for scenario in scenarios:
 	os.system('export SKIP_SAME_TIME=1')
 	os.chdir(working_path+scenario)
-	run_list=sorted([path.split('/')[-1] for path in glob.glob('*EKE*06.nc')])
+	run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob('*EKE*06.nc')])
 
 	for run in run_list:
 		result=try_several_times('cdo -O mergetime monEKE_'+model+'_'+scenario+'_'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
