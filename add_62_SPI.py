@@ -62,4 +62,5 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			else:
 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
-			result=try_several_times('Rscript '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' SPI_'+model+'_'+scenario+'_'+run+'.nc',1,600)
+
+			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/add_61_SPI.r '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' SPI_'+model+'_'+scenario+'_'+run+'.nc',1,600)
