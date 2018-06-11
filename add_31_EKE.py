@@ -80,64 +80,56 @@ tape_dict={
 
 }
 
-# for scenario in scenarios:
-# 	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
-# 	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
-# 	os.system('export SKIP_SAME_TIME=1')
-# 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
-# 	os.chdir(working_path+scenario)
-# 	if os.path.isdir(working_path+scenario+'/tmp')==False: os.system('mkdir tmp')
-# 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
-# 	version=model_dict[model]['version'][scenario]
-# 	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
-#
-# 	for run in run_list:
-# 		if len(glob.glob('monEKE*'+run+'*'))==0:
-# 			FNULL = open(working_path+scenario+'/log_'+run, 'w')
-# 			out=os.system('rm tmp/*'+run+'*')
-# 			os.chdir('tmp')
-# 			for var in ['ua','va']:
-# 				if tape_dict[model][scenario].split('.')[-1]=='tar':
-# 					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
-# 				if tape_dict[model][scenario].split('.')[-1]=='nc':
-# 					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
-#
-# 				if len(glob.glob(var+'*'+run+'*'))==1:
-# 					orig_file=glob.glob(var+'*'+run+'*')[0]
-# 					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)
-# 					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)
-# 					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
-#
-#
-# 				for tmp_file in glob.glob(var+'*'+run+'*'):
-# 					tmp_file=tmp_file.split('/')[-1]
-# 					result=try_several_times('cdo -O -selyear,'+selyears+' '+tmp_file+' 0_'+tmp_file,5,60)
-# 					result=try_several_times('cdo -O -sellevel,85000 0_'+tmp_file+' 1_'+tmp_file,5,60)
-# 					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
-# 					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
-#
-# 			os.chdir('../')
-# 			for tmp_file in glob.glob('tmp/3_ua*'+run+'*'):
-# 				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
-# 				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
-# 				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
-# 			out=os.system('rm tmp/*'+run+'*')
-#
-# 	os.chdir('../')
-# 	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" /global/homes/p/pepflei/data/EKE/EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
-
-
 for scenario in scenarios:
+	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
+	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
 	os.system('export SKIP_SAME_TIME=1')
+	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
 	os.chdir(working_path+scenario)
-	run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob('*EKE*06.nc')])
+	if os.path.isdir(working_path+scenario+'/tmp')==False: os.system('mkdir tmp')
+	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
+	version=model_dict[model]['version'][scenario]
+	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
 
 	for run in run_list:
+		if len(glob.glob('monEKE*'+run+'*'))==0:
+			FNULL = open(working_path+scenario+'/log_'+run, 'w')
+			out=os.system('rm tmp/*'+run+'*')
+			os.chdir('tmp')
+			for var in ['ua','va']:
+				if tape_dict[model][scenario].split('.')[-1]=='tar':
+					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
+				if tape_dict[model][scenario].split('.')[-1]=='nc':
+					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
+
+				if len(glob.glob(var+'*'+run+'*'))==1:
+					orig_file=glob.glob(var+'*'+run+'*')[0]
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)
+					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)
+					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
+
+
+				for tmp_file in glob.glob(var+'*'+run+'*'):
+					tmp_file=tmp_file.split('/')[-1]
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+tmp_file+' 0_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 0_'+tmp_file+' 1_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
+					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
+
+			os.chdir('../')
+			for tmp_file in glob.glob('tmp/3_ua*'+run+'*'):
+				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
+				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
+				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
+			out=os.system('rm tmp/*'+run+'*')
+
 		result=try_several_times('cdo -O mergetime monEKE_'+model+'_'+scenario+'_'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		if result!='failed':
 			os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
 
 
+	os.chdir('../')
+	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" /global/homes/p/pepflei/data/EKE/EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
 
 
 

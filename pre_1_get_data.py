@@ -98,5 +98,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			print run,' processing time:',time.time()-start_time
 		else:
 			print run,' ------- fail '
+
+		asdasd
+
 		# clean
 		os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
