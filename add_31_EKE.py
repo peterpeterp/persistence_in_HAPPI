@@ -89,8 +89,8 @@ for scenario in scenarios:
 	if os.path.isdir(working_path+scenario+'/tmp')==False: os.system('mkdir tmp')
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 	version=model_dict[model]['version'][scenario]
-	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tasmax/*')])[0:100]
-
+	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tas/*')])[0:100]
+	print(run_list)
 	for run in run_list:
 		if len(glob.glob('monEKE*'+run+'*'))==0:
 			out=os.system('rm tmp/*'+run+'*')
