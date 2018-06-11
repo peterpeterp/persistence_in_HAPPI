@@ -3,6 +3,7 @@ import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
+import subprocess as sub
 
 def wait_timeout(proc, seconds):
 	"""Wait for a process to finish, or raise exception after timeout"""
