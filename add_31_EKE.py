@@ -136,7 +136,6 @@ for scenario in scenarios:
 		result=try_several_times('cdo -O mergetime monEKE_'+model+'_'+scenario+'_'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		if result!='failed':
 			os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
-		asdasd
 
 
 
