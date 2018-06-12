@@ -30,6 +30,7 @@ for (x in 1:length(lon)){
 
 	londim <- ncdim_def(name="lon",units="deg east",vals=lon)
 	latdim <- ncdim_def(name="lat",units="deg north",vals=lat)
+	# adapt time stamp
 	timedim <- ncdim_def(name="time",units="days since 1860-1-1 00:00:00",vals=time,unlim=FALSE)
 
 	spivar <- ncvar_def(name="SPI",units="-",dim=list(londim,latdim,timedim),missval=-99999.9,longname=paste('SPI ',args[3],'months'))

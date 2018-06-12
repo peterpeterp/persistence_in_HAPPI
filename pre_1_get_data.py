@@ -95,8 +95,12 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
 
 		# persistence
-		eke=da.read_nc('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc')['EKE'].values.squeeze()
-		get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True,EKE=eke)
+		eke,spi=None,None
+		if os.path.isfile('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc'):
+			eke=da.read_nc('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc')['EKE'].values.squeeze()
+		if os.path.isfile('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc'):
+			spi=da.read_nc('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc')['SPI'].values.squeeze()
+		get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True,EKE=eke,SPI=spi)
 		print 'processing time:',time.time()-start_time
 
 		if os.path.isfile(raw_file.replace('.nc','_period.nc')):
@@ -104,7 +108,6 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		else:
 			print run,' ------- fail '
 
-		asdasd
 
 		# clean
 		os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
