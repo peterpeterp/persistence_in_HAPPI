@@ -60,53 +60,56 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		for run in run_list:
 			start_time=time.time()
 
-			# get daily temp
+
 			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-			out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-			command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-			result=try_several_times(command,2,60)
-			result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-			result=try_several_times('rm '+out_file_name_tmp)
+			if os.path.isfile(raw_file.replace('.nc','_period.nc'))==False:
 
-			# mask ocean
-			land_file=raw_file.replace('.nc','_land.nc')
-			result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
+				# get daily temp
+				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+				result=try_several_times(command,2,60)
+				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+				result=try_several_times('rm '+out_file_name_tmp)
 
-			# detrend
-			a=raw_file.replace('.nc','_a.nc')
-			b=raw_file.replace('.nc','_b.nc')
-			result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
-			detrend_1=raw_file.replace('.nc','_detrend_1.nc')
-			result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
+				# mask ocean
+				land_file=raw_file.replace('.nc','_land.nc')
+				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
-			runmean=raw_file.replace('.nc','_runmean.nc')
-			result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
+				# detrend
+				a=raw_file.replace('.nc','_a.nc')
+				b=raw_file.replace('.nc','_b.nc')
+				result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
+				detrend_1=raw_file.replace('.nc','_detrend_1.nc')
+				result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
 
-			detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
-			command='cdo -O delete,timestep='
-			for i in range(1,46,1): command+=str(i)+','
-			for i in range(1,46,1): command+=str(-i)+','
-			result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
-			anom_file=raw_file.replace('.nc','_anom.nc')
-			result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
+				runmean=raw_file.replace('.nc','_runmean.nc')
+				result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
 
-			# state
-			state_file=raw_file.replace('.nc','_state.nc')
-			temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
+				detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
+				command='cdo -O delete,timestep='
+				for i in range(1,46,1): command+=str(i)+','
+				for i in range(1,46,1): command+=str(-i)+','
+				result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
+				anom_file=raw_file.replace('.nc','_anom.nc')
+				result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 
-			# persistence
-			eke,spi=None,None
-			if os.path.isfile('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc'):
-				eke=da.read_nc('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc')['EKE'].values.squeeze()
-			if os.path.isfile('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc'):
-				spi=da.read_nc('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc')['SPI'].values.squeeze()
-			get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True,EKE=eke,SPI=spi)
+				# state
+				state_file=raw_file.replace('.nc','_state.nc')
+				temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
 
-			if os.path.isfile(raw_file.replace('.nc','_period.nc')):
-				print run,' processing time:',time.time()-start_time
-			else:
-				print run,' ------- fail '
+				# persistence
+				eke,spi=None,None
+				if os.path.isfile('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc'):
+					eke=da.read_nc('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc')['EKE'].values.squeeze()
+				if os.path.isfile('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc'):
+					spi=da.read_nc('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc')['SPI'].values.squeeze()
+				get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True,EKE=eke,SPI=spi)
+
+				if os.path.isfile(raw_file.replace('.nc','_period.nc')):
+					print run,' processing time:',time.time()-start_time
+				else:
+					print run,' ------- fail '
 
 
-			# clean
-			os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
+				# clean
+				os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
