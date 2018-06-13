@@ -77,10 +77,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			b=raw_file.replace('.nc','_b.nc')
 			result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
 			detrend_1=raw_file.replace('.nc','_detrend_1.nc')
-			result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1)
+			result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
 
 			runmean=raw_file.replace('.nc','_runmean.nc')
-			result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean)
+			result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
 
 			detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
 			command='cdo -O delete,timestep='
@@ -88,7 +88,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			for i in range(1,46,1): command+=str(-i)+','
 			result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
 			anom_file=raw_file.replace('.nc','_anom.nc')
-			result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file)
+			result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 
 			# state
 			state_file=raw_file.replace('.nc','_state.nc')
