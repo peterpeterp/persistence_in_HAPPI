@@ -1,4 +1,4 @@
-import os,sys,glob,time,collections
+import os,sys,glob,time,collections,signal
 import numpy as np
 from netCDF4 import Dataset,netcdftime,num2date
 import random as random
