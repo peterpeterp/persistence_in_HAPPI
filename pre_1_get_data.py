@@ -56,7 +56,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	if scenario==sys.argv[2]:
 		os.system('mkdir '+working_path+scenario)
 		tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
-		run_list=sorted([path.split('/')[-1] for path in glob.glob(tmp_path+'*')])[0:10]
+		run_list=sorted([path.split('/')[-1] for path in glob.glob(tmp_path+'*')])[0:100]
 		for run in run_list:
 			start_time=time.time()
 
