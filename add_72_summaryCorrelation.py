@@ -32,9 +32,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 		print(run_list)
 		example_data=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run_list[0]])+'.nc')
 		summary=da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])
-
+		print(summary)
 		for run in run_list:
-			summary[run]=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+			tmp=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+			summary[run]=tmp
 
 		ds=dda.Dataset({cortype:summary})
 		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
