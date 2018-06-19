@@ -1,9 +1,9 @@
-import time,os,signal
-import subprocess as sub
-from scipy import stats
-import dimarray as da
+import os,sys,glob,time,collections,signal
 import numpy as np
-import matplotlib.pylab as plt
+from netCDF4 import Dataset,netcdftime,num2date
+import random as random
+import dimarray as da
+import subprocess as sub
 
 def wait_timeout(proc, seconds):
 	"""Wait for a process to finish, or raise exception after timeout"""
@@ -21,17 +21,40 @@ def wait_timeout(proc, seconds):
 		time.sleep(interval)
 
 
-def try_several_times(command,trials,seconds):
+def try_several_times(command,trials=2,seconds=60):
 	for trial in range(trials):
-		proc=sub.Popen(command,stdout=sub.PIPE,
-                       shell=True, preexec_fn=os.setsid)
-		print(os.getpgid(proc.pid))
+		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
 		result=wait_timeout(proc,seconds)
 		if result!='failed':
 			break
 	return(result)
 
+sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
+import __settings
+model_dict=__settings.model_dict
 
+sys.path.append('/global/homes/p/pepflei/weather_persistence/')
+from persistence_functions import *
+
+model=sys.argv[1]
+print model
+
+in_path=model_dict[model]['in_path']
+grid=model_dict[model]['grid']
+
+try:
+	os.chdir('/global/homes/p/pepflei/')
+	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
+	land_mask_file='/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc'
+except:
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+	working_path='data/'+model+'/'
+	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
+
+
+for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
+	if scenario==sys.argv[2]:
+		os.system('mkdir '+working_path+scenario)
 
 data=da.read_nc('tas_Aday_CAM4-2degree_Plus20-Future_CMIP5-MMM-est1_v2-0_ens0098_period.nc')
 eke=data['period_eke']
