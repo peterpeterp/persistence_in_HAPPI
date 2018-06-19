@@ -36,8 +36,10 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 		cor_eke[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 		cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
-	for y in data.lat:
-		print(y)
+
+    print('detecting\n10------50-------100')
+    for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
+        sys.stdout.write(progress); sys.stdout.flush()
 		for x in data.lon:
 			period_state=data['period_state'][:,y,x]
 			if np.sum(np.abs(period_state))!=0:
@@ -49,8 +51,6 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 						tmp_spi=data['period_spi'][select,y,x]
 						time_=data['period_midpoints'][select,y,x]
 
-						print('*******************')
-						start_time=time.time()
 						# detrend
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
 						pers=tmp_pers-(intercept+slope*time_)+tmp_pers.mean()
@@ -60,13 +60,10 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
 						spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
-						print(time.time()-start_time)
 
 						for toCor,toCor_out in zip([eke,spi],[cor_eke,cor_spi]):
 							pearson,pearson_sig=stats.pearsonr(pers,toCor)
-							print(time.time()-start_time)
 							slope,intercept,r_value,p_value,std_err = stats.linregress(toCor,pers)
-							print(time.time()-start_time)
 							for stat_name,stat in zip(['pearson','pearson_sig','slope','intercept','r_value','p_value','std_err'],[pearson,pearson_sig,slope,intercept,r_value,p_value,std_err]):
 								toCor_out[stat_name][season,state,y,x]=stat
 
@@ -76,5 +73,3 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 
 	ds=da.Dataset(cor_spi)
 	ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
-
-	asdas
