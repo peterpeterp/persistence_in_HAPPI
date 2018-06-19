@@ -37,7 +37,7 @@ for run in run_list:
 	data=da.read_nc(glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0])
 	#data=da.read_nc('data/tests/tas_Aday_CAM4-2degree_All-Hist_est1_v1-0_ens0030_period.nc')
 
-	if len(data.keys()):
+	if len(data.keys())==6:
 
 		cor_eke,cor_spi={},{}
 		for stat in ['corrcoef','p_value']:
