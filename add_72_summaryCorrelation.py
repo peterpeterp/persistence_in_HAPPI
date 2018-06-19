@@ -12,11 +12,9 @@ model_dict=__settings.model_dict
 
 try:
 	model=sys.argv[1]
-	scenario=sys.argv[2]
-	print model,scenario
+	print model
 except:
 	model='CAM4-2degree'
-	scenario='All-Hist'
 
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
