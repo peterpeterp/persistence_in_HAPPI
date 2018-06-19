@@ -28,7 +28,7 @@ except:
 
 for scenario in ['All-Hist','Plus20-Future']:
 	for cortype in ['corEKE','corSPI']:
-		run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
+		run_list=sorted([path.split('/')[-1].split('_')[-1] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
 
 		example_data=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run_list[0]])+'.nc')
 		summary=da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])
