@@ -51,7 +51,7 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 
 						# detrend
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_pers)
-						pers=tmp_pers-(intercept+slope*time)+ptmp_ers.mean()
+						pers=tmp_pers-(intercept+slope*time)+tmp_pers.mean()
 
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_eke)
 						eke=tmp_eke-(intercept+slope*time)+tmp_eke.mean()
