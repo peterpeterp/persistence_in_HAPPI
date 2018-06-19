@@ -49,6 +49,8 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 						tmp_spi=data['period_spi'][select,y,x]
 						time=data['period_midpoints'][select,y,x]
 
+						print('*******************')
+						start_time=time.time()
 						# detrend
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_pers)
 						pers=tmp_pers-(intercept+slope*time)+tmp_pers.mean()
@@ -58,10 +60,13 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_spi)
 						spi=tmp_spi-(intercept+slope*time)+tmp_spi.mean()
+						print(time.time()-start_time)
 
 						for toCor,toCor_out in zip([eke,spi],[cor_eke,cor_spi]):
 							pearson,pearson_sig=stats.pearsonr(pers,toCor)
+							print(time.time()-start_time)
 							slope,intercept,r_value,p_value,std_err = stats.linregress(toCor,pers)
+							print(time.time()-start_time)
 							for stat_name,stat in zip(['pearson','pearson_sig','slope','intercept','r_value','p_value','std_err'],[pearson,pearson_sig,slope,intercept,r_value,p_value,std_err]):
 								toCor_out[stat_name][season,state,y,x]=stat
 
