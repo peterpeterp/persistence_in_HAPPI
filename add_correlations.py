@@ -47,19 +47,19 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 						tmp_pers=data['period_length'][select,y,x]
 						tmp_eke=data['period_eke'][select,y,x]
 						tmp_spi=data['period_spi'][select,y,x]
-						time=data['period_midpoints'][select,y,x]
+						time_=data['period_midpoints'][select,y,x]
 
 						print('*******************')
 						start_time=time.time()
 						# detrend
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_pers)
-						pers=tmp_pers-(intercept+slope*time)+tmp_pers.mean()
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
+						pers=tmp_pers-(intercept+slope*time_)+tmp_pers.mean()
 
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_eke)
-						eke=tmp_eke-(intercept+slope*time)+tmp_eke.mean()
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_eke)
+						eke=tmp_eke-(intercept+slope*time_)+tmp_eke.mean()
 
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time,tmp_spi)
-						spi=tmp_spi-(intercept+slope*time)+tmp_spi.mean()
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
+						spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
 						print(time.time()-start_time)
 
 						for toCor,toCor_out in zip([eke,spi],[cor_eke,cor_spi]):
