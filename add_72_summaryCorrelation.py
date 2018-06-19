@@ -37,5 +37,5 @@ for scenario in ['All-Hist','Plus20-Future']:
 			summary['corrcoef'][run]=tmp['corrcoef']
 			summary['p_value'][run]=tmp['p_value']
 
-		ds=dda.Dataset({cortype:summary})
+		ds=da.Dataset({cortype:summary})
 		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
