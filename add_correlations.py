@@ -10,12 +10,13 @@ sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
 model_dict=__settings.model_dict
 
-sys.path.append('/global/homes/p/pepflei/weather_persistence/')
-from persistence_functions import *
-
-model=sys.argv[1]
-scenario=sys.argv[2]
-print model,scenario
+try:
+	model=sys.argv[1]
+	scenario=sys.argv[2]
+	print model,scenario
+except:
+	model='CAM4-2degree'
+	scenario='All-Hist'
 
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
@@ -28,17 +29,23 @@ except:
 	working_path='data/'+model+'/'
 
 
-for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/tas*period.nc')]):
+run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/tas*period.nc')])
+if run_list==[]:
+	run_list=['ens0030']
+
+for run in run_list:
 	data=da.read_nc(glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0])
+	#data=da.read_nc('data/tests/tas_Aday_CAM4-2degree_All-Hist_est1_v1-0_ens0030_period.nc')
 
 	cor_eke,cor_spi={},{}
-	for stat in ['pearson','pearson_sig','slope','intercept','r_value','p_value','std_err']:
+	for stat in ['corrcoef','p_value']:
 		cor_eke[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 		cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
 
-	print('detecting\n10------50-------100')
+	print('correaltion\n10------50-------100')
 	for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
+		y=18
 		sys.stdout.write(progress); sys.stdout.flush()
 		for x in data.lon:
 			period_state=data['period_state'][:,y,x]
@@ -61,11 +68,8 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
 						spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
 
-						for toCor,toCor_out in zip([eke,spi],[cor_eke,cor_spi]):
-							pearson,pearson_sig=stats.pearsonr(pers,toCor)
-							slope,intercept,r_value,p_value,std_err = stats.linregress(toCor,pers)
-							for stat_name,stat in zip(['pearson','pearson_sig','slope','intercept','r_value','p_value','std_err'],[pearson,pearson_sig,slope,intercept,r_value,p_value,std_err]):
-								toCor_out[stat_name][season,state,y,x]=stat
+						cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers,eke)
+						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers,spi)
 
 
 	ds=da.Dataset(cor_eke)
