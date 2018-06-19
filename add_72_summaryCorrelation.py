@@ -26,13 +26,14 @@ except:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 	working_path='data/'+model+'/'
 
-for cortype in ['corEKE','corSPI']:
-	run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
+for scenario in ['All-Hist','Plus20-Future']:
+	for cortype in ['corEKE','corSPI']:
+		run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
 
-	summary=da.DimArray(axes=[run_list,range(4),[-1,1],data.lat,data.lon],dims=['run','season','state','lat','lon'])
+		summary=da.DimArray(axes=[run_list,range(4),[-1,1],data.lat,data.lon],dims=['run','season','state','lat','lon'])
 
-	for run in run_list:
-		summary[run]=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+		for run in run_list:
+			summary[run]=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
 
-	ds=dda.Dataset({cortype:summary})
-	ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
+		ds=dda.Dataset({cortype:summary})
+		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
