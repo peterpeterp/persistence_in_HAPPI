@@ -4,7 +4,7 @@ from netCDF4 import Dataset,netcdftime,num2date
 import random as random
 import dimarray as da
 import subprocess as sub
-
+import scipy.stats as stats
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
