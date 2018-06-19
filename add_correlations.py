@@ -37,9 +37,9 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 		cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
 
-    print('detecting\n10------50-------100')
-    for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
-        sys.stdout.write(progress); sys.stdout.flush()
+	print('detecting\n10------50-------100')
+	for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
+		sys.stdout.write(progress); sys.stdout.flush()
 		for x in data.lon:
 			period_state=data['period_state'][:,y,x]
 			if np.sum(np.abs(period_state))!=0:
