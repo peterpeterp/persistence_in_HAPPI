@@ -26,11 +26,6 @@ except:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 	working_path='data/'+model+'/'
 
-
-if run_list==[]:
-	run_list=['ens0030']
-
-
 for cortype in ['corEKE','corSPI']:
 	run_list=sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
 
