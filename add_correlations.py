@@ -72,9 +72,9 @@ for run in sorted([path.split('/')[-1].split('_')[-2] for path in glob.glob(work
 
 
 	ds=da.Dataset(cor_eke)
-	ds.write_nc(working_path+scenatio+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+	ds.write_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
 
 	ds=da.Dataset(cor_spi)
-	ds.write_nc(working_path+scenatio+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
+	ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
 
 	asdas
