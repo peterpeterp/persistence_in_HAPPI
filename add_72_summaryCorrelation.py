@@ -31,12 +31,11 @@ for scenario in ['All-Hist','Plus20-Future']:
 		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
 		print(run_list)
 		example_data=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run_list[0]])+'.nc')
-		summary=da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])
-		print(summary)
+		summary={'corrcoef':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon']),'p_value':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])}
 		for run in run_list:
 			tmp=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
-			print(tmp)
-			summary[run]=tmp
+			summary['corrcoef'][run]=tmp['corrcoef']
+			summary['p_value'][run]=tmp['p_value']
 
 		ds=dda.Dataset({cortype:summary})
 		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
