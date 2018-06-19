@@ -35,6 +35,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 		print(summary)
 		for run in run_list:
 			tmp=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+			print(tmp)
 			summary[run]=tmp
 
 		ds=dda.Dataset({cortype:summary})
