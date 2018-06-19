@@ -37,44 +37,46 @@ for run in run_list:
 	data=da.read_nc(glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0])
 	#data=da.read_nc('data/tests/tas_Aday_CAM4-2degree_All-Hist_est1_v1-0_ens0030_period.nc')
 
-	cor_eke,cor_spi={},{}
-	for stat in ['corrcoef','p_value']:
-		cor_eke[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
-		cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
+	if len(data.keys()):
+
+		cor_eke,cor_spi={},{}
+		for stat in ['corrcoef','p_value']:
+			cor_eke[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
+			cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
 
-	print('\n'+run+'\n10------50-------100')
-	for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
-		sys.stdout.write(progress); sys.stdout.flush()
-		for x in data.lon:
-			period_state=data['period_state'][:,y,x]
-			if np.sum(np.abs(period_state))!=0:
-				for state in [-1,1]:
-					state_select=(period_state==state)
-					tmp_pers=data['period_length'][state_select,y,x]
-					tmp_eke=data['period_eke'][state_select,y,x]
-					tmp_spi=data['period_spi'][state_select,y,x]
-					time_=data['period_midpoints'][state_select,y,x]
+		print('\n'+run+'\n10------50-------100')
+		for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
+			sys.stdout.write(progress); sys.stdout.flush()
+			for x in data.lon:
+				period_state=data['period_state'][:,y,x]
+				if np.sum(np.abs(period_state))!=0:
+					for state in [-1,1]:
+						state_select=(period_state==state)
+						tmp_pers=data['period_length'][state_select,y,x]
+						tmp_eke=data['period_eke'][state_select,y,x]
+						tmp_spi=data['period_spi'][state_select,y,x]
+						time_=data['period_midpoints'][state_select,y,x]
 
-					# detrend
-					slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
-					pers=tmp_pers-(intercept+slope*time_)+tmp_pers.mean()
+						# detrend
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
+						pers=tmp_pers-(intercept+slope*time_)+tmp_pers.mean()
 
-					slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_eke)
-					eke=tmp_eke-(intercept+slope*time_)+tmp_eke.mean()
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_eke)
+						eke=tmp_eke-(intercept+slope*time_)+tmp_eke.mean()
 
-					slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
-					spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
+						spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
 
-					for season in range(4):
-						seas_select=(data['period_season'][state_select,y,x]==season)
-						cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],eke[seas_select])
-						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
+						for season in range(4):
+							seas_select=(data['period_season'][state_select,y,x]==season)
+							cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],eke[seas_select])
+							cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
 
 
 
-	ds=da.Dataset(cor_eke)
-	ds.write_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+		ds=da.Dataset(cor_eke)
+		ds.write_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
 
-	ds=da.Dataset(cor_spi)
-	ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
+		ds=da.Dataset(cor_spi)
+		ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
