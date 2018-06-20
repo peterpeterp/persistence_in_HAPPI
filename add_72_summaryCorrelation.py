@@ -33,7 +33,7 @@ for cortype in ['corEKE','corSPI']:
 			'p_value':da.DimArray(axes=[run_list,['All-Hist','Plus20-Future'],range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','scenario','season','state','lat','lon'])}
 	for scenario in ['All-Hist','Plus20-Future']:
 		for run in run_list:
-			if os.path.isfile(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
+			if os.path.isfile(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc'):
 				tmp=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
 				all_runs['corrcoef'][run,scenario]=tmp['corrcoef']
 				all_runs['p_value'][run,scenario]=tmp['p_value']
