@@ -59,19 +59,24 @@ for run in run_list:
 						time_=data['period_midpoints'][state_select,y,x]
 
 						# detrend
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
-						pers=tmp_pers-(intercept+slope*time_)+tmp_pers.mean()
+						mask = ~np.isnan(time_) & ~np.isnan(tmp_pers)
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
+						pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
 
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_eke)
-						eke=tmp_eke-(intercept+slope*time_)+tmp_eke.mean()
+						mask = ~np.isnan(time_) & ~np.isnan(tmp_eke)
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_eke[mask])
+						eke=tmp_eke-(intercept+slope*time_)+np.nanmean(tmp_eke)
 
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
-						spi=tmp_spi-(intercept+slope*time_)+tmp_spi.mean()
+						mask = ~np.isnan(time_) & ~np.isnan(tmp_spi)
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
+						spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
 						for season in range(4):
 							seas_select=(data['period_season'][state_select,y,x]==season)
-							cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],eke[seas_select])
-							cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
+							mask = ~np.isnan(pers[seas_select]) & ~np.isnan(eke[seas_select])
+							cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],eke[seas_select][mask])
+							mask = ~np.isnan(pers[seas_select]) & ~np.isnan(spi[seas_select])
+							cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],spi[seas_select][mask])
 
 
 

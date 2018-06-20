@@ -6,7 +6,7 @@ import dimarray as da
 from statsmodels.sandbox.stats import multicomp
 import cartopy.crs as ccrs
 import cartopy
-
+import matplotlib
 os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence')
 
 sum_meanQu={}
@@ -33,7 +33,8 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 		sum_SPI[model][scenario]=da.read_nc('data/SPI/SPI_'+model+'_'+scenario+'_monClim.nc')['SPI']
 		sum_pr[model][scenario]=da.read_nc('data/pr/pr_'+model+'_'+scenario+'_monClim.nc')['pr']
 
-
+corr_colors = matplotlib.colors.LinearSegmentedColormap.from_list("", ["cyan","green","white","red","magenta"])
+change_colors = matplotlib.colors.LinearSegmentedColormap.from_list("", ["blue","cyan","lightblue","white","plum","magenta","darkmagenta"])
 
 # ------------------- overview for one model
 plt.close('all')
@@ -53,25 +54,28 @@ for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	yy=np.append(yy-y_step*0.5,yy[-1]+y_step*0.5)
 	lons,lats=np.meshgrid(xx,yy)
 
-	im=axes[0,0].pcolormesh(lons,lats,sum_meanQu[dataset]['All-Hist']['JJA']['warm']['mean'],vmin=3,vmax=7,cmap=plt.cm.PiYG_r)
+	mask=sum_meanQu[dataset]['All-Hist']['JJA']['warm']['mean'].copy()
+	mask[np.isfinite(mask)]=1
+
+	im=axes[0,0].pcolormesh(lons,lats,sum_meanQu[dataset]['All-Hist']['JJA']['warm']['mean'],vmin=3,vmax=7,cmap=plt.cm.jet)
 	cb=fig.colorbar(im,orientation='horizontal',label='mean persistence [days]',ax=axes[0,0])
 
-	im=axes[0,1].pcolormesh(lons,lats,sum_corEKE[dataset]['All-Hist'][1,1,'corrcoef_mn'],vmin=-0.5,vmax=0.5,cmap=plt.cm.PiYG_r)
+	im=axes[0,1].pcolormesh(lons,lats,sum_corEKE[dataset]['All-Hist'][1,1,'corrcoef_mn'],vmin=-0.5,vmax=0.5,cmap=corr_colors)
 	cb=fig.colorbar(im,orientation='horizontal',label='correlation persistnce - EKE',ax=axes[0,1])
 
-	im=axes[0,2].pcolormesh(lons,lats,sum_corSPI[dataset]['All-Hist'][1,1,'corrcoef_mn'],vmin=-0.5,vmax=0.5,cmap=plt.cm.PiYG_r)
+	im=axes[0,2].pcolormesh(lons,lats,sum_corSPI[dataset]['All-Hist'][1,1,'corrcoef_mn'],vmin=-0.5,vmax=0.5,cmap=corr_colors)
 	cb=fig.colorbar(im,orientation='horizontal',label='correlation persistnce - SPI',ax=axes[0,2])
 
 	to_plot=sum_meanQu[dataset]['Plus20-Future']['JJA']['warm']['mean']-sum_meanQu[dataset]['All-Hist']['JJA']['warm']['mean']
-	im=axes[1,0].pcolormesh(lons,lats,to_plot,vmin=-0.2,vmax=0.2,cmap=plt.cm.PiYG_r)
+	im=axes[1,0].pcolormesh(lons,lats,to_plot,vmin=-0.2,vmax=0.2,cmap=change_colors)
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in mean persistence [days]',ax=axes[1,0])
 
 	to_plot=sum_EKE[dataset]['Plus20-Future'].ix[5:8,0,:,:].mean(axis=0)-sum_EKE[dataset]['All-Hist'].ix[5:8,0,:,:].mean(axis=0)
-	im=axes[1,1].pcolormesh(lons,lats,to_plot,vmin=-0.5,vmax=0.5,cmap=plt.cm.PiYG_r)
+	im=axes[1,1].pcolormesh(lons,lats,to_plot,vmin=-0.5,vmax=0.5,cmap=change_colors)
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in EKE [m2s-2]',ax=axes[1,1])
 
-	to_plot=(sum_pr[dataset]['Plus20-Future'].squeeze().ix[3:6,:,:].mean(axis=0)-sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0))/sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0)*100
-	im=axes[1,2].pcolormesh(lons,lats,to_plot,vmin=-10,vmax=10,cmap=plt.cm.PiYG_r)
+	to_plot=(sum_pr[dataset]['Plus20-Future'].squeeze().ix[3:6,:,:].mean(axis=0)-sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0))/sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0)*100*mask
+	im=axes[1,2].pcolormesh(lons,lats,to_plot,vmin=-10,vmax=10,cmap=change_colors)
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in pr Mai April June[%]',ax=axes[1,2])
 
 
