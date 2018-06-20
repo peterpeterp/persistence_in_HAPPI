@@ -46,7 +46,7 @@ types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_
 
 big_dict={}
 for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
-	pkl_file = open('data/'+model+'_'+scenario+'_counter.pkl', 'rb')
+	pkl_file = open('data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'rb')
 	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
 lat=big_dict[scenario]['lat']
@@ -77,4 +77,4 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 						SummaryMeanQu[scenario,season,state_name,['npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99'],lat[iy],lon[ix]]=np.nanpercentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
 
 ds=da.Dataset({'SummaryMeanQu':SummaryMeanQu})
-ds.write_nc('data/'+model+'_SummaryMeanQu.nc', mode='w')
+ds.write_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc', mode='w')

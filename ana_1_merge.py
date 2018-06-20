@@ -51,6 +51,6 @@ for scenario in ['Plus15-Future','Plus20-Future','All-Hist']:
 	distr_dict['lon']=lon
 	distr_dict['lat']=lat
 
-	output = open('../data/'+model+'_'+scenario+'_counter.pkl', 'wb')
+	output = open('../data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'wb')
 	pickle.dump(distr_dict, output)
 	output.close()

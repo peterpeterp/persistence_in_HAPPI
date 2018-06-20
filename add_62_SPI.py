@@ -68,3 +68,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 
 				result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/add_61_SPI.r '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' '+working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+
+
+'''
+for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in All-Hist Plus20-Future; do nohup cdo -ymonmean -ensmean -cat "/global/cscratch1/sd/pepflei/SPI/${model}/${scenario}/SPI*" /global/homes/p/pepflei/data/SPI/SPI_${model}_${scenario}_monClim.nc > out/$model+add & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;
+'''
