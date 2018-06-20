@@ -30,11 +30,20 @@ for scenario in ['All-Hist','Plus20-Future']:
 	for cortype in ['corEKE','corSPI']:
 		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob(working_path+scenario+'/'+cortype+'*.nc')])
 		example_data=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run_list[0]])+'.nc')
-		summary={'corrcoef':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon']),'p_value':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])}
+		all_runs={'corrcoef':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon']),'p_value':da.DimArray(axes=[run_list,range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','season','state','lat','lon'])}
 		for run in run_list:
 			tmp=da.read_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
-			summary['corrcoef'][run]=tmp['corrcoef']
-			summary['p_value'][run]=tmp['p_value']
+			all_runs['corrcoef'][run]=tmp['corrcoef']
+			all_runs['p_value'][run]=tmp['p_value']
+
+		ds=da.Dataset({cortype:all_runs})
+		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'_all_runs.nc')
+
+		summary=da.DimArray(axes=[range(4),[-1,1],['corrcoef_mn','corrcoef_std','p_value_mn','p_value_std'],example_data.lat,example_data.lon],dims=['season','state','statistic','lat','lon'])
+		summary[:,:,'corrcoef_mn',:,:]=all_runs['corrcoef'].mean(axis=0)
+		summary[:,:,'corrcoef_std',:,:]=all_runs['corrcoef'].std(axis=0)
+		summary[:,:,'p_value_mn',:,:]=all_runs['p_value'].mean(axis=0)
+		summary[:,:,'p_value_std',:,:]=all_runs['p_value'].std(axis=0)
 
 		ds=da.Dataset({cortype:summary})
-		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'.nc')
+		ds.write('data/'+model+'/'+'_'.join([cortype,model,scenario])+'_summary.nc')

@@ -13,12 +13,6 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	sum_meanQu[model]=da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu']
 	sum_ks[model]=da.read_nc('data/'+model+'/'+model+'_SummaryKS.nc')['SummaryKS']
 
-sum_ks={}
-for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-	sum_meanQu[model]=da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu']
-	sum_ks[model]=da.read_nc('data/'+model+'/'+model+'_SummaryKS.nc')['SummaryKS']
-
-
 # print stats
 mean=0
 for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
