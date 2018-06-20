@@ -27,6 +27,7 @@ except:
 	working_path='data/'+model+'/'
 
 for cortype in ['corEKE','corSPI']:
+	run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob(working_path+'All-Hist'+'/'+cortype+'*.nc')])
 	example_data=da.read_nc(working_path+'All-Hist'+'/corEKE_'+'_'.join([model,'All-Hist',run_list[0]])+'.nc')
 	all_runs={'corrcoef':da.DimArray(axes=[run_list,['All-Hist','Plus20-Future'],range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','scenario','season','state','lat','lon']),
 			'p_value':da.DimArray(axes=[run_list,['All-Hist','Plus20-Future'],range(4),[-1,1],example_data.lat,example_data.lon],dims=['run','scenario','season','state','lat','lon'])}
