@@ -57,7 +57,7 @@ for run in run_list:
 					tmp_spi=SPI.ix[index,:,:][:,y,x].values
 
 					# detrend
-					mask = ~np.isnan(time_.values) & ~np.isnan(tmp_pers.values) & ~np.isnan(tmp_spi.values)
+					mask = ~np.isnan(time_) & ~np.isnan(tmp_pers) & ~np.isnan(tmp_spi)
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
 					pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
 
@@ -66,8 +66,8 @@ for run in run_list:
 
 					for season in range(4):
 						seas_select=(data['period_season'][state_select,y,x].values[mask]==season)
-						print(pers[seas_select].values)
-						print(spi[seas_select].values)
+						print(pers[seas_select])
+						print(spi[seas_select])
 						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
 
 
