@@ -54,20 +54,14 @@ for run in run_list:
 					tmp_pers=data['period_length'][state_select,y,x]
 					time_=data['period_midpoints'][state_select,y,x]
 					index=data['period_monthly_index'][state_select,y,x]
-					print(index.shape)
 					tmp_spi=SPI.ix[index,:,:][:,y,x]
-					print(tmp_spi.shape)
-					print(time_.shape)
 
 					# detrend
 					mask = ~np.isnan(time_) & ~np.isnan(tmp_pers)
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
 					pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
 
-					print(tmp_spi)
-					print(time_)
-
-					mask = ~np.isnan(time_.values) & ~np.isnan(tmp_spi.values)
+					mask = np.isnan(tmp_spi.values)
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
