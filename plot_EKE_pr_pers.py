@@ -34,7 +34,8 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 		sum_pr[model][scenario]=da.read_nc('data/pr/pr_'+model+'_'+scenario+'_monClim.nc')['pr']
 
 corr_colors = matplotlib.colors.LinearSegmentedColormap.from_list("", ["teal","cyan","white","magenta","indigo"])
-change_colors = matplotlib.colors.LinearSegmentedColormap.from_list("", ["blue","cyan","lightblue","white","plum","magenta","darkmagenta"])
+change_colors = matplotlib.colors.LinearSegmentedColormap.from_list("", ["darkgreen","yellowgreen","lightblue","white","plum","magenta","darkmagenta"])
+change_colors_r = matplotlib.colors.LinearSegmentedColormap.from_list("", ["darkgreen","yellowgreen","lightblue","white","plum","magenta","darkmagenta"][::-1])
 
 # ------------------- overview for one model
 plt.close('all')
@@ -71,11 +72,11 @@ for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in mean persistence [days]',ax=axes[1,0])
 
 	to_plot=sum_EKE[dataset]['Plus20-Future'].ix[5:8,0,:,:].mean(axis=0)-sum_EKE[dataset]['All-Hist'].ix[5:8,0,:,:].mean(axis=0)
-	im=axes[1,1].pcolormesh(lons,lats,to_plot,vmin=-0.5,vmax=0.5,cmap=change_colors)
+	im=axes[1,1].pcolormesh(lons,lats,to_plot,vmin=-0.5,vmax=0.5,cmap=change_colors_r)
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in EKE [m2s-2]',ax=axes[1,1])
 
 	to_plot=(sum_pr[dataset]['Plus20-Future'].squeeze().ix[3:6,:,:].mean(axis=0)-sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0))/sum_pr[dataset]['All-Hist'].squeeze().ix[3:6,:,:].mean(axis=0)*100*mask
-	im=axes[1,2].pcolormesh(lons,lats,to_plot,vmin=-10,vmax=10,cmap=change_colors)
+	im=axes[1,2].pcolormesh(lons,lats,to_plot,vmin=-10,vmax=10,cmap=change_colors_r)
 	cb=fig.colorbar(im,orientation='horizontal',label='changes in pr Mai April June [%]',ax=axes[1,2])
 
 

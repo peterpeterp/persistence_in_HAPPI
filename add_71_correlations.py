@@ -35,13 +35,13 @@ if run_list==[]:
 
 for run in run_list:
 	data=da.read_nc(glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0])
+	SPI=da.read_nc(glob.glob('/global/cscratch1/sd/pepflei/SPI/SPI*'+run+'*.nc')[0])['SPI']
 	#data=da.read_nc('data/tests/tas_Aday_CAM4-2degree_All-Hist_est1_v1-0_ens0030_period.nc')
 
 	if len(data.keys())==6:
 
 		cor_eke,cor_spi={},{}
 		for stat in ['corrcoef','p_value']:
-			cor_eke[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 			cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
 
@@ -54,18 +54,14 @@ for run in run_list:
 					for state in [-1,1]:
 						state_select=(period_state==state)
 						tmp_pers=data['period_length'][state_select,y,x]
-						tmp_eke=data['period_eke'][state_select,y,x]
-						tmp_spi=data['period_spi'][state_select,y,x]
 						time_=data['period_midpoints'][state_select,y,x]
+						index=data['period_monthly_index'][state_select,y,x]
+						tmp_spi=SPI.ix[index,:,:][:,y,x]
 
 						# detrend
 						mask = ~np.isnan(time_) & ~np.isnan(tmp_pers)
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
 						pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
-
-						mask = ~np.isnan(time_) & ~np.isnan(tmp_eke)
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_eke[mask])
-						eke=tmp_eke-(intercept+slope*time_)+np.nanmean(tmp_eke)
 
 						mask = ~np.isnan(time_) & ~np.isnan(tmp_spi)
 						slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
@@ -73,15 +69,9 @@ for run in run_list:
 
 						for season in range(4):
 							seas_select=(data['period_season'][state_select,y,x]==season)
-							mask = ~np.isnan(pers[seas_select]) & ~np.isnan(eke[seas_select])
-							cor_eke['corrcoef'][season,state,y,x],cor_eke['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],eke[seas_select][mask])
 							mask = ~np.isnan(pers[seas_select]) & ~np.isnan(spi[seas_select])
 							cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],spi[seas_select][mask])
 
-
-
-		ds=da.Dataset(cor_eke)
-		ds.write_nc(working_path+scenario+'/corEKE_'+'_'.join([model,scenario,run])+'.nc')
 
 		ds=da.Dataset(cor_spi)
 		ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
