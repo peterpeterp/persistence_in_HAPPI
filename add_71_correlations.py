@@ -66,7 +66,9 @@ for run in run_list:
 
 					for season in range(4):
 						seas_select=(data['period_season'][state_select,y,x][mask]==season)
-						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],spi[seas_select][mask])
+						print(pers[seas_select].values)
+						print(spi[seas_select].values)
+						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
 
 
 	ds=da.Dataset(cor_spi)
