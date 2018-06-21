@@ -38,6 +38,10 @@ for run in run_list:
 	spi_file=glob.glob('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc')[0]
 
 	if os.path.isfile(pers_file) and os.path.isfile(spi_file) and os.path.isfile(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')==False:
+		claim_run=open(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc','w')
+		claim_run.write('working on this')
+		claim_run.close()
+		
 		data=da.read_nc(pers_file)
 		SPI=da.read_nc(spi_file)['SPI']
 
