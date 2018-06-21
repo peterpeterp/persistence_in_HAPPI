@@ -56,19 +56,25 @@ for run in run_list:
 					index=data['period_monthly_index'][state_select,y,x]
 					tmp_spi=SPI.ix[index,:,:][:,y,x].values
 
-					# detrend
+					# mask all
 					mask = ~np.isnan(time_) & ~np.isnan(tmp_pers) & ~np.isnan(tmp_spi)
-					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
+					time_=time_[mask]
+					tmp_pers=tmp_pers[mask]
+					tmp_spi=tmp_spi[mask]
+					seas_index=data['period_season'][state_select,y,x].values[mask]
+
+					# detrend
+					slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
 					pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
 
-					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
+					slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
 					for season in range(4):
-						seas_select=(data['period_season'][state_select,y,x].values[mask]==season)
+						seas_select=(seas_index==season)
 						print(pers[seas_select])
 						print(spi[seas_select])
-						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
+						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_index==season],spi[seas_index==season])
 
 
 	ds=da.Dataset(cor_spi)
