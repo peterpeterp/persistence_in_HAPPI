@@ -66,7 +66,6 @@ for run in run_list:
 
 					for season in range(4):
 						seas_select=(data['period_season'][state_select,y,x]==season)
-						mask = ~np.isnan(pers[seas_select]) & ~np.isnan(spi[seas_select])
 						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],spi[seas_select][mask])
 
 
