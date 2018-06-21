@@ -51,10 +51,10 @@ for run in run_list:
 			if np.sum(np.abs(period_state))!=0:
 				for state in [-1,1]:
 					state_select=(period_state==state)
-					tmp_pers=data['period_length'][state_select,y,x]
-					time_=data['period_midpoints'][state_select,y,x]
+					tmp_pers=data['period_length'][state_select,y,x].values
+					time_=data['period_midpoints'][state_select,y,x].values
 					index=data['period_monthly_index'][state_select,y,x]
-					tmp_spi=SPI.ix[index,:,:][:,y,x]
+					tmp_spi=SPI.ix[index,:,:][:,y,x].values
 
 					# detrend
 					mask = ~np.isnan(time_.values) & ~np.isnan(tmp_pers.values) & ~np.isnan(tmp_spi.values)
@@ -65,7 +65,7 @@ for run in run_list:
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
 					for season in range(4):
-						seas_select=(data['period_season'][state_select,y,x][mask]==season)
+						seas_select=(data['period_season'][state_select,y,x].values[mask]==season)
 						print(pers[seas_select].values)
 						print(spi[seas_select].values)
 						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select],spi[seas_select])
