@@ -67,7 +67,7 @@ for run in run_list:
 					print(tmp_spi)
 					print(time_)
 
-					mask = ~np.isnan(time_) & ~np.isnan(tmp_spi)
+					mask = ~np.isnan(time_.values) & ~np.isnan(tmp_spi.values)
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
