@@ -35,7 +35,7 @@ if run_list==[]:
 
 for run in run_list:
 	data=da.read_nc(glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0])
-	SPI=da.read_nc(glob.glob('/global/cscratch1/sd/pepflei/SPI/SPI*'+run+'*.nc')[0])['SPI']
+	SPI=da.read_nc(glob.glob('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI*'+run+'*.nc')[0])['SPI']
 	#data=da.read_nc('data/tests/tas_Aday_CAM4-2degree_All-Hist_est1_v1-0_ens0030_period.nc')
 
 	if len(data.keys())==6:
