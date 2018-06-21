@@ -37,7 +37,7 @@ for run in run_list:
 	pers_file=glob.glob(working_path+scenario+'/tas*'+run+'*period.nc')[0]
 	spi_file=glob.glob('/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc')[0]
 
-	if os.path.isfile(pers_file) and os.path.isfile(spi_file):
+	if os.path.isfile(pers_file) and os.path.isfile(spi_file) and os.path.isfile(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')==False:
 		data=da.read_nc(pers_file)
 		SPI=da.read_nc(spi_file)['SPI']
 
@@ -66,14 +66,15 @@ for run in run_list:
 							tmp_spi=tmp_spi[mask]
 							seas_index=data['period_season'][state_select,y,x].values[mask]
 
-							# detrend
-							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
-							pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
-							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
-							spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
+							if tmp_pers.shape[0]>10:
+								# detrend
+								slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
+								pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
+								slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
+								spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
-							for season in range(4):
-								cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_index==season],spi[seas_index==season])
+								for season in range(4):
+									cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_index==season],spi[seas_index==season])
 
 
 			ds=da.Dataset(cor_spi)
