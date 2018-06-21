@@ -39,7 +39,7 @@ for run in run_list:
 
 	if os.path.isfile(pers_file) and os.path.isfile(spi_file):
 		data=da.read_nc(pers_file)
-		SPI=da.read_nc()['SPI']
+		SPI=da.read_nc(spi_file)['SPI']
 
 		cor_eke,cor_spi={},{}
 		for stat in ['corrcoef','p_value']:
