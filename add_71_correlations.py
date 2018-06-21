@@ -64,6 +64,9 @@ for run in run_list:
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_pers[mask])
 					pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
 
+					print(tmp_spi)
+					print(time_)
+
 					mask = ~np.isnan(time_) & ~np.isnan(tmp_spi)
 					slope, intercept, r_value, p_value, std_err = stats.linregress(time_[mask],tmp_spi[mask])
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
