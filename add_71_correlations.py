@@ -54,7 +54,10 @@ for run in run_list:
 					tmp_pers=data['period_length'][state_select,y,x]
 					time_=data['period_midpoints'][state_select,y,x]
 					index=data['period_monthly_index'][state_select,y,x]
+					print(index.shape)
 					tmp_spi=SPI.ix[index,:,:][:,y,x]
+					print(SPI.ix[index,:,:][:,y,x])
+					print(time_.shape)
 
 					# detrend
 					mask = ~np.isnan(time_) & ~np.isnan(tmp_pers)
