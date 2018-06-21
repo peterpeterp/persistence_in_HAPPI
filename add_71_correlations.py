@@ -56,7 +56,7 @@ for run in run_list:
 					index=data['period_monthly_index'][state_select,y,x]
 					print(index.shape)
 					tmp_spi=SPI.ix[index,:,:][:,y,x]
-					print(SPI.ix[index,:,:][:,y,x])
+					print(tmp_spi.shape)
 					print(time_.shape)
 
 					# detrend
