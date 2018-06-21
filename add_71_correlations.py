@@ -41,39 +41,40 @@ for run in run_list:
 		data=da.read_nc(pers_file)
 		SPI=da.read_nc(spi_file)['SPI']
 
-		cor_eke,cor_spi={},{}
-		for stat in ['corrcoef','p_value']:
-			cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
+		if 'period_monthly_index' in data.keys():
+			cor_eke,cor_spi={},{}
+			for stat in ['corrcoef','p_value']:
+				cor_spi[stat]=da.DimArray(axes=[range(4),[-1,1],data.lat,data.lon],dims=['season','state','lat','lon'])
 
-		print('\n'+run+'\n10------50-------100')
-		for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
-			sys.stdout.write(progress); sys.stdout.flush()
-			for x in data.lon:
-				period_state=data['period_state'][:,y,x]
-				if np.sum(np.abs(period_state))!=0:
-					for state in [-1,1]:
-						state_select=(period_state==state)
-						tmp_pers=data['period_length'][state_select,y,x].values
-						time_=data['period_midpoints'][state_select,y,x].values
-						index=data['period_monthly_index'][state_select,y,x]
-						tmp_spi=SPI.ix[index,:,:][:,y,x].values
+			print('\n'+run+'\n10------50-------100')
+			for y,progress in zip(data.lat,np.array([['-']+['']*(len(data.lat)/20+1)]*20).flatten()[0:len(data.lat)]):
+				sys.stdout.write(progress); sys.stdout.flush()
+				for x in data.lon:
+					period_state=data['period_state'][:,y,x]
+					if np.sum(np.abs(period_state))!=0:
+						for state in [-1,1]:
+							state_select=(period_state==state)
+							tmp_pers=data['period_length'][state_select,y,x].values
+							time_=data['period_midpoints'][state_select,y,x].values
+							index=data['period_monthly_index'][state_select,y,x]
+							tmp_spi=SPI.ix[index,:,:][:,y,x].values
 
-						# mask all
-						mask = ~np.isnan(time_) & ~np.isnan(tmp_pers) & ~np.isnan(tmp_spi)
-						time_=time_[mask]
-						tmp_pers=tmp_pers[mask]
-						tmp_spi=tmp_spi[mask]
-						seas_index=data['period_season'][state_select,y,x].values[mask]
+							# mask all
+							mask = ~np.isnan(time_) & ~np.isnan(tmp_pers) & ~np.isnan(tmp_spi)
+							time_=time_[mask]
+							tmp_pers=tmp_pers[mask]
+							tmp_spi=tmp_spi[mask]
+							seas_index=data['period_season'][state_select,y,x].values[mask]
 
-						# detrend
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
-						pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
-						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
-						spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
+							# detrend
+							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_pers)
+							pers=tmp_pers-(intercept+slope*time_)+np.nanmean(tmp_pers)
+							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,tmp_spi)
+							spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
-						for season in range(4):
-							cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_index==season],spi[seas_index==season])
+							for season in range(4):
+								cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_index==season],spi[seas_index==season])
 
 
-		ds=da.Dataset(cor_spi)
-		ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
+			ds=da.Dataset(cor_spi)
+			ds.write_nc(working_path+scenario+'/corSPI_'+'_'.join([model,scenario,run])+'.nc')
