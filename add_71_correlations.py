@@ -65,7 +65,7 @@ for run in run_list:
 					spi=tmp_spi-(intercept+slope*time_)+np.nanmean(tmp_spi)
 
 					for season in range(4):
-						seas_select=(data['period_season'][state_select,y,x]==season)
+						seas_select=(data['period_season'][state_select,y,x][mask]==season)
 						cor_spi['corrcoef'][season,state,y,x],cor_spi['p_value'][season,state,y,x]=stats.pearsonr(pers[seas_select][mask],spi[seas_select][mask])
 
 
