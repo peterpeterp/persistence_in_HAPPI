@@ -87,7 +87,7 @@ for season,col in zip(['JJA','DJF'],[0,1]):
 		significance=np.asarray(sum_ks[dataset]['Plus20-Future'][season]['stateInd']['KS_vs_All-Hist'].copy())
 		significance[np.isnan(significance)]=1
 		significance_=multicomp.multipletests(significance.reshape((len(tmp.lat)*len(tmp.lon))), method='fdr_bh')[1].reshape((len(tmp.lat),len(tmp.lon)))
-		stip = ax.contourf(tmp.lon, tmp.lat, significance_, levels=[-1, 0.1, 1],colors='none', hatches=['.....',None])
+		stip = ax.contourf(tmp.lon, tmp.lat, significance, levels=[-1, 0.05, 1],colors='none', hatches=['.....',None])
 
 		ax.annotate(season+' '+'\n'+dataset, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 
