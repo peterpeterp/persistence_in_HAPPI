@@ -90,5 +90,4 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 
 				# clean
-				#os.system('rm '+land_file+' '+state_file)
-				asdasd
+				os.system('rm '+land_file+' '+state_file+' '+raw_file)
