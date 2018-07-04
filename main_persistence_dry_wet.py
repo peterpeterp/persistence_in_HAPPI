@@ -57,12 +57,13 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		os.system('mkdir '+working_path+scenario)
 		tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/pr/'
 		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE*')])[0:100]
+		print(run_list)
 		for run in run_list:
 			start_time=time.time()
 
 
 			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-			if len(glob.glob(working_path+scenario+'/*'+run+'*'))<2:
+			if len(glob.glob(working_path+scenario+'/*pr*'+run+'*'))<2:
 
 				# get daily temp
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
