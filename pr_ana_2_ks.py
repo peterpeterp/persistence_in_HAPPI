@@ -63,21 +63,21 @@ for scenario_combi in [['Plus20-Future','All-Hist']]:
 				counter_1=big_dict[scenario_1][str(lat[iy])+'_'+str(lon[ix])][season]
 				counter_2=big_dict[scenario_2][str(lat[iy])+'_'+str(lon[ix])][season]
 				if len(counter_1)>5 and len(counter_2)>5:
-					cold_1,warm_1=counter_to_list(counter_1)
-					cold_2,warm_2=counter_to_list(counter_2)
+					dry_1,wet_1=counter_to_list(counter_1)
+					dry_2,wet_2=counter_to_list(counter_2)
 
-					ks_cold=stats.ks_2samp(cold_1, cold_2)[1]
-					ks_warm=stats.ks_2samp(warm_1, warm_2)[1]
+					ks_dry=stats.ks_2samp(dry_1, dry_2)[1]
+					ks_wet=stats.ks_2samp(wet_1, wet_2)[1]
 
-					stateInd_1=np.append(cold_1,warm_1)
-					stateInd_2=np.append(cold_2,warm_2)
+					stateInd_1=np.append(dry_1,wet_1)
+					stateInd_2=np.append(dry_2,wet_2)
 					ks_stateInd=stats.ks_2samp(stateInd_1, stateInd_2)[1]
 
 					for scenario_store in scenario_combi:
 						for scenario_compare_to in scenario_combi:
 							if scenario_store!=scenario_compare_to:
-								SummaryKS[scenario_store][season]['cold']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_cold
-								SummaryKS[scenario_store][season]['warm']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_warm
+								SummaryKS[scenario_store][season]['dry']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_dry
+								SummaryKS[scenario_store][season]['wet']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_wet
 								SummaryKS[scenario_store][season]['stateInd']['KS_vs_'+scenario_compare_to][lat[iy]][lon[ix]]=ks_stateInd
 
 ds=da.Dataset({'SummaryKS':SummaryKS})

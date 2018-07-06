@@ -69,8 +69,8 @@ for scenario in ['Plus20-Future','All-Hist']:
 			for ix in range(len(lon)):
 				counter=distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]
 				if len(counter)>5:
-					cold,warm=counter_to_list(counter)
-					for state_name,distr in zip(['cold','warm'],[cold,warm]):
+					dry,wet=counter_to_list(counter)
+					for state_name,distr in zip(['dry','wet'],[dry,wet]):
 						SummaryMeanQu[scenario,season,state_name,'mean',lat[iy],lon[ix]]=np.mean(distr)
 						#SummaryMeanQu[scenario][season][state_name].ix[1:10,iy,ix]=np.percentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
 						SummaryMeanQu[scenario,season,state_name,['qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99'],lat[iy],lon[ix]]=quantile_from_cdf(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
