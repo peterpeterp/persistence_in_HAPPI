@@ -39,13 +39,13 @@ def quantile_from_cdf(x,qu):
 model=sys.argv[1]
 print model
 
-scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+scenarios=['Plus20-Future','All-Hist']
 seasons=['MAM','JJA','SON','DJF','year']
 states=['dry','wet']
 types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99','npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99']
 
 big_dict={}
-for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
+for scenario in ['All-Hist','Plus20-Future']:
 	pkl_file = open('data/'+model+'/pr_'+model+'_'+scenario+'_counter.pkl', 'rb')
 	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
@@ -54,7 +54,7 @@ lon=big_dict[scenario]['lon']
 
 SummaryMeanQu=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(states),np.asarray(types),lat,lon],dims=['scenario','season','state','type','lat','lon'])
 
-for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+for scenario in ['Plus20-Future','All-Hist']:
 	distr_dict = big_dict[scenario]
 
 	for iy in range(len(lat)):

@@ -28,13 +28,13 @@ def counter_to_list(counter):
 model=sys.argv[1]
 print model
 
-scenarios=['Plus20-Future','Plus15-Future','All-Hist']
+scenarios=['Plus20-Future','All-Hist']
 seasons=['MAM','JJA','SON','DJF','year']
 states=['dry','wet']
-types=['KS_vs_Plus20-Future','KS_vs_Plus15-Future','KS_vs_All-Hist']
+types=['KS_vs_Plus20-Future','KS_vs_All-Hist']
 
 big_dict={}
-for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
+for scenario in ['All-Hist','Plus20-Future']:
 	pkl_file = open('data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'rb')
 	big_dict[scenario] = pickle.load(pkl_file)	;	pkl_file.close()
 
@@ -51,7 +51,7 @@ for scenario in scenarios:
 			grid_cell=distr_dict[str(lat[iy])+'_'+str(lon[ix])]
 			grid_cell['year']=grid_cell['MAM']+grid_cell['JJA']+grid_cell['SON']+grid_cell['DJF']
 
-for scenario_combi in [['Plus20-Future','All-Hist'],['Plus15-Future','All-Hist'],['Plus20-Future','Plus15-Future']]:
+for scenario_combi in [['Plus20-Future','All-Hist']]:
 	scenario_1=scenario_combi[0]
 	scenario_2=scenario_combi[1]
 
