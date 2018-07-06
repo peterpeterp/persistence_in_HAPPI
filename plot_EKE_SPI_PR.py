@@ -84,3 +84,33 @@ for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	fig.tight_layout()
 	#plt.savefig('plots/diff_map_stateInd.png',dpi=300)
 	plt.savefig('plots/overview_'+dataset+'.png',dpi=300)
+
+
+# ------------------- overview for one model
+plt.close('all')
+
+fig,axes = plt.subplots(nrows=2,ncols=2,figsize=(12,6),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)},gridspec_kw = {'height_ratios':[3,3]})
+for ax in axes.flatten():
+	ax.set_global()
+	ax.coastlines(edgecolor='black')
+	ax.axis('off')
+	ax.set_extent([-180,180,-66,80],crs=plate_carree)
+
+for dataset,ax in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],axes.flatten()):
+
+	tmp=sum_meanQu[dataset]
+	xx,yy=tmp.lon.copy(),tmp.lat.copy()
+	x_step,y_step=np.diff(xx,1).mean(),np.diff(yy,1).mean()
+	xx=np.append(xx-x_step*0.5,xx[-1]+x_step*0.5)
+	yy=np.append(yy-y_step*0.5,yy[-1]+y_step*0.5)
+	lons,lats=np.meshgrid(xx,yy)
+
+	to_plot=sum_EKE[dataset]['All-Hist'].ix[5:8,0,:,:].mean(axis=0)
+	im=ax.pcolormesh(lons,lats,to_plot,vmin=2,vmax=18,cmap=plt.cm.jet,transform=ccrs.PlateCarree())
+	cb=fig.colorbar(im,orientation='horizontal',label='EKE [m2s-2]',ax=ax)
+	ax.set_title(dataset)
+
+#plt.suptitle('mean persistence', fontweight='bold')
+fig.tight_layout()
+#plt.savefig('plots/diff_map_stateInd.png',dpi=300)
+plt.savefig('plots/EKE_clim.png',dpi=300)

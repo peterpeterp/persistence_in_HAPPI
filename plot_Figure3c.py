@@ -35,12 +35,12 @@ for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	big_dict[dataset]['NHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 
 
-NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(-23,-2),'summer':'JJA','winter':'DJF'},
-		'WNA':{'hatch':' ','color':'darkblue','pos_off':(-8,+14),'summer':'JJA','winter':'DJF'},
-		'CNA':{'hatch':' ','color':'gray','pos_off':(0,0),'summer':'JJA','winter':'DJF'},
-		'ENA':{'hatch':' ','color':'darkgreen','pos_off':(+10,0),'summer':'JJA','winter':'DJF'},
+NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
+		'WNA':{'hatch':' ','color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
+		'CNA':{'hatch':' ','color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
+		'ENA':{'hatch':' ','color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
 		'CGI':{'hatch':' ','color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-		'CAM':{'hatch':' ','color':'darkcyan','summer':'JJA','winter':'DJF'},
+		'CAM':{'hatch':' ','color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 
 		'NEU':{'hatch':' ','color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
 		'CEU':{'hatch':' ','color':'darkblue','pos_off':(+10,+5),'summer':'JJA','winter':'DJF'},
@@ -51,7 +51,7 @@ NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(-23,-2),'summer':'JJA
 
 		'MED':{'hatch':' ','color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'hatch':' ','color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
-		'NHml':{'hatch':'///','color':'white','pos':(-145,25),'xlabel':'period length [days]','ylabel':'change in exceedence\nprobability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'NHml':{'hatch':'///','color':'white','pos':(-142,37),'xlabel':'period length [days]','ylabel':'change in exceedence\nprobability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
@@ -95,5 +95,5 @@ def scenario_diff(subax,region,arg1=None,arg2=None,arg3=None):
 
 
 
-fig,ax_map=srex_overview.srex_overview(scenario_diff,axis_settings,polygons=polygons,reg_info=all_regs,arg1='summer',arg2='warm',x_ext=[-180,180],y_ext=[0,85],small_plot_size=0.08,legend_plot=legend_plot, legend_pos=[163,60], title='Change in probability of exceeding warm period lengths in JJA')
+fig,ax_map=srex_overview.srex_overview(scenario_diff,axis_settings,polygons=polygons,reg_info=all_regs,arg1='summer',arg2='warm',x_ext=[-180,180],y_ext=[0,85],small_plot_size=0.08,legend_plot=legend_plot, legend_pos=[163,70], title='Change in probability of exceeding warm period lengths in JJA')
 plt.savefig('plots/Figure3c.png',dpi=600)
