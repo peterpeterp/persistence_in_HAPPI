@@ -57,6 +57,15 @@ def get_regional_distribution(regions,model,scenarios=['All-Hist','Plus20-Future
 
 model=sys.argv[1]
 print model
+
+# region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
+
+region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,add_name='mid-lat')
+
+# pkl_file = open('data/srex_dict.pkl', 'rb')
+# srex = pickle.load(pkl_file)	;	pkl_file.close()
+# region_dict=get_regional_distribution(srex,model,add_name='srex')
+
 # wave_polys={'7_1':{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
 # 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
 # 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
@@ -64,11 +73,3 @@ print model
 # 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
 # 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]}}
 # region_dict=get_regional_distribution(wave_polys,model,add_name='mid-lat')
-
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
-
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model,add_name='mid-lat')
-
-pkl_file = open('data/srex_dict.pkl', 'rb')
-srex = pickle.load(pkl_file)	;	pkl_file.close()
-region_dict=get_regional_distribution(srex,model,add_name='srex')

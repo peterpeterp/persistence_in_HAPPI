@@ -68,13 +68,14 @@ for scenario in ['Plus20-Future','All-Hist']:
 			print iy
 			for ix in range(len(lon)):
 				counter=distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]
-				if len(counter)>5:
+				if len(counter)>10:
 					dry,wet=counter_to_list(counter)
-					for state_name,distr in zip(['dry','wet'],[dry,wet]):
-						SummaryMeanQu[scenario,season,state_name,'mean',lat[iy],lon[ix]]=np.mean(distr)
-						#SummaryMeanQu[scenario][season][state_name].ix[1:10,iy,ix]=np.percentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
-						SummaryMeanQu[scenario,season,state_name,['qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99'],lat[iy],lon[ix]]=quantile_from_cdf(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
-						SummaryMeanQu[scenario,season,state_name,['npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99'],lat[iy],lon[ix]]=np.nanpercentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
+					if len(dry)>10 and len(wet)>10:
+						for state_name,distr in zip(['dry','wet'],[dry,wet]):
+							SummaryMeanQu[scenario,season,state_name,'mean',lat[iy],lon[ix]]=np.mean(distr)
+							#SummaryMeanQu[scenario][season][state_name].ix[1:10,iy,ix]=np.percentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
+							SummaryMeanQu[scenario,season,state_name,['qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99'],lat[iy],lon[ix]]=quantile_from_cdf(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
+							SummaryMeanQu[scenario,season,state_name,['npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99'],lat[iy],lon[ix]]=np.nanpercentile(distr,[1.,5.,10.,25.,50.,75.,90.,95.,99.])
 
 ds=da.Dataset({'SummaryMeanQu':SummaryMeanQu})
 ds.write_nc('data/'+model+'/pr_'+model+'_SummaryMeanQu.nc', mode='w')
