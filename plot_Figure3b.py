@@ -25,6 +25,15 @@ except:
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
+big_dict_dry={}
+for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
+	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_srex.pkl', 'rb')
+	big_dict_dry[dataset]=region_dict = pickle.load(pkl_file)	;	pkl_file.close()
+	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_mid-lat-SH.pkl', 'rb')
+	big_dict_dry[dataset]['SHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
+	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_mid-lat.pkl', 'rb')
+	big_dict_dry[dataset]['NHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
+
 big_dict={}
 for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl', 'rb')
@@ -33,7 +42,6 @@ for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	big_dict[dataset]['SHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_mid-lat.pkl', 'rb')
 	big_dict[dataset]['NHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
-
 
 NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
 		'WNA':{'hatch':' ','color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
@@ -56,9 +64,16 @@ NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(+10,+7),'summer':'JJA
 all_regs=NH_regs.copy()
 
 polygons=srex.copy()
-polygons['NHml']={'points':[(-180,23),(180,23),(180,66),(-180,66)]}
+polygons['NHml']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
 maincolor='darkmagenta'
+
+scenario_dict={'HadGHCND':{'early':'1954-1974','late':'1990-2010'},
+				'MIROC5':{'early':'All-Hist','late':'Plus20-Future'},
+				'NorESM1':{'early':'All-Hist','late':'Plus20-Future'},
+				'CAM4-2degree':{'early':'All-Hist','late':'Plus20-Future'},
+				'ECHAM6-3-LR':{'early':'All-Hist','late':'Plus20-Future'},
+}
 
 # ---------------------------- changes
 def legend_plot(subax):
@@ -68,8 +83,8 @@ def legend_plot(subax):
 	subax.legend(loc='best',fontsize=9)
 
 def axis_settings(subax,label='off'):
-	subax.set_xlim((0,30))
-	subax.set_ylim((-20,20))
+	subax.set_xlim((0,40))
+	subax.set_ylim((-30,30))
 	subax.plot([0,40],[0,0],'k')
 	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom=label,labelsize=8)
 	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft=label,labelsize=8)
@@ -88,8 +103,29 @@ def scenario_diff(subax,region,arg1=None,arg2=None,arg3=None):
 		nmax=min(len(count_20),len(count_h),40)
 		tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
 		ensemble[i,:nmax]=tmp
-	subax.plot(range(1,41),np.nanmean(ensemble,axis=0),color=maincolor)
-	subax.fill_between(range(1,41),np.nanmin(ensemble,axis=0),np.nanmax(ensemble,axis=0),facecolor=maincolor,alpha=0.3)
+	subax.plot(range(1,nmax+1),np.nanmean(ensemble,axis=0),color=maincolor)
+	subax.fill_between(range(1,nmax+1),np.nanmin(ensemble,axis=0),np.nanmax(ensemble,axis=0),facecolor=maincolor,alpha=0.3)
+
+	ensemble=np.zeros([4,40])*np.nan
+	for dataset,color,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],['blue','green','magenta','orange'],range(4)):
+		tmp_20=big_dict_dry[dataset][region]['Plus20-Future'][season]['dry']
+		tmp_h=big_dict_dry[dataset][region]['All-Hist'][season]['dry']
+		count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_20['count'])) for ii in range(len(tmp_20['count']))])
+		count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_h['count']))])
+		nmax=min(len(count_20),len(count_h),40)
+		tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
+		ensemble[i,:nmax]=tmp
+	subax.plot(range(1,nmax+1),np.nanmean(ensemble,axis=0),color='darkorange')
+	subax.fill_between(range(1,nmax+1),np.nanmin(ensemble,axis=0),np.nanmax(ensemble,axis=0),facecolor='darkorange',alpha=0.3)
+
+	tmp_20=big_dict['HadGHCND'][region]['1990-2010'][season][arg2]
+	tmp_h=big_dict['HadGHCND'][region]['1954-1974'][season][arg2]
+	count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_20['count'])) for ii in range(len(tmp_20['count']))])
+	count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_h['count']))])
+	nmax=min(len(count_20),len(count_h),40)
+	tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
+	subax.plot(range(1,nmax+1),tmp,color='darkcyan')
+
 	subax=axis_settings(subax)
 	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', fontsize=10,xytext=(-5, 5), textcoords='offset points')
 

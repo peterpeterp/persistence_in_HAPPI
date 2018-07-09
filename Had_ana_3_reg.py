@@ -14,12 +14,12 @@ from persistence_support import *
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	os.chdir('/global/homes/p/pepflei/')
-
+	os.chdir('/global/homes/p/pepflei)
 
 def get_regional_distribution(regions,model,scenarios=['All-Hist','1954-1974','1990-2010'],add_name=''):
 	region_dict={}
 	for region in regions.keys():
+		print(region)
 		region_dict[region]={}
 		for scenario in scenarios:
 			pkl_file = open('data/'+model+'/'+model+'_'+scenario+'_counter.pkl', 'rb')
@@ -27,7 +27,6 @@ def get_regional_distribution(regions,model,scenarios=['All-Hist','1954-1974','1
 			region_dict[region][scenario]={}
 			tmp={}
 			for season in ['MAM','JJA','SON','DJF']:
-				print(region,scenario,season)
 				region_dict[region][scenario][season]={'cold':{},'warm':{}}
 				tmp[season]=collections.Counter()
 			polygon=Polygon(regions[region]['points'])
@@ -66,7 +65,7 @@ model='HadGHCND'
 
 region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
 
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,23),(180,23),(180,66),(-180,66)]}},model,add_name='mid-lat')
+region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,add_name='mid-lat')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()

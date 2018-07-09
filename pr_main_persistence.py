@@ -78,7 +78,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 				# # state
 				state_file=raw_file.replace('.nc','_state.nc')
-				precip_to_index(land_file,state_file,overwrite=True,unit_multiplier=86400,threshold=0.5)
+				precip_to_index(land_file,state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# persistence
 				get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True)
