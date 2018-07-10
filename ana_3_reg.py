@@ -66,10 +66,8 @@ region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(
 # srex = pickle.load(pkl_file)	;	pkl_file.close()
 # region_dict=get_regional_distribution(srex,model,add_name='srex')
 
-# wave_polys={'7_1':{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]}}
-# region_dict=get_regional_distribution(wave_polys,model,add_name='mid-lat')
+wave_polys={'box1':{'points':[(-117.5,35),(-90,35),(-90,60),(-117.5,60)]},
+			'box2':{'points':[(-17.5,35),(12.5,35),(12.5,60),(-17.5,60)]},
+			'box3':{'points':[(43.5,35),(65,35),(65,60),(43.5,60)]},
+			}
+region_dict=get_regional_distribution(wave_polys,model,add_name='wavePolys')
