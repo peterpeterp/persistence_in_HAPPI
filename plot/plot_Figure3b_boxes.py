@@ -27,43 +27,30 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 big_dict_dry={}
 for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_srex.pkl', 'rb')
+	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_wavePolys.pkl', 'rb')
 	big_dict_dry[dataset]=region_dict = pickle.load(pkl_file)	;	pkl_file.close()
-	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_mid-lat-SH.pkl', 'rb')
-	big_dict_dry[dataset]['SHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 	pkl_file = open('data/'+dataset+'/pr_'+dataset+'_regional_distrs_mid-lat.pkl', 'rb')
 	big_dict_dry[dataset]['NHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 
+
 big_dict={}
 for dataset in ['HadGHCND','MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl', 'rb')
+	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_wavePolys.pkl', 'rb')
 	big_dict[dataset]=region_dict = pickle.load(pkl_file)	;	pkl_file.close()
-	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_mid-lat-SH.pkl', 'rb')
-	big_dict[dataset]['SHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 	pkl_file = open('data/'+dataset+'/'+dataset+'_regional_distrs_mid-lat.pkl', 'rb')
 	big_dict[dataset]['NHml']=pickle.load(pkl_file)['mid-lat']	;	pkl_file.close()
 
-NH_regs={'ALA':{'hatch':' ','color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
-		'WNA':{'hatch':' ','color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
-		'CNA':{'hatch':' ','color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
-		'ENA':{'hatch':' ','color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
-		'CGI':{'hatch':' ','color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-		'CAM':{'hatch':' ','color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-
-		'NEU':{'hatch':' ','color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
-		'CEU':{'hatch':' ','color':'darkblue','pos_off':(+10,+5),'summer':'JJA','winter':'DJF'},
-		'CAS':{'hatch':' ','color':'darkgreen','pos_off':(+0,+10),'summer':'JJA','winter':'DJF'},
-		'NAS':{'hatch':' ','color':'gray','summer':'JJA','winter':'DJF'},
-		'TIB':{'hatch':' ','color':'darkcyan','pos_off':(+0,-14),'summer':'JJA','winter':'DJF'},
-		'EAS':{'hatch':' ','color':'darkgreen','summer':'JJA','winter':'DJF'},
-
-		'MED':{'hatch':' ','color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
-		'WAS':{'hatch':' ','color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
+NH_regs={'box1':{'hatch':' ','color':'darkgreen','pos_off':(+0,+0),'summer':'JJA','winter':'DJF'},
+		'box2':{'hatch':' ','color':'darkgreen','pos_off':(+0,+0),'summer':'JJA','winter':'DJF'},
+		'box3':{'hatch':' ','color':'darkgreen','pos_off':(+0,-0),'summer':'JJA','winter':'DJF'},
 		'NHml':{'hatch':'///','color':'white','pos':(-142,37),'xlabel':'period length [days]','ylabel':'change in exceedence\nprobability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
-polygons=srex.copy()
+polygons={'box1':{'points':[(-117.5,35),(-90,35),(-90,60),(-117.5,60)]},
+			'box2':{'points':[(-17.5,35),(12.5,35),(12.5,60),(-17.5,60)]},
+			'box3':{'points':[(43.5,35),(65,35),(65,60),(43.5,60)]},
+			}
 polygons['NHml']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
 maincolor='darkmagenta'
@@ -78,13 +65,16 @@ scenario_dict={'HadGHCND':{'early':'1954-1974','late':'1990-2010'},
 # ---------------------------- changes
 def legend_plot(subax):
 	subax.axis('off')
-	subax.fill_between([1,1],[1,1],[1,1],label='multi-model spread',facecolor=maincolor,alpha=0.3)
-	subax.plot([1,1],[1,1],label='multi-model mean',color=maincolor)
-	subax.legend(loc='best',fontsize=9)
+	# subax.fill_between([1,1],[1,1],[1,1],label='warm persistence',facecolor=maincolor,alpha=0.3)
+	subax.plot([1,1],[1,1],label='warm persistence',color=maincolor)
+	# subax.fill_between([1,1],[1,1],[1,1],label='dry persistence',facecolor='darkorange',alpha=0.3)
+	subax.plot([1,1],[1,1],label='dry persistence',color='darkorange')
+	subax.plot([1,1],[1,1],label='historical warm persistence',color='darkcyan')
+	subax.legend(loc='lower right',fontsize=9,ncol=1)
 
 def axis_settings(subax,label='off'):
 	subax.set_xlim((0,40))
-	subax.set_ylim((-30,30))
+	subax.set_ylim((-50,50))
 	subax.plot([0,40],[0,0],'k')
 	subax.tick_params(axis='x',which='both',bottom='on',top='on',labelbottom=label,labelsize=8)
 	subax.tick_params(axis='y',which='both',left='on',right='on',labelleft=label,labelsize=8)
@@ -132,4 +122,4 @@ def scenario_diff(subax,region,arg1=None,arg2=None,arg3=None):
 
 
 fig,ax_map=srex_overview.srex_overview(scenario_diff,axis_settings,polygons=polygons,reg_info=all_regs,arg1='summer',arg2='warm',x_ext=[-180,180],y_ext=[0,85],small_plot_size=0.08,legend_plot=legend_plot, legend_pos=[163,70], title='Relative change in probability of exceeding warm period lengths in JJA')
-plt.savefig('plots/Figure3b.png',dpi=600)
+plt.savefig('plots/Figure3b_boxes.png',dpi=600)

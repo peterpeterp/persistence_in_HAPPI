@@ -14,7 +14,7 @@ from persistence_support import *
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	os.chdir('/global/homes/p/pepflei)
+	os.chdir('/global/homes/p/pepflei')
 
 def get_regional_distribution(regions,model,scenarios=['All-Hist','1954-1974','1990-2010'],add_name=''):
 	region_dict={}
@@ -55,18 +55,18 @@ def get_regional_distribution(regions,model,scenarios=['All-Hist','1954-1974','1
 	return region_dict
 
 model='HadGHCND'
-# wave_polys={'7_1':{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]},
-# 				{'points':[(-180,23),(180,23),(180,66),(-180,66)]}}
-# region_dict=get_regional_distribution(wave_polys,model,add_name='mid-lat')
 
-region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
+
+# region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
 
 region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,add_name='mid-lat')
 
-pkl_file = open('data/srex_dict.pkl', 'rb')
-srex = pickle.load(pkl_file)	;	pkl_file.close()
-region_dict=get_regional_distribution(srex,model,add_name='srex')
+wave_polys={'box1':{'points':[(-117.5,35),(-90,35),(-90,60),(-117.5,60)]},
+			'box2':{'points':[(-17.5,35),(12.5,35),(12.5,60),(-17.5,60)]},
+			'box3':{'points':[(43.5,35),(65,35),(65,60),(43.5,60)]},
+			}
+region_dict=get_regional_distribution(wave_polys,model,add_name='wavePolys')
+
+# pkl_file = open('data/srex_dict.pkl', 'rb')
+# srex = pickle.load(pkl_file)	;	pkl_file.close()
+# region_dict=get_regional_distribution(srex,model,add_name='srex')
