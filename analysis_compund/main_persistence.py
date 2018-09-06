@@ -65,8 +65,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-			if len(glob.glob(working_path+scenario+'/*'+run+'*'))<2:
-
+			tas_state_file=raw_file.replace('.nc','_state.nc')
+			if os.path.isfile(tas_state_file) == False:
 				# get daily temp
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
 				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
@@ -97,11 +97,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 
 				# # state
-				tas_state_file=raw_file.replace('.nc','_state.nc')
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
 
 				# clean
-				os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file)
+				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file)
 
 
 			###############
@@ -110,7 +109,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/pr/'
 			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-			if len(glob.glob(working_path+scenario+'/*pr*'+run+'*'))<2:
+			pr_state_file=raw_file.replace('.nc','_state.nc')
+			if os.path.isfile(pr_state_file) == False:
 
 				# get daily temp
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
@@ -124,7 +124,6 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
 				# # state
-				pr_state_file=raw_file.replace('.nc','_state.nc')
 				precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# clean
