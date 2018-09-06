@@ -1,6 +1,6 @@
 import os,sys,glob,time,collections,signal
 import numpy as np
-from netCDF4 import Dataset,netcdftime,num2date
+from netCDF4 import Dataset,num2date
 import random as random
 import dimarray as da
 import subprocess as sub
