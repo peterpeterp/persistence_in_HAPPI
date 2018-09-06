@@ -133,7 +133,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# Compound
 			###############
 			compound_state_file=tas_state_file.replace('tas_Aday','compound_Aday')
-			compound_precip_temp_index(tas_state_file,precip_state_file,compound_state_file)
+			compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
 
 			###############
 			# Compound
