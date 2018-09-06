@@ -96,7 +96,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				# runmean=raw_file.replace('.nc','_runmean.nc')
 				# result=try_several_times('cdo -O mergetime '+empties+' '+runmean_tmp+' '+runmean,1,120)
 				#
-				# anom_file=raw_file.replace('.nc','_anom.nc')
+				anom_file=raw_file.replace('.nc','_anom.nc')
 				# result=try_several_times('cdo -O sub '+detrend_1+' '+runmean+' '+anom_file,1,120)
 
 				# # state
