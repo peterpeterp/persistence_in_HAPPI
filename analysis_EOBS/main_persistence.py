@@ -46,8 +46,9 @@ start_time=time.time()
 raw_file='data/EOBS/All-Hist/tg_0.50deg_reg_v17.0.nc'
 
 if os.path.isfile(raw_file.replace('.nc','_anom.nc'))==False:
-	tas=da.read_nc(raw_file)['tg']
-	tas_time=da.read_nc(raw_file)['time']
+	nc=da.read_nc(raw_file)
+	tas=nc['tg']
+	tas_time=nc['time']
 
 	datevar=num2date(tas_time,units = tas_time.units)
 	time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
@@ -62,7 +63,7 @@ if os.path.isfile(raw_file.replace('.nc','_anom.nc'))==False:
 	for i in range(7):
 		window[(365*i):(365*i)+91]=True
 
-	first_possible_time_step=np.where(window==1)[0][-1]
+	first_possible_time_step=np.where(window==1)[0][-1] / 2
 
 	trend=tas.copy()*np.nan
 	print('detecting\n10------50-------100')
@@ -70,27 +71,6 @@ if os.path.isfile(raw_file.replace('.nc','_anom.nc'))==False:
 		sys.stdout.write(progress); sys.stdout.flush()
 		trend.ix[i,:,:]=np.nanmean(tas.ix[np.where(window)[0],:,:],axis=0)
 		window=np.roll(window,1)
-
-
-	# tas_reshape=tas.values.reshape((68,365,len(tas.latitude),len(tas.longitude)))
-	# trend_reshape=tas_reshape.copy()
-	# for year in range(4,64):
-	# 	print(year)
-	# 	for day in range(0,365):
-	# 		if day>=45 and day<=320:
-	# 			trend_reshape[year,day,:,:]=np.nanmean(tas_reshape[year-3:year+4,day-45:day+46],axis=(0,1))
-	# 		if day<45:
-	# 			trend_reshape[year,day,:,:] = np.nanmean( np.concatenate((\
-	# 			tas_reshape[year-4:year+3,365+(day-45):365].reshape((7*(45-day),len(tas.latitude),len(tas.longitude))),\
-	# 			tas_reshape[year-3:year+4,0:day+46].reshape((7*(day+46),len(tas.latitude),len(tas.longitude))),\
-	# 			 )),axis=(0,1))
-	# 		if day>320:
-	# 			trend_reshape[year,day,:,:] = np.nanmean( np.concatenate((\
-	# 			tas_reshape[year-3:year+4,day-45:365].reshape((7*(365-day+45),len(tas.latitude),len(tas.longitude))),\
-	# 			tas_reshape[year-2:year+5,0:day+45-365].reshape((7*(day+45-365),len(tas.latitude),len(tas.longitude))),\
-	# 			 )),axis=(0,1))
-	# trend=tas.copy()
-	# trend.values=trend_reshape.reshape((68*365,len(tas.latitude),len(tas.longitude)))
 
 	da.Dataset({'tas_trend_91_7':trend}).write_nc(raw_file.replace('.nc','_trend.nc'))
 
@@ -101,25 +81,22 @@ else:
 	anom=da.read_nc(raw_file.replace('.nc','_anom.nc'))['tas_anom']
 
 
-# # state
-state_file=raw_file.replace('.nc','_state.nc')
-temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),state_file,overwrite=True)
+# state
+tas_state_file=raw_file.replace('.nc','_state.nc')
+temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,overwrite=True)
 
 #################
 # Precipitation
 #################
-raw_file='data/EOBS/All-Hist/tg_0.50deg_reg_v17.0.nc'
-state_file=raw_file.replace('.nc','_state.nc')
-precip_to_index(state_file,overwrite=True,unit_multiplier=86400,threshold=1)
+raw_file='data/EOBS/All-Hist/rr_0.50deg_reg_v17.0.nc'
+precip_state_file=raw_file.replace('.nc','_state.nc')
+precip_to_index(precip_state_file,overwrite=True,unit_multiplier=1,threshold=1)
+
+#################
+# Compound State
+#################
+compound_precip_temp_index(tas_state_file,precip_state_file,'data/EOBS/All-Hist/compound_state.nc4')
 #
 # 	# persistence
 # 	get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True)
 #
-# 	if os.path.isfile(raw_file.replace('.nc','_period.nc')):
-# 		print run,' processing time:',time.time()-start_time
-# 	else:
-# 		print run,' ------- fail '
-#
-#
-# 	# clean
-# 	# os.system('rm '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file+' '+state_file)
