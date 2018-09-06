@@ -88,19 +88,24 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				runmean=raw_file.replace('.nc','_runmean.nc')
 				result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
 
-				detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
-				command='cdo -O delete,timestep='
+				anom_file_tmp=raw_file.replace('.nc','_anom_tmp.nc')
+				result=try_several_times('cdo -O sub '+detrend_1+' '+runmean+' '+anom_file_tmp,1,120)
+
+				empties=raw_file.replace('.nc','_empties.nc')
+				command='cdo -O -setrtomiss,-9999,9999 -seltimestep,'
 				for i in range(1,46,1): command+=str(i)+','
 				for i in range(1,46,1): command+=str(-i)+','
-				result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
+				result=try_several_times(command+' '+raw_file+' '+empties)
 				anom_file=raw_file.replace('.nc','_anom.nc')
-				result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
+				result=try_several_times('cdo -O mergetime '+empties+' '+anom_file_tmp+' '+anom_file,1,120)
 
 				# # state
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
 
+				asdas
+
 				# clean
-				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut+' '+anom_file)
+				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+empties+' '+anom_file+' '+anom_file_tmp)
 
 
 			###############

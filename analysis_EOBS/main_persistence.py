@@ -33,10 +33,7 @@ def try_several_times(command,trials=2,seconds=60):
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
 sys.path.append('/Users/peterpfleiderer/Projects/Persistence/weather_persistence/')
-from persistence_functions import *
-
-
-
+import persistence_functions as prsfc; reload(prsfc)
 
 start_time=time.time()
 
@@ -83,20 +80,36 @@ else:
 
 # state
 tas_state_file=raw_file.replace('.nc','_state.nc')
-temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,overwrite=True)
+prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,var_name='tas_anom',overwrite=True)
 
 #################
 # Precipitation
 #################
 raw_file='data/EOBS/All-Hist/rr_0.50deg_reg_v17.0.nc'
-precip_state_file=raw_file.replace('.nc','_state.nc')
-precip_to_index(precip_state_file,overwrite=True,unit_multiplier=1,threshold=1)
+if os.path.isfile(raw_file.replace('.nc','_nofeb29.nc')) == False:
+	nc=da.read_nc(raw_file)
+	pr=nc['rr']
+	pr_time=nc['time']
+	datevar=num2date(pr_time,units = pr_time.units)
+	feb29_id = [id for id,dd in zip(range(len(datevar)),datevar) if dd.month==2 and dd.day==29]
+	no_feb29d_id = [id for id in range(len(datevar)) if id not in feb29_id]
+	pr=pr.ix[no_feb29d_id,:,:]
+	da.Dataset({'rr':pr}).write_nc(raw_file.replace('.nc','_nofeb29.nc'))
+
+pr_state_file=raw_file.replace('.nc','_state.nc')
+prsfc.precip_to_index(raw_file.replace('.nc','_nofeb29.nc'),pr_state_file,var_name='rr',overwrite=True,unit_multiplier=1,threshold=1)
 
 #################
 # Compound State
 #################
-compound_precip_temp_index(tas_state_file,precip_state_file,'data/EOBS/All-Hist/compound_state.nc4')
-#
-# 	# persistence
-# 	get_persistence(state_file,raw_file.replace('.nc','_period.nc'),overwrite=True)
-#
+compound_state_file='data/EOBS/All-Hist/compound_state.nc4'
+prsfc.compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
+
+gc.collect()
+
+#################
+# Persistence
+#################
+prsfc.get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
