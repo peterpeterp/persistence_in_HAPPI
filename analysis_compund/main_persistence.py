@@ -68,36 +68,36 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			tas_state_file=raw_file.replace('.nc','_state.nc')
 			if os.path.isfile(tas_state_file) == False:
 				# get daily temp
-				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-				result=try_several_times(command,2,60)
-				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-				result=try_several_times('rm '+out_file_name_tmp)
-
-				# mask ocean
-				land_file=raw_file.replace('.nc','_land.nc')
-				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
-
-				# detrend
-				a=raw_file.replace('.nc','_a.nc')
-				b=raw_file.replace('.nc','_b.nc')
-				result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
-				detrend_1=raw_file.replace('.nc','_detrend_1.nc')
-				result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
-
-				runmean_tmp=raw_file.replace('.nc','_runmean_tmp.nc')
-				result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean_tmp,1,120)
-
-				empties=raw_file.replace('.nc','_empties.nc')
-				command='cdo -O -setrtomiss,-9999,9999 -seltimestep,'
-				for i in range(1,46,1): command+=str(i)+','
-				for i in range(3606,3652,1): command+=str(i)+','
-				result=try_several_times(command+' '+raw_file+' '+empties)
-				runmean=raw_file.replace('.nc','_runmean.nc')
-				result=try_several_times('cdo -O mergetime '+empties+' '+runmean_tmp+' '+runmean,1,120)
-
-				anom_file=raw_file.replace('.nc','_anom.nc')
-				result=try_several_times('cdo -O sub '+detrend_1+' '+runmean+' '+anom_file,1,120)
+				# out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+				# command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+				# result=try_several_times(command,2,60)
+				# result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+				# result=try_several_times('rm '+out_file_name_tmp)
+				#
+				# # mask ocean
+				# land_file=raw_file.replace('.nc','_land.nc')
+				# result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
+				#
+				# # detrend
+				# a=raw_file.replace('.nc','_a.nc')
+				# b=raw_file.replace('.nc','_b.nc')
+				# result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
+				# detrend_1=raw_file.replace('.nc','_detrend_1.nc')
+				# result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
+				#
+				# runmean_tmp=raw_file.replace('.nc','_runmean_tmp.nc')
+				# result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean_tmp,1,120)
+				#
+				# empties=raw_file.replace('.nc','_empties.nc')
+				# command='cdo -O -setrtomiss,-9999,9999 -seltimestep,'
+				# for i in range(1,46,1): command+=str(i)+','
+				# for i in range(3606,3652,1): command+=str(i)+','
+				# result=try_several_times(command+' '+raw_file+' '+empties)
+				# runmean=raw_file.replace('.nc','_runmean.nc')
+				# result=try_several_times('cdo -O mergetime '+empties+' '+runmean_tmp+' '+runmean,1,120)
+				#
+				# anom_file=raw_file.replace('.nc','_anom.nc')
+				# result=try_several_times('cdo -O sub '+detrend_1+' '+runmean+' '+anom_file,1,120)
 
 				# # state
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
