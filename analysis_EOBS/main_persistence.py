@@ -30,9 +30,9 @@ def try_several_times(command,trials=2,seconds=60):
 	return(result)
 
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
+# os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-sys.path.append('/Users/peterpfleiderer/Projects/Persistence/weather_persistence/')
+sys.path.append('../weather_persistence/')
 import persistence_functions as prsfc; reload(prsfc)
 
 start_time=time.time()
