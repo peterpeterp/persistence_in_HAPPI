@@ -136,7 +136,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# Compound
 			###############
 			compound_state_file=tas_state_file.replace('tas_Aday','compound_Aday')
-			compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
+			if os.path.isfile(compound_state_file) == False:
+				compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
 
 			gc.collect()
 
@@ -144,9 +145,12 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# Compound
 			###############
 
-			get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			if os.path.isfile(compound_state_file.replace('_state.nc','_period.nc')) == False:
+				get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True)
 			gc.collect()
-			get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			if os.path.isfile(pr_state_file.replace('_state.nc','_period.nc')) == False:
+				get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True)
 			gc.collect()
-			get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			if os.path.isfile(tas_state_file.replace('_state.nc','_period.nc')) == False:
+				get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True)
 			gc.collect()
