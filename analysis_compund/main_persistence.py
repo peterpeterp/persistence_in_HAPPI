@@ -103,7 +103,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
 
 				# clean
-				#os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+empties+' '+anom_file+' '+runmean_tmp)
+				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+empties+' '+anom_file+' '+runmean_tmp)
 
 
 			###############
@@ -115,7 +115,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			pr_state_file=raw_file.replace('.nc','_state.nc')
 			if os.path.isfile(pr_state_file) == False:
 
-				# get daily temp
+				# get daily pr
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
 				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
 				result=try_several_times(command,2,60)
@@ -130,7 +130,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# clean
-				#os.system('rm '+land_file+' '+raw_file)
+				os.system('rm '+land_file+' '+raw_file)
 
 			###############
 			# Compound
@@ -139,7 +139,6 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
 
 			gc.collect()
-			asdas 
 
 			###############
 			# Compound
