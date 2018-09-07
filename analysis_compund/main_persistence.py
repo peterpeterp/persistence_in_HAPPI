@@ -92,7 +92,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				command='cdo -O -setrtomiss,-9999,9999 -seltimestep,'
 				for i in range(1,46,1): command+=str(i)+','
 				for i in range(3606,3652,1): command+=str(i)+','
-				result=try_several_times(command+' '+raw_file+' '+empties)
+				result=try_several_times(command+' '+raw_file+' '+empties,1,120)
 				runmean=raw_file.replace('.nc','_runmean.nc')
 				result=try_several_times('cdo -O mergetime '+empties+' '+runmean_tmp+' '+runmean,1,120)
 
