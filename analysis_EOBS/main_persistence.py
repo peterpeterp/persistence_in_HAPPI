@@ -51,9 +51,9 @@ if os.path.isfile(raw_file.replace('.nc','_anom.nc'))==False:
 	time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
 	#tas.time=time_axis
 
-	feb29_id = [id for id,dd in zip(range(len(time_axis)),datevar) if dd.month==2 and dd.day==29]
-	no_feb29d_id = [id for id in range(len(time_axis)) if id not in feb29_id]
-	tas=tas.ix[no_feb29d_id,:,:]
+	# feb29_id = [id for id,dd in zip(range(len(time_axis)),datevar) if dd.month==2 and dd.day==29]
+	# no_feb29d_id = [id for id in range(len(time_axis)) if id not in feb29_id]
+	# tas=tas.ix[no_feb29d_id,:,:]
 
 	window=tas.time.copy()
 	window[:]=False
@@ -86,18 +86,18 @@ prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,var_
 # Precipitation
 #################
 raw_file='data/EOBS/All-Hist/rr_0.50deg_reg_v17.0.nc'
-if os.path.isfile(raw_file.replace('.nc','_nofeb29.nc')) == False:
-	nc=da.read_nc(raw_file)
-	pr=nc['rr']
-	pr_time=nc['time']
-	datevar=num2date(pr_time,units = pr_time.units)
-	feb29_id = [id for id,dd in zip(range(len(datevar)),datevar) if dd.month==2 and dd.day==29]
-	no_feb29d_id = [id for id in range(len(datevar)) if id not in feb29_id]
-	pr=pr.ix[no_feb29d_id,:,:]
-	da.Dataset({'rr':pr}).write_nc(raw_file.replace('.nc','_nofeb29.nc'))
+# if os.path.isfile(raw_file.replace('.nc','_nofeb29.nc')) == False:
+# 	nc=da.read_nc(raw_file)
+# 	pr=nc['rr']
+# 	pr_time=nc['time']
+# 	datevar=num2date(pr_time,units = pr_time.units)
+# 	feb29_id = [id for id,dd in zip(range(len(datevar)),datevar) if dd.month==2 and dd.day==29]
+# 	no_feb29d_id = [id for id in range(len(datevar)) if id not in feb29_id]
+# 	pr=pr.ix[no_feb29d_id,:,:]
+# 	da.Dataset({'rr':pr}).write_nc(raw_file.replace('.nc','_nofeb29.nc'))
 
 pr_state_file=raw_file.replace('.nc','_state.nc')
-prsfc.precip_to_index(raw_file.replace('.nc','_nofeb29.nc'),pr_state_file,var_name='rr',overwrite=True,unit_multiplier=1,threshold=1)
+prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=1,threshold=1)
 
 #################
 # Compound State
