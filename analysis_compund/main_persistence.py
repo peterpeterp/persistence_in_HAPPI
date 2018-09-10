@@ -57,6 +57,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		os.system('mkdir '+working_path+scenario)
 		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE*')])[0:100]
 		for run in run_list:
+			print(run)
 			start_time=time.time()
 
 			###############
@@ -148,12 +149,18 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# Compound
 			###############
 
-			if os.path.isfile(compound_state_file.replace('_state.nc','_period.nc')) == False:
-				get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			compound_period_file=compound_state_file.replace('_state.nc','_period.nc')
+			print(compound_period_file)
+			if os.path.isfile(compound_period_file) == False:
+				get_persistence(compound_state_file,compound_period_file,overwrite=True)
 			gc.collect()
-			if os.path.isfile(pr_state_file.replace('_state.nc','_period.nc')) == False:
-				get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			pr_period_file=pr_state_file.replace('_state.nc','_period.nc')
+			print(pr_period_file)
+			if os.path.isfile(pr_period_file) == False:
+				get_persistence(pr_state_file,pr_period_file,overwrite=True)
 			gc.collect()
-			if os.path.isfile(tas_state_file.replace('_state.nc','_period.nc')) == False:
-				get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True)
+			tas_period_file=tas_state_file.replace('_state.nc','_period.nc')
+			print(tas_period_file)
+			if os.path.isfile(tas_period_file) == False:
+				get_persistence(tas_state_file,tas_period_file,overwrite=True)
 			gc.collect()
