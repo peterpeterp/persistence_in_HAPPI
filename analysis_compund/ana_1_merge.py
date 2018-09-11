@@ -16,6 +16,7 @@ for style,style_orig in zip(['tas','cpd','pr'],['tg','compound','rr']):
 	for scenario in ['Plus20-Future','All-Hist']:
 		all_files=glob.glob(working_path+scenario+'/'+style_orig+'*period*')
 
+		print working_path+scenario+'/'+style_orig+'*period*'
 		print all_files
 
 		nc_in=Dataset(all_files[0],'r')
