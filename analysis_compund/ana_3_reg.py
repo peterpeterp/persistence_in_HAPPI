@@ -66,6 +66,6 @@ for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-war
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
-srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
+#srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
 for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-warm'],['dry','wet']]):
 	region_dict=get_regional_distribution(srex,model,style,states,scenarios=['All-Hist'],add_name='srex')
