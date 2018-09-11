@@ -62,10 +62,10 @@ print model
 # region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
 
 for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-warm'],['dry','wet']]):
-	region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,style,states,scenarios=['All-Hist'],add_name='mid-lat')
+	region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,style,states,scenarios=['All-Hist','Plus20-Future'],add_name='mid-lat')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 #srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
 for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-warm'],['dry','wet']]):
-	region_dict=get_regional_distribution(srex,model,style,states,scenarios=['All-Hist'],add_name='srex')
+	region_dict=get_regional_distribution(srex,model,style,states,scenarios=['All-Hist','Plus20-Future'],add_name='srex')
