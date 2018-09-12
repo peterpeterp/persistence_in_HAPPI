@@ -28,7 +28,8 @@ except:
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
-
+run='ens0000'
+scenario='All-Hist'
 lat_,lon_=54.,37.5
 year=2010
 
