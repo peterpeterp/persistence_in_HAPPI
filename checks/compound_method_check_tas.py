@@ -15,7 +15,7 @@ model_dict=__settings.model_dict
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
-model=sys.argv[1]
+model='CAM4-2degree'
 print model
 
 in_path=model_dict[model]['in_path']
@@ -26,7 +26,7 @@ try:
 	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 	land_mask_file='/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc'
 except:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
@@ -40,26 +40,8 @@ tas_period={}
 for name, value in nc_period.items():
 	tas_period[name]=value[:,lat_,lon_]
 
-nc_period=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
-pr_period={}
-for name, value in nc_period.items():
-	pr_period[name]=value[:,lat_,lon_]
-
-nc_period=da.read_nc(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
-compound_period={}
-for name, value in nc_period.items():
-	compound_period[name]=value[:,lat_,lon_]
-
 nc_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
 tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
-
-nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'.nc')
-pr=nc_state['pr'].squeeze()[:,lat_,lon_]
-
-
-tas_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
-pr_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
-compound_state=da.read_nc(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
 
 gc.collect()
 
@@ -78,23 +60,6 @@ fig,axes = plt.subplots(nrows=3,ncols=1,gridspec_kw = {'height_ratios':[1,2,4]})
 for ax in axes:
 	ax.set_xlim(time_stamps[0],time_stamps[-1])
 	ax.set_xticks([])
-
-axes[0].axis('off')
-axes[0].set_title('cold+wet - warm+dry')
-periods_ = np.where((compound_period['period_midpoints']>time_stamps[0]) & (compound_period['period_midpoints']<=time_stamps[-1]))[0]
-mid=compound_period['period_midpoints'].ix[periods_]
-length=compound_period['period_length'].ix[periods_]
-for ll,mm in zip(length,mid):
-	axes[0].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[-1,-1],[1,1],color={-1:'darkcyan',1:'darkmagenta',0:'white'}[np.sign(ll)],alpha=0.3)
-
-periods_ = np.where((pr_period['period_midpoints']>time_stamps[0]) & (pr_period['period_midpoints']<=time_stamps[-1]))[0]
-mid=pr_period['period_midpoints'].ix[periods_]
-length=pr_period['period_length'].ix[periods_]
-for ll,mm in zip(length,mid):
-	axes[1].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[7,7],[12,12],color={-1:'brown',1:'cyan'}[np.sign(ll)],alpha=0.3)
-axes[1].plot(time_stamps,pr[time_stamps],color='gray')
-axes[1].set_title('dry - wet')
-axes[1].set_ylabel('precip [mm]')
 
 periods_ = np.where((tas_period['period_midpoints']>time_stamps[0]) & (tas_period['period_midpoints']<=time_stamps[-1]))[0]
 mid=tas_period['period_midpoints'].ix[periods_]
