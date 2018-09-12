@@ -84,30 +84,24 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				b=raw_file.replace('.nc','_b.nc')
 				result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
 				detrend_1=raw_file.replace('.nc','_detrend_1.nc')
-				result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,2,120)
-
-				runmean_tmp=raw_file.replace('.nc','_runmean_tmp.nc')
-				result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean_tmp,2,120)
-
-				empties_tmp=raw_file.replace('.nc','_empties_tmp.nc')
-				command='cdo -O seltimestep,'
-				for i in range(1,46,1): command+=str(i)+','
-				for i in range(3606,3652,1): command+=str(i)+','
-				result=try_several_times(command+' '+land_file+' '+empties_tmp,2,120)
-				empties=raw_file.replace('.nc','_empties.nc')
-				result=try_several_times('cdo -O -setrtomiss,-9999,9999 '+empties_tmp+' '+empties,2,120)
+				result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
 
 				runmean=raw_file.replace('.nc','_runmean.nc')
-				result=try_several_times('cdo -O mergetime '+empties+' '+runmean_tmp+' '+runmean,2,120)
+				result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
 
+				detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
+				command='cdo -O delete,timestep='
+				for i in range(1,46,1): command+=str(i)+','
+				for i in range(1,46,1): command+=str(-i)+','
+				result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
 				anom_file=raw_file.replace('.nc','_anom.nc')
-				result=try_several_times('cdo -O sub '+detrend_1+' '+runmean+' '+anom_file,2,120)
+				result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 
 				# # state
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
 
 				# clean
-				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+empties+' '+empties_tmp+' '+anom_file+' '+runmean_tmp)
+				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+anom_file+' '+detrend_cut)
 
 
 			###############
