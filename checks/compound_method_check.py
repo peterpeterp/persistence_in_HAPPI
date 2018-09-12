@@ -3,6 +3,8 @@ import numpy as np
 from netCDF4 import Dataset,num2date
 import random as random
 import dimarray as da
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
