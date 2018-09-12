@@ -25,7 +25,6 @@ parser.add_argument('--lon_','-x', default=37.5)
 
 # Parse and evaluate
 args = parser.parse_args()
-args.func(args)
 
 model=args.model
 run=args.run
