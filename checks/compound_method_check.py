@@ -16,7 +16,10 @@ sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
 model=sys.argv[1]
-print model
+run='ens0000'
+scenario='All-Hist'
+lat_,lon_=54.,37.5
+year=2010
 
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
@@ -30,10 +33,7 @@ except:
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
-run='ens0000'
-scenario='All-Hist'
-lat_,lon_=54.,37.5
-year=2010
+
 
 nc_period=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
 tas_period={}
@@ -54,7 +54,7 @@ nc_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario
 tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
 
 nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'.nc')
-pr=nc_state['pr'].squeeze()[:,lat_,lon_]
+pr=nc_state['pr'].squeeze()[:,lat_,lon_]*86400
 
 
 tas_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
