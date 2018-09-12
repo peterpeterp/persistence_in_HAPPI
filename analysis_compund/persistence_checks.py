@@ -34,6 +34,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob('/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE*')])[0:100]
 		for run in run_list:
 
+			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
+			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			tas_state_file=raw_file.replace('.nc','_state.nc')
+
 			tas_period_file=tas_state_file.replace('_state.nc','_period_check.nc')
 			print(tas_period_file)
 			get_persistence(tas_state_file,tas_period_file,overwrite=True)
