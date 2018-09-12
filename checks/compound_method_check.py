@@ -45,32 +45,32 @@ except:
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
-nc_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'*'+run+'_anom.nc')[0])
+nc_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'*'+scenario+'*'+run+'_anom.nc')[0])
 lat_=nc_state.lat[np.argmin(np.abs(nc_state.lat-lat_))]
 lon_=nc_state.lon[np.argmin(np.abs(nc_state.lon-lon_))]
 tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
 
-nc_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'*'+run+'.nc')[0])
+nc_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'*'+scenario+'*'+run+'.nc')[0])
 pr=nc_state['pr'].squeeze()[:,lat_,lon_]*86400
 
-nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'*'+run+'_period.nc')[0])
+nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'*'+scenario+'*'+run+'_period.nc')[0])
 tas_period={}
 for name, value in nc_period.items():
 	tas_period[name]=value[:,lat_,lon_]
 
-nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'*'+run+'_period.nc')[0])
+nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'*'+scenario+'*'+run+'_period.nc')[0])
 pr_period={}
 for name, value in nc_period.items():
 	pr_period[name]=value[:,lat_,lon_]
 
-nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'*'+run+'_period.nc')[0])
+nc_period=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'*'+scenario+'*'+run+'_period.nc')[0])
 compound_period={}
 for name, value in nc_period.items():
 	compound_period[name]=value[:,lat_,lon_]
 
-tas_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
-pr_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
-compound_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
+tas_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'*'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
+pr_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'*'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
+compound_state=da.read_nc(glob.glob(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'*'+scenario+'*'+run+'_state.nc')[0])['state'][:,lat_,lon_]
 
 gc.collect()
 
