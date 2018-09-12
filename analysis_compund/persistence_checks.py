@@ -12,6 +12,30 @@ model_dict=__settings.model_dict
 sys.path.append('/global/homes/p/pepflei/check/weather_persistence/')
 from persistence_functions import *
 
+def wait_timeout(proc, seconds):
+	"""Wait for a process to finish, or raise exception after timeout"""
+	start = time.time()
+	end = start + seconds
+	interval = min(seconds / 1000.0, .25)
+
+	while True:
+		result = proc.poll()
+		if result is not None:
+			return result
+		if time.time() >= end:
+			os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+			return 'failed'
+		time.sleep(interval)
+
+
+def try_several_times(command,trials=2,seconds=60):
+	for trial in range(trials):
+		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
+		result=wait_timeout(proc,seconds)
+		if result!='failed':
+			break
+	return(result)
+
 model=sys.argv[1]
 print model
 
