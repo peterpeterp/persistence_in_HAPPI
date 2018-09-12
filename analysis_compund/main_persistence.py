@@ -101,7 +101,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				temp_anomaly_to_ind(anom_file,tas_state_file,overwrite=True)
 
 				# clean
-				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+anom_file+' '+detrend_cut)
+				os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut)
 
 
 			###############
@@ -128,7 +128,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# clean
-				os.system('rm '+land_file+' '+raw_file)
+				os.system('rm '+land_file)
 
 			###############
 			# Compound
