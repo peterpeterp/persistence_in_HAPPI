@@ -107,6 +107,6 @@ axes[2].plot(time_stamps,tas_anom[time_stamps],color='gray')
 axes[2].set_title('cold - warm')
 axes[2].set_ylabel('temp anom [K]')
 
-plt.suptitle(' '.join(lat_,lon_,year))
+plt.suptitle(' '.join([lat_,lon_,year]))
 # plt.tight_layout()
-plt.savefig('plots/checks/'+'_'.join(model,scenario,run,lat_,lon_,year)+'.png')
+plt.savefig('plots/checks/'+'_'.join([model,scenario,run,lat_,lon_,year])+'.png')
