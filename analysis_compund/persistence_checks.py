@@ -91,8 +91,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 
 			# # state
-			state_file=raw_file.replace('.nc','_state_check.nc')
-			temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
+			tas_period_file=raw_file.replace('.nc','_state_check.nc')
+			temp_anomaly_to_ind(anom_file,tas_period_file,overwrite=True)
 
 			tas_period_file=tas_state_file.replace('_state_check.nc','_period_check.nc')
 			print(tas_period_file)
