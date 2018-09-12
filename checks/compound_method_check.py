@@ -45,7 +45,13 @@ except:
 	working_path='data/'+model+'/'
 	land_mask_file='data/'+model+'/landmask_'+grid+'_NA-1.nc'
 
+nc_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
+lat_=nc_state.lat[np.argmin(np.abs(nc_state.lat-lat_))]
+lon_=nc_state.lon[np.argmin(np.abs(nc_state.lon-lon_))]
+tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
 
+nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'.nc')
+pr=nc_state['pr'].squeeze()[:,lat_,lon_]*86400
 
 nc_period=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
 tas_period={}
@@ -61,13 +67,6 @@ nc_period=da.read_nc(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+sc
 compound_period={}
 for name, value in nc_period.items():
 	compound_period[name]=value[:,lat_,lon_]
-
-nc_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
-tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
-
-nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'.nc')
-pr=nc_state['pr'].squeeze()[:,lat_,lon_]*86400
-
 
 tas_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
 pr_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
