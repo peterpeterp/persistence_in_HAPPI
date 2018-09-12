@@ -15,11 +15,24 @@ model_dict=__settings.model_dict
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
-model=sys.argv[1]
-run='ens0000'
-scenario='All-Hist'
-lat_,lon_=54.,37.5
-year=2010
+parser = argparse.ArgumentParser(description=' ',epilog=' ')
+parser.add_argument('--model','-m', default='CAM4-2degree')
+parser.add_argument('--run','-r', default='ens0000')
+parser.add_argument('--scenario','-s', default='All-Hist')
+parser.add_argument('--year','-y', default=2010)
+parser.add_argument('--lat_','-y', default=54.)
+parser.add_argument('--lon_','-x', default=37.5)
+
+# Parse and evaluate
+args = parser.parse_args()
+args.func(args)
+
+model=args.model
+run=args.run
+scenario=args.scenario
+year=args.year
+lat_=args.lat_
+lon_=args.lon_
 
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
@@ -107,6 +120,6 @@ axes[2].plot(time_stamps,tas_anom[time_stamps],color='gray')
 axes[2].set_title('cold - warm')
 axes[2].set_ylabel('temp anom [K]')
 
-plt.suptitle(' '.join([str(xx) for xx in [lat_,lon_,year]]))
+plt.suptitle(' '.join([str(xx) for xx in [model,scenario,run,lat_,lon_,year]]))
 # plt.tight_layout()
 plt.savefig('plots/checks/'+'_'.join([str(xx) for xx in [model,scenario,run,lat_,lon_,year]])+'.png')
