@@ -16,12 +16,12 @@ sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 from persistence_functions import *
 
 parser = argparse.ArgumentParser(description=' ',epilog=' ')
-parser.add_argument('--model','-m', default='CAM4-2degree')
-parser.add_argument('--run','-r', default='ens0000')
-parser.add_argument('--scenario','-s', default='All-Hist')
-parser.add_argument('--year','-yr', default=2010)
-parser.add_argument('--lat_','-y', default=54.)
-parser.add_argument('--lon_','-x', default=37.5)
+parser.add_argument('--model','-m', default='CAM4-2degree',type=str)
+parser.add_argument('--run','-r', default='ens0000',type=str)
+parser.add_argument('--scenario','-s', default='All-Hist',type=str)
+parser.add_argument('--year','-yr', default=2010,type=int)
+parser.add_argument('--lat_','-y', default=54.,type=float)
+parser.add_argument('--lon_','-x', default=37.5,type=float)
 
 # Parse and evaluate
 args = parser.parse_args()
