@@ -43,23 +43,21 @@ pr_period={}
 for name, value in nc_period.items():
 	pr_period[name]=value[:,lat_,lon_]
 
-nc_period=da.read_nc(working_path+'/'+scenario+'/'+'cpd_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
-cpd_period={}
+nc_period=da.read_nc(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_period.nc')
+compound_period={}
 for name, value in nc_period.items():
-	cpd_period[name]=value[:,lat_,lon_]
+	compound_period[name]=value[:,lat_,lon_]
 
 nc_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
 tas_anom=nc_state['tas'].squeeze()[:,lat_,lon_]
 
-nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
+nc_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'.nc')
 pr=nc_state['pr'].squeeze()[:,lat_,lon_]
 
-nc_state=da.read_nc(working_path+'/'+scenario+'/'+'cpd_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')
-cpd=nc_state['cpd'].squeeze()[:,lat_,lon_]
 
-tas_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')['state'][:,lat_,lon_]
-pr_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')['state'][:,lat_,lon_]
-cpd_state=da.read_nc(working_path+'/'+scenario+'/'+'cpd_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_anom.nc')['state'][:,lat_,lon_]
+tas_state=da.read_nc(working_path+'/'+scenario+'/'+'tas_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
+pr_state=da.read_nc(working_path+'/'+scenario+'/'+'pr_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
+compound_state=da.read_nc(working_path+'/'+scenario+'/'+'compound_Aday_'+model+'_'+scenario+'_est1_v1-0_'+run+'_state.nc')['state'][:,lat_,lon_]
 
 gc.collect()
 
@@ -81,9 +79,9 @@ for ax in axes:
 
 axes[0].axis('off')
 axes[0].set_title('cold+wet - warm+dry')
-periods_ = np.where((cpd_period['period_midpoints']>time_stamps[0]) & (cpd_period['period_midpoints']<=time_stamps[-1]))[0]
-mid=cpd_period['period_midpoints'].ix[periods_]
-length=cpd_period['period_length'].ix[periods_]
+periods_ = np.where((compound_period['period_midpoints']>time_stamps[0]) & (compound_period['period_midpoints']<=time_stamps[-1]))[0]
+mid=compound_period['period_midpoints'].ix[periods_]
+length=compound_period['period_length'].ix[periods_]
 for ll,mm in zip(length,mid):
 	axes[0].fill_between([mm-np.abs(ll)/2.-15,mm+np.abs(ll)/2.-15],[-1,-1],[1,1],color={-1:'darkcyan',1:'darkmagenta',0:'white'}[np.sign(ll)],alpha=0.3)
 
