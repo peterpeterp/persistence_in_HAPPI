@@ -90,11 +90,11 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				for i in range(1,46,1): command+=str(i)+','
 				for i in range(1,46,1): command+=str(-i)+','
 				result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
-				anom_file=raw_file.replace('.nc','_anom.nc')
+				anom_file=raw_file.replace('.nc','_anom_19Jun.nc')
 				result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
 				#
 				# # state
-				state_file=raw_file.replace('.nc','_state.nc')
+				state_file=raw_file.replace('.nc','_state_19Jun.nc')
 				temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
 
 				# persistence
