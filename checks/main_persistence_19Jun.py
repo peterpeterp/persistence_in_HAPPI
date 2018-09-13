@@ -95,12 +95,12 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				#
 				# # state
 				state_file=raw_file.replace('.nc','_state_19Jun.nc')
-				temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
+				prsfc.temp_anomaly_to_ind(anom_file,state_file,overwrite=True)
 
 				# persistence
 				eke_file='/global/cscratch1/sd/pepflei/EKE/'+model+'/'+scenario+'/monEKE_'+model+'_'+scenario+'_'+run+'.nc'
 				spi_file='/global/cscratch1/sd/pepflei/SPI/'+model+'/'+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc'
-				get_persistence(state_file,raw_file.replace('.nc','_period_19Jun.nc'),overwrite=True,eke_file=eke_file,spi_file=spi_file)
+				prsfc.get_persistence(state_file,raw_file.replace('.nc','_period_19Jun.nc'),overwrite=True,eke_file=eke_file,spi_file=spi_file)
 
 				asdas
 
