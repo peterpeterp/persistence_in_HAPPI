@@ -56,3 +56,4 @@ for style,style_orig in zip(['tas','cpd','pr'],['tas','compound','pr']):
 		output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_counter.pkl', 'wb')
 		pickle.dump(distr_dict, output)
 		output.close()
+		asdasd
