@@ -13,10 +13,12 @@ try:
 	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
 	model='CAM4-2degree'
 	scenario='All-Hist'
+	working_path='data/'+model+'/'
 except:
 	os.chdir('/global/homes/p/pepflei/')
 	model=sys.argv[1]
 	scenario=sys.argv[2]
+	working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 sys.path.append('persistence_in_models/')
 import __settings
@@ -32,7 +34,7 @@ for style in ['tas','pr','cpd']:
 	distrs = da.DimArray(axes=[['ENA','CAS','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS','NHml'],[1,3],[-1,1],range(100),range(1,36)],\
 						 dims=['region','season','state','run','length'])
 
-	for file,run_i in zip(glob.glob('data/'+model+'/'+scenario+'/'+style+'_*_period.nc'),range(100)):
+	for file,run_i in zip(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc'),range(100)):
 		print(file)
 		nc=da.read_nc(file)
 
