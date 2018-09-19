@@ -31,10 +31,16 @@ masks=da.read_nc('masks/srex_mask_'+grid+'.nc')
 
 
 for style in ['tas','pr','cpd']:
-	distrs = da.DimArray(axes=[['ENA','CAS','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS','NHml'],[1,3],[-1,1],range(100),range(1,36)],\
+	run_list=[]
+	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc')):
+		run_list.append(file.split('_')[-2])
+
+	distrs = da.DimArray(axes=[['ENA','CAS','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS','NHml'],[1,3],[-1,1],run_list,range(1,36)],\
 						 dims=['region','season','state','run','length'])
 
-	for file,run_i in zip(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc'),range(100)):
+	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc')):
+		run = file.split('_')[-2]
+
 		print(file)
 		nc=da.read_nc(file)
 
@@ -53,7 +59,7 @@ for style in ['tas','pr','cpd']:
 
 					for len,count in counter.items():
 						if len*st<=35:
-							distrs[name,sea,st,run_i,len*st] = np.array([ float(count) / float(np.sum(counter.values()))])
+							distrs[name,sea,st,run,len*st] = np.array([ float(count) / float(np.sum(counter.values()))])
 
 			gc.collect()
 
