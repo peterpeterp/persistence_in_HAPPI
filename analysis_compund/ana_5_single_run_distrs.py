@@ -30,15 +30,15 @@ print model,scenario
 masks=da.read_nc('masks/srex_mask_'+grid+'.nc')
 
 
-for style in ['tas','pr','cpd']:
+for style,style_orig in zip(['tas','cpd','pr'],['tas','compound','pr']):
 	run_list=[]
-	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc')):
+	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style_orig+'_*_period.nc')):
 		run_list.append(file.split('_')[-2])
 
 	distrs = da.DimArray(axes=[['ENA','CAS','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS','NHml'],[1,3],[-1,1],run_list,range(1,36)],\
 						 dims=['region','season','state','run','length'])
 
-	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style+'_*_period.nc')):
+	for file in sorted(glob.glob(working_path+'/'+scenario+'/'+style_orig+'_*_period.nc')):
 		run = file.split('_')[-2]
 
 		print(file)
@@ -67,9 +67,9 @@ for style in ['tas','pr','cpd']:
 				counter = collections.Counter()
 				for y in nc.lat[(nc.lat>=35) & (nc.lat<=60)]:
 					for x in nc.lon:
-						season = nc['period_season'].ix[:,y,x].values
-						state = nc['period_state'].ix[:,y,x].values
-						per = nc['period_length'].ix[:,y,x].values
+						season = nc['period_season'][:,y,x].values
+						state = nc['period_state'][:,y,x].values
+						per = nc['period_length'][:,y,x].values
 						in_seas_state=np.where((season==sea) & (state==st))[0]
 						counter+=collections.Counter(per[in_seas_state])
 
