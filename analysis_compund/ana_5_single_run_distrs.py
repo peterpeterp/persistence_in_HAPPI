@@ -61,6 +61,23 @@ for style in ['tas','pr','cpd']:
 						if len*st<=35:
 							distrs[name,sea,st,run,len*st] = np.array([ float(count) / float(np.sum(counter.values()))])
 
-			gc.collect()
+		lats = nc.lat[(nc.lat>=35) & (nc.lat<=60)]
+		for sea in [1,3]:
+			for st in [-1,1]:
+				counter = collections.Counter()
+				for y in nc.lat[(nc.lat>=35) & (nc.lat<=60)]:
+					for x in nc.lon:
+						season = nc['period_season'].ix[:,y,x].values
+						state = nc['period_state'].ix[:,y,x].values
+						per = nc['period_length'].ix[:,y,x].values
+						in_seas_state=np.where((season==sea) & (state==st))[0]
+						counter+=collections.Counter(per[in_seas_state])
+
+				for len,count in counter.items():
+					if len*st<=35:
+						distrs['NHml',sea,st,run,len*st] = np.array([ float(count) / float(np.sum(counter.values()))])
+
+
+		gc.collect()
 
 	da.Dataset({'distrs':distrs}).write_nc('data/'+model+'/'+style+'_'+model+'_'+scenario+'_distrs.nc')
