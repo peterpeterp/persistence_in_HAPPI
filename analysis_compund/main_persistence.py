@@ -137,7 +137,16 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
 				# # state
-				precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
+				if scenario == 'All-Hist':
+					precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
+
+				else:
+					pr_percentile_file = glob.glob(working_path+'All-Hist'+'/pr_*_'+run+'_percentile1mm.nc')
+					if os.path.isfile(pr_percentile_file) is False:
+						pr_hist_state_file = glob.glob(working_path+'All-Hist'+'/pr_*_'+run+'_state.nc')
+						result=try_several_times('cdo chname,pr,qu -divc,36.5 -timsum -setrtoc,-10,0,0 ' + pr_hist_state_file + ' ' + pr_percentile_file)
+
+					precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True,threshold=1)
 
 				# clean
 				os.system('rm '+land_file)
