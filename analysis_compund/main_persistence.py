@@ -144,7 +144,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					pr_hist_state_file = glob.glob(working_path+'All-Hist'+'/pr_*_'+run+'_state.nc')[0]
 					pr_percentile_file = pr_hist_state_file.replace('_state.nc','_percentile1mm.nc')
 					if os.path.isfile(pr_percentile_file) is False:
-						result=try_several_times('cdo chname,state,qu -divc,36.5 -timsum -setrtoc,-1,0,0 ' + pr_hist_state_file + ' ' + pr_percentile_file)
+						result=try_several_times('cdo chname,state,qu -divc,36.5 -timsum -setrtoc,-1,0,0 ' + pr_hist_state_file + ' ' + pr_percentile_file,3,60)
 						#result=try_several_times('cdo chname,pr,qu -divc,36.5 -timsum -setrtoc,1,9999,1 -setrtoc,0,1,0 -mulc,86400 ' + pr_hist_file + ' ' + pr_percentile_file)
 
 					precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
