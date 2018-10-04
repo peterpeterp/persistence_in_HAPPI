@@ -123,7 +123,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/pr/'
 			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 			pr_state_file=raw_file.replace('.nc','_state.nc')
-			if os.path.isfile(pr_state_file) == False:
+			if os.path.isfile(pr_state_file) == False or True:
 
 				# get daily pr
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
@@ -145,7 +145,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					pr_percentile_file = pr_hist_file.replace('.nc','_percentile1mm.nc')
 					if os.path.isfile(pr_percentile_file) is False:
 						result=try_several_times('cdo chname,pr,qu -divc,36.5 -timsum -setrtoc,0,1,0 -setrtoc,1,9999,1 -mulc,86400 ' + pr_hist_file + ' ' + pr_percentile_file)
-						
+
 					result=try_several_times('cdo chname,pr,qu -divc,36.5 -timsum -setrtoc,0,1,0 -setrtoc,1,9999,1 -mulc,86400 ' + pr_hist_file + ' ' + pr_percentile_file)
 
 					precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
