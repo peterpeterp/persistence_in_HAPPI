@@ -102,7 +102,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					pr_percentile_file = glob.glob(working_path+'All-Hist'+'/pr_*_'+run+'_percentageState1.nc')[0]
 
 					if os.path.isfile(pr_percentile_file):
-						#import persistence_functions as prsfc; reload(prsfc)
+						# import persistence_functions as prsfc; reload(prsfc)
 						prsfc.precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
 
 				# clean
