@@ -45,10 +45,11 @@ for style in ['pr','cpd','tas']:
 		for state_file in state_files:
 			percentage_file = state_file.replace('state.nc','percentageState1.nc')
 			for i in range(3):
-				if os.stat(percentage_file).st_size < 78000:
-					os.system('rm '+percentage_file)
 				if os.path.isfile(percentage_file):
-					break
+					if os.stat(percentage_file).st_size < 78000:
+						os.system('rm '+percentage_file)
+					else:
+						break
 				result=try_several_times('cdo timsum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 ' + state_file + ' ' + percentage_file ,3,60)
 
 
