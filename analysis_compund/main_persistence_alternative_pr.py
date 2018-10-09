@@ -138,27 +138,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				land_file=raw_file.replace('.nc','_land.nc')
 				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
-				# # state
-				if scenario == 'All-Hist':
-					prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
-
-				else:
-					pr_hist_state_file = glob.glob(working_path+'All-Hist'+'/pr_*_'+run+'_state.nc')[0]
-					pr_percentile_file = pr_hist_state_file.replace('_state.nc','_percentile1mm.nc')
-
-					for i in range(3):
-						result=try_several_times('cdo timsum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 ' + pr_hist_state_file + ' ' + pr_percentile_file,3,60)
-						if os.stat(pr_percentile_file).st_size == 0:
-							os.system('rm '+pr_percentile_file)
-
-						if os.path.isfile(pr_percentile_file):
-							break
-
-						#result=try_several_times('cdo chname,pr,qu -divc,36.5 -timsum -setrtoc,1,9999,1 -setrtoc,0,1,0 -mulc,86400 ' + pr_hist_file + ' ' + pr_percentile_file)
-
-					import persistence_functions as prsfc; reload(prsfc)
-
-					prsfc.precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
+				prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# clean
 				os.system('rm '+land_file)
