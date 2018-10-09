@@ -41,9 +41,9 @@ model_dict=__settings.model_dict
 
 for style in ['pr']:
 	for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
-		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state.nc'))
+		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state_qu1mm.nc'))
 		for state_file in state_files:
-			percentage_file = state_file.replace('state.nc','percentageState1.nc')
+			percentage_file = state_file.replace('state_qu1mm.nc','percentageState1_qu1mm.nc')
 			#os.system('rm '+percentage_file)
 			for i in range(3):
 				if os.path.isfile(percentage_file):
@@ -60,5 +60,5 @@ for style in ['pr']:
 
 				os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState-1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState-1.nc',3,240)
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1_qu1mm.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1_qu1mm.nc',3,240)
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState-1_qu1mm.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState-1_qu1mm.nc',3,240)
