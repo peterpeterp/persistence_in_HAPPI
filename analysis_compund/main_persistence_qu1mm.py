@@ -103,8 +103,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 					pr_percentile_file = pr_hist_state_file.replace('_state.nc','_percentageState1_qu1mm.nc')
 
 					if os.path.isfile(pr_percentile_file) == False:
-						if os.stat(pr_percentile_file).st_size < 78000:
-							prsfc.precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
+						prsfc.precip_to_index_percentile(land_file,pr_state_file,pr_percentile_file,overwrite=True)
 
 				# clean
 				os.system('rm '+land_file)
