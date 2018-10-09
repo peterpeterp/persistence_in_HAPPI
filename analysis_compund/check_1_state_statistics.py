@@ -41,8 +41,17 @@ model_dict=__settings.model_dict
 
 for style in ['pr','cpd','tas']:
 	for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
-		state_files = glob.glob(working_path+scenario+'/'+style+'_*_state.nc')
+		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
-			result=try_several_times('cdo timsum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 ' + state_file + ' ' + state_file.replace('_state.nc','_percentageState1.nc') ,3,60)
+			percentage_file = state_file.replace('state.nc','percentageState1.nc')
+			for i in range(3):
+				if os.stat(percentage_file).st_size < 78000:
+					os.system('rm '+percentage_file)
+				if os.path.isfile(percentage_file):
+					break
+				result=try_several_times('cdo timsum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 ' + state_file + ' ' + percentage_file ,3,60)
+
 
 		try_several_times('cdo ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
+
+		asdasd
