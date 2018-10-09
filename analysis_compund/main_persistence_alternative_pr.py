@@ -141,7 +141,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=1)
 
 				# clean
-				os.system('rm '+land_file)
+				os.system('rm '+land_file+' '+raw_file)
 
 			###############
 			# Compound
@@ -153,7 +153,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			gc.collect()
 
 			###############
-			# Compound
+			# Persistence
 			###############
 
 			compound_period_file=compound_state_file.replace('_state.nc','_period.nc')
