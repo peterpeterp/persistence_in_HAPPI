@@ -44,7 +44,7 @@ for style in ['pr']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state_qu1mm.nc'))
 		for state_file in state_files:
 			percentage_file = state_file.replace('state_qu1mm.nc','percentageState1_qu1mm.nc')
-			os.system('rm '+percentage_file)
+			#os.system('rm '+percentage_file)
 			for i in range(3):
 				if os.path.isfile(percentage_file):
 					if os.stat(percentage_file).st_size < 78000:
