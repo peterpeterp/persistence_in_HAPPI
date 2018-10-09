@@ -53,6 +53,4 @@ for style in ['pr','cpd','tas']:
 				result=try_several_times('cdo yseassum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 ' + state_file + ' ' + percentage_file ,3,60)
 
 
-		try_several_times('cdo ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
-
-		asdas
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
