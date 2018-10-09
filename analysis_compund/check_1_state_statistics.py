@@ -54,3 +54,5 @@ for style in ['pr','cpd','tas']:
 
 
 		try_several_times('cdo ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
+
+		asdas
