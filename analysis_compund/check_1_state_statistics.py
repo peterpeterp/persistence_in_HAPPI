@@ -51,7 +51,14 @@ for style in ['cpd']:
 						os.system('rm '+percentage_file)
 					else:
 						break
-				result=try_several_times('cdo yseassum -chname,state,qu -divc,36.5 -setrtoc,-1,0,0 -setmissval,0 ' + state_file + ' ' + percentage_file ,3,60)
+				result=try_several_times('cdo setmissval,nan ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
+				result=try_several_times('cdo setmissval,-99 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
+				result=try_several_times('cdo yseassum -chname,state,qu -divc,36.5 -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file ,3,60)
 
+				result=try_several_times('cdo -O setmissval,99 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
+				result=try_several_times('cdo -O yseassum -chname,state,qu -divc,-36.5 -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
+
+				os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
 		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState-1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState-1.nc',3,240)
