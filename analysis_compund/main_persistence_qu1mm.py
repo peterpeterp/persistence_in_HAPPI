@@ -110,7 +110,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			###############
 			# Compound
 			###############
-			compound_state_file=pr_state_file.replace('tas_Aday','cpd_Aday')
+			compound_state_file=pr_state_file.replace('pr_Aday','cpd_Aday')
 			tas_state_file=pr_state_file.replace('pr_Aday','tas_Aday').replace('_qu1mm','')
 			if os.path.isfile(compound_state_file) == False:
 				prsfc.compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
