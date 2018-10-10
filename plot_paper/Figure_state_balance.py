@@ -40,10 +40,10 @@ for model in ['CAM4-2degree']:
 		ax.coastlines(edgecolor='black')
 		ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-	for style,state,row in zip(['pr','pr','pr','pr','cpd','cpd'],['dry','wet','dry','wet','dry-warm','wet-cold'],range(1,7)):
+	for style,state_,state,row in zip(['tas','tas','pr','pr','cpd','cpd'],[-1,1,-1,1,-1,1],['cold','warm','dry','wet','dry-warm','wet-cold'],range(1,7)):
 
 		for stat,ax,col in zip(['mean'],axes[row,:],[0]):
-			data = da.read_nc('data/'+model+'/'+'_'.join([style,model,'All-Hist','percentageState1.nc']))['qu']
+			data = da.read_nc('data/'+model+'/'+'_'.join([style,model,'All-Hist','percentageState'+str(state_)+'.nc']))['qu']
 			lat,lon = data.lat,data.lon
 			lon=np.roll(lon,len(lon)/2)
 

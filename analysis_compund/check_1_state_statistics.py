@@ -43,7 +43,7 @@ for style in ['pr','cpd','tas']:
 	for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
-			percentage_file = state_file.replace('state.nc','percentageState1.nc')
+			percentage_file = state_file.replace('state.nc','numberState1.nc')
 			#os.system('rm '+percentage_file)
 
 			result=try_several_times('cdo setmissval,nan ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
@@ -54,19 +54,19 @@ for style in ['pr','cpd','tas']:
 						os.system('rm '+percentage_file)
 					else:
 						break
-				result=try_several_times('cdo yseassum -chname,state,qu -divc,9.1 -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file ,3,60)
+				result=try_several_times('cdo yseassum -chname,state,qu -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file ,3,60)
 
 			result=try_several_times('cdo -O setmissval,99 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-			
+
 			for i in range(3):
 				if os.path.isfile(percentage_file.replace('State1','State-1')):
 					if os.stat(percentage_file.replace('State1','State-1')).st_size < 78000:
 						os.system('rm '+percentage_file.replace('State1','State-1'))
 					else:
 						break
-				result=try_several_times('cdo -O yseassum -chname,state,qu -divc,-9.1 -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
+				result=try_several_times('cdo -O yseassum -chname,state,qu -mulc,-1 -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
 
 			os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState1.nc',3,240)
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_percentageState-1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_percentageState-1.nc',3,240)
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberState1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_numberState1.nc',3,240)
+		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberState-1.nc ' + 'data/' + model + '/' + style + '_' + model +'_' +scenario + '_numberState-1.nc',3,240)
