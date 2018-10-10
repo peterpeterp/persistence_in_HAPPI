@@ -53,10 +53,10 @@ for style in ['pr','cpd','tas']:
 						break
 				result=try_several_times('cdo setmissval,nan ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
 				result=try_several_times('cdo setmissval,-99 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-				result=try_several_times('cdo yseassum -chname,state,qu -divc,36.5 -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file ,3,60)
+				result=try_several_times('cdo yseassum -chname,state,qu -divc,9.1 -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file ,3,60)
 
 				result=try_several_times('cdo -O setmissval,99 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-				result=try_several_times('cdo -O yseassum -chname,state,qu -divc,-36.5 -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
+				result=try_several_times('cdo -O yseassum -chname,state,qu -divc,-9.1 -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
 
 				os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
