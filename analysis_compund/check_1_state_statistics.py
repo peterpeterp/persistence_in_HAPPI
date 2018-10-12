@@ -51,7 +51,8 @@ for style in ['pr','cpd','tas']:
 			result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + state_file.replace('.nc','.nc_tmp3') ,3,60)
 			result=try_several_times('cdo -O yseassum -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file ,3,60)
 			result=try_several_times('cdo -O yseassum -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
-			result=try_several_times('cdo -O yseassum -setrtoc,0.1,100,1 -setrtoc,-100,-0.1,1 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file.replace('State1','Days') ,3,60)
+			result=try_several_times('cdo -O setrtoc,-100,-0.1,1 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + state_file.replace('.nc','.nc_tmp4') ,3,60)
+			result=try_several_times('cdo -O yseassum -setrtoc,0.1,100,1 ' + state_file.replace('.nc','.nc_tmp4') + ' ' + percentage_file.replace('State1','Days') ,3,60)
 
 			os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
