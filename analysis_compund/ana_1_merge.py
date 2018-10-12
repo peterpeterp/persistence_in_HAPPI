@@ -12,11 +12,11 @@ working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
-for style,style_orig in zip(['tas','cpd','pr'],['tas','compound','pr']):
+for style in ['tas','cpd','pr']:
 	for scenario in ['Plus20-Future','All-Hist']:
-		all_files=glob.glob(working_path+scenario+'/'+style_orig+'*period*')
+		all_files=glob.glob(working_path+scenario+'/'+style+'*period*')
 
-		print working_path+scenario+'/'+style_orig+'*period*'
+		print working_path+scenario+'/'+style+'*period*'
 		print all_files
 
 		nc_in=Dataset(all_files[0],'r')

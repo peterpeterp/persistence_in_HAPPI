@@ -93,7 +93,7 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.legend(handles=legend_elements ,title='                                     '+arg3[0]+'        '+arg3[1]+'       '+arg3[2] ,loc='lower right',fontsize=9,ncol=4, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
-def axis_settings(subax,label='off',arg1=None,arg2=None,arg3=None,arg4=None):
+def axis_settings(subax,label=False):
 	subax.set_yscale('log')
 	subax.set_xlim((0,35))
 	subax.set_ylim((0.01,100))
@@ -108,6 +108,7 @@ def axis_settings(subax,label='off',arg1=None,arg2=None,arg3=None,arg4=None):
 	for tick in subax.yaxis.get_major_ticks():
 		tick.label.set_backgroundcolor('w')
 	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
+
 	return(subax)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
@@ -122,7 +123,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 			nmax=min(nmax,len(count_h))
 			ensemble[i,:nmax]=count_h[0:nmax]
 		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
-		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3)
+		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4)
 
 		if state=='rr':
 			print(style,state)
@@ -143,20 +144,41 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	print('HadGHCND',style,state)
 	print(count_h[[7,14,21,28]]*100)
 
-	subax.annotate('   '+region, xy=(0, 0), xycoords='axes fraction', color=all_regs[region]['color'], weight='bold', fontsize=10,xytext=(-5, 5), textcoords='offset points')
+	lb_color ='none'
+	if all_regs[region]['edge'] != 'none':
+		lb_color = all_regs[region]['edge']
+	if all_regs[region]['color'] != 'none':
+		lb_color = all_regs[region]['color']
+	subax.annotate(region, xy=(0.05, 0.05), xycoords='axes fraction', color=lb_color, weight='bold', fontsize=10)
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='summer', arg2=['tas','pr','cpd'], arg3=['warm','dry','dry-warm'], arg4=sns.color_palette("hls", 3), title='exceedance probabilites of persistence in JJA')
+	arg1='summer',
+	arg2=['tas','pr','cpd'],
+	arg3=['warm','dry','dry-warm'],
+	arg4=['#FF3030','#FF8C00','#8B3A62'],
+	title='exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/Figure1_a.png',dpi=600)
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='summer', arg2=['tas','pr','cpd'], arg3=['cold','wet','wet-cold'], arg4=sns.color_palette("hls", 3), title='exceedance probabilites of persistence in JJA')
+	arg1='summer',
+	arg2=['tas','pr','cpd'],
+	arg3=['cold','wet','wet-cold'],
+	arg4=['#1C86EE','#00FFFF','#458B74'],
+	title='exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/Figure1_b.png',dpi=600)
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='winter', arg2=['tas','pr','cpd'], arg3=['warm','dry','dry-warm'], arg4=sns.color_palette("hls", 3), title='exceedance probabilites of persistence in DJF')
-plt.savefig('plots/paper/FigureSI1_a_DJF.png',dpi=600)
+	arg1='winter',
+	arg2=['tas','pr','cpd'],
+	arg3=['warm','dry','dry-warm'],
+	arg4=['#FF3030','#FF8C00','#8B3A62'],
+	title='exceedance probabilites of persistence in DJF')
+plt.savefig('plots/paper/FigureSI1_a.png',dpi=600)
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='winter', arg2=['tas','pr','cpd'], arg3=['cold','wet','wet-cold'], arg4=sns.color_palette("hls", 3), title='exceedance probabilites of persistence in DJF')
-plt.savefig('plots/paper/FigureSI1_b_DJF.png',dpi=600)
+	arg1='winter',
+	arg2=['tas','pr','cpd'],
+	arg3=['cold','wet','wet-cold'],
+	arg4=['#1C86EE','#00FFFF','#458B74'],
+	title='exceedance probabilites of persistence in DJF')
+plt.savefig('plots/paper/FigureSI1_b.png',dpi=600)

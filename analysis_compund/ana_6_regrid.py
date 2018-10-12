@@ -24,3 +24,7 @@ for style in ['tas','pr','cpd']:
 						ds['*'.join([scenario,season,state,stat_type])]=tmp[scenario,season,state,stat_type]
 		da.Dataset(ds).write_nc('data/'+model+'/'+style+'_'+model+'_SummaryMeanQu_regridReady.nc', mode='w')
 		os.system('cdo remapbil,data/grid1x1.cdo data/'+model+'/'+style+'_'+model+'_SummaryMeanQu_regridReady.nc data/'+model+'/'+style+'_'+model+'_SummaryMeanQu_1x1.nc')
+
+for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
+	for filename in glob.glob('data/'+model+'/state_stats/*'):
+		os.system('cdo remapbil,data/grid1x1.cdo '+filename + ' ' + filename.replace('.nc','_1x1.nc'))
