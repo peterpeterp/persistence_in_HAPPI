@@ -46,15 +46,16 @@ for style in ['pr','cpd','tas']:
 			percentage_file = state_file.replace('state.nc','numberState1.nc')
 			#os.system('rm '+percentage_file)
 
-			result=try_several_times('cdo -O chname,state,qu ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
-			result=try_several_times('cdo -O setmissval,nan ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-			result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + state_file.replace('.nc','.nc_tmp3') ,3,60)
-			result=try_several_times('cdo -O yseassum -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file ,3,60)
-			result=try_several_times('cdo -O yseassum -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
-			result=try_several_times('cdo -O setrtoc,-100,-0.1,1 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + state_file.replace('.nc','.nc_tmp4') ,3,60)
-			result=try_several_times('cdo -O yseassum -setrtoc,0.1,100,1 ' + state_file.replace('.nc','.nc_tmp4') + ' ' + percentage_file.replace('State1','Days') ,3,60)
+			if os.path.isfile(percentage_file.replace('State1','Days')) == False:
+				result=try_several_times('cdo -O chname,state,qu ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
+				result=try_several_times('cdo -O setmissval,nan ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
+				result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + state_file.replace('.nc','.nc_tmp3') ,3,60)
+				result=try_several_times('cdo -O yseassum -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file ,3,60)
+				result=try_several_times('cdo -O yseassum -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
+				result=try_several_times('cdo -O setrtoc,-100,-0.1,1 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + state_file.replace('.nc','.nc_tmp4') ,3,60)
+				result=try_several_times('cdo -O yseassum -setrtoc,0.1,100,1 ' + state_file.replace('.nc','.nc_tmp4') + ' ' + percentage_file.replace('State1','Days') ,3,60)
 
-			os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
+				os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
 		os.system('mkdir data/' + model + '/state_stats')
 		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberState1.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberState1.nc',3,240)
