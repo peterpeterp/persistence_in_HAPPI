@@ -23,8 +23,15 @@ except:
     os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
     working_path='data/'+model+'/'
 
+sys.path.append('persistence_in_models/')
+import __settings
+model_dict=__settings.model_dict
+
+in_path=model_dict[model]['in_path']
+grid=model_dict[model]['grid']
+
 for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
-    run_count=0
+
     all_files=glob.glob(working_path+scenario+'/*_period*')
     if os.path.isdir(working_path+scenario+'/summerStat') == False:
         os.system('mkdir '+working_path+scenario+'/summerStat')
@@ -32,13 +39,24 @@ for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
     print('finding periods\n10------50-------100')
     for in_file,progress in zip(all_files, np.array([['-']+['']*(len(all_files)/20+1)]*20).flatten()[0:len(all_files)]):
         sys.stdout.write(progress); sys.stdout.flush()
-
+        run = in_file.split('_')[-2]
         out_file=in_file.replace('_period','_summer').replace('/tas_Aday_','/summerStat/tas_Aday_')
         if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
         if os.path.isfile(out_file)==False:
+
+			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
+			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			if os.path.isfile(raw_file) == False:
+				# get daily temp
+				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+				result=try_several_times(command,2,60)
+				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+				result=try_several_times('rm '+out_file_name_tmp)
+
             #state_check=da.read_nc(in_file.replace('_period','_state'))['state']
             #tas=da.read_nc(in_file.replace('_period',''))['tas'][state_check.time,:,:]
-            tas=da.read_nc(in_file.replace('_period',''))['tas'].ix[45:-45,::]
+            tas=da.read_nc(raw_file)['tas'].ix[45:-45,::]
             tt=np.asarray(tas.squeeze(),np.float)
             datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
             year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
