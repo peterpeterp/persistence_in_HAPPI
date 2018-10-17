@@ -54,36 +54,25 @@ for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
 
             #x90_thresh=np.asarray(da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][scenario,'JJA','warm','qu_90'],np.float)
 
-            n_ID = 70
-
             result = {
                 'length' : da.DimArray(['7','14','21','28'],axes=[['7','14','21','28']],dims=['length']),
                 'lon': lon,
                 'lat': lat,
-                'hottest_day':da.DimArray(axes=[['7','14','21','28'],np.array([str(i) for i in range(n_ID)]),tas.lat,tas.lon],dims=['length','ID','lat','lon']),
-                'mean_temp':da.DimArray(axes=[['7','14','21','28'],np.array([str(i) for i in range(n_ID)]),tas.lat,tas.lon],dims=['length','ID','lat','lon']),
-                'hottest_day_shift':da.DimArray(axes=[['7','14','21','28'],np.array([str(i) for i in range(n_ID)]),tas.lat,tas.lon],dims=['length','ID','lat','lon']),
-                'original_period_id':da.DimArray(axes=[['7','14','21','28'],np.array([str(i) for i in range(n_ID)]),tas.lat,tas.lon],dims=['length','ID','lat','lon']),
+                'hottest_day':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
+                'mean_temp':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
+                'hottest_day_shift':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
+                # 'original_period_id':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
                 #'TXx_in_x90':da.DimArray(TXx_in_x90[0:len(set(year)),:,:],axes=[['7','14','21','28'],sorted(set(year)),tas.lat,tas.lon],dims=['length_thresh','year','lat','lon']),
             }
-
-
-            '''
-            run - mean
-            more meaningful
-            '''
 
             for per_len_thresh in [7,14,21,28][::-1]:
                 thresh = mm.copy()[0,:,:] * 0.0 + float(per_len_thresh)
                 hottest_day,x90_cum_temp,mean_temp,hottest_day_shift,TXx_in_x90,original_period_id,max_len=summer_period_analysis(ll,mm,seas,state,tt,thresh,year,len(period.lat),len(period.lon),len(period.period_id))
-                print(max_len,thresh)
-                mean_temp[mean_temp==-99]=np.nan
 
                 for tmp,name in zip([hottest_day,mean_temp,hottest_day_shift,original_period_id],['hottest_day','mean_temp','hottest_day_shift','original_period_id']):
-                    result[name][str(per_len_thresh),:,:,:].ix[:max_len,:,:] = tmp
-
-            for name in ['hottest_day','mean_temp','hottest_day_shift','original_period_id']:
-                result[name] = result[name].ix[:,:max_len,:,:]
+                    tmp = np.array(tmp,np.float)
+                    tmp[tmp==-99] = np.nan
+                    result[name][str(per_len_thresh),:,:] = np.nanmean(tmp,axis=0)
 
             ds=da.Dataset(result)
             ds.write_nc(out_file,mode='w')
