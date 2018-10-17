@@ -35,6 +35,8 @@ for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
     all_files=glob.glob(working_path+scenario+'/*_period*')
     if os.path.isdir(working_path+scenario+'/summerStat') == False:
         os.system('mkdir '+working_path+scenario+'/summerStat')
+    if os.path.isdir(working_path+scenario+'/tas') == False:
+        os.system('mkdir '+working_path+scenario+'/tas')
 
     print('finding periods\n10------50-------100')
     for in_file,progress in zip(all_files, np.array([['-']+['']*(len(all_files)/20+1)]*20).flatten()[0:len(all_files)]):
@@ -45,7 +47,7 @@ for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
         if os.path.isfile(out_file)==False:
 
 			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
-			raw_file=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 			if os.path.isfile(raw_file) == False:
 				# get daily temp
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
