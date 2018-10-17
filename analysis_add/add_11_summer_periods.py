@@ -2,6 +2,33 @@ import os,sys,glob,time,collections,gc,itertools,timeit
 import numpy as np
 from netCDF4 import Dataset,num2date
 import dimarray as da
+import random as random
+import subprocess as sub
+
+def wait_timeout(proc, seconds):
+	"""Wait for a process to finish, or raise exception after timeout"""
+	start = time.time()
+	end = start + seconds
+	interval = min(seconds / 1000.0, .25)
+
+	while True:
+		result = proc.poll()
+		if result is not None:
+			return result
+		if time.time() >= end:
+			os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+			return 'failed'
+		time.sleep(interval)
+
+
+def try_several_times(command,trials=2,seconds=60):
+	for trial in range(trials):
+		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
+		result=wait_timeout(proc,seconds)
+		if result!='failed':
+			break
+	return(result)
+
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 sys.path.append('/Users/peterpfleiderer/Projects/Persistence/weather_persistence/')
