@@ -57,7 +57,7 @@ model_dict=__settings.model_dict
 in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
-for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
+for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 
 	all_files=glob.glob(working_path+scenario+'/*_period*')
 	if os.path.isdir(working_path+scenario+'/summerStat') == False:
@@ -82,6 +82,8 @@ for scenario in ['Plus20-Future','All-Hist','Plus15-Future']:
 				result=try_several_times(command,2,60)
 				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
 				result=try_several_times('rm '+out_file_name_tmp)
+
+			result=try_several_times('cdo -O yseasmean '+raw_file+' '+out_file.replace('_summer.nc','_seasMean.nc'),2,60)
 
 			#state_check=da.read_nc(in_file.replace('_period','_state'))['state']
 			#tas=da.read_nc(in_file.replace('_period',''))['tas'][state_check.time,:,:]
