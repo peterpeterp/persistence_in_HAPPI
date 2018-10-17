@@ -118,7 +118,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				thresh = mm.copy()[0,:,:] * 0.0 + float(per_len_thresh)
 				hottest_day,x90_cum_temp,mean_temp,hottest_day_shift,TXx_in_x90,original_period_id,max_len=summer_period_analysis(ll,mm,seas,state,tt,thresh,year,len(period.lat),len(period.lon),len(period.period_id))
 
-				for tmp,name in zip([hottest_day,mean_temp,hottest_day_shift,original_period_id],['hottest_day','mean_temp','hottest_day_shift','original_period_id']):
+				for tmp,name in zip([hottest_day,mean_temp,hottest_day_shift],['hottest_day','mean_temp','hottest_day_shift']):
 					tmp = np.array(tmp,np.float)
 					tmp[tmp==-99] = np.nan
 					result[name][str(per_len_thresh),:,:] = np.nanmean(tmp,axis=0)
