@@ -73,10 +73,9 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
 		if os.path.isfile(out_file)==False:
 
-			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
-			raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			raw_file=in_file.replace('_period','').replace('/tas_Aday_','/tas/tas_Aday_')
 			if os.path.isfile(raw_file) == False:
-				# get daily temp
+				tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
 				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
 				result=try_several_times(command,2,60)
@@ -85,9 +84,9 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 			result=try_several_times('cdo -O yseasmean '+raw_file+' '+out_file.replace('_summer.nc','_seasMean.nc'),2,60)
 
-			#state_check=da.read_nc(in_file.replace('_period','_state'))['state']
-			#tas=da.read_nc(in_file.replace('_period',''))['tas'][state_check.time,:,:]
-			tas=da.read_nc(raw_file)['tas'].ix[45:-45,::]
+			state_check=da.read_nc(in_file.replace('_period','_state'))['state']
+			tas=da.read_nc(raw_file)['tas'][state_check.time,:,:]
+			#tas=da.read_nc(raw_file)['tas'].ix[45:-45,::]
 			tt=np.asarray(tas.squeeze(),np.float)
 			datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
 			year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
@@ -131,4 +130,35 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 
 
+			# # check plot
+			# import matplotlib.pyplot as plt
+			# plt.close()
+			# year_uq=sorted(set(year))
+			# day_in_year=[]
+			# for yr in year_uq:
+			# 	day_in_year+=range(year[year==yr].shape[0])
+			# day_in_year=np.array(day_in_year)
+			# fig,axes= plt.subplots(nrows=2,ncols=5,figsize=(20,10))
+			# for ax,yr in zip(axes.flatten(),year_uq):
+			# 	state_check_=state_check.values.squeeze()
+			# 	colors=np.array(day_in_year[year==yr],'str')
+			# 	colors[state_check_[year==yr,70,10]==-1]='b'
+			# 	colors[state_check_[year==yr,70,10]==1]='r'
+			# 	ax.scatter(day_in_year[year==yr],tas[:,tas.lat[70],tas.lon[10]].values[year==yr],color=colors)
+			# 	ids=original_period_id[:,70,10]
+			# 	ids=ids[0:np.argmax(ids)+1]
+			# 	xx=year[mm[ids,70,10]]
+			# 	ids=ids[year[mm[ids,70,10]]==yr]
+			# 	ax.set_title(ll[ids,70,10])
+			# 	for id_ in ids:
+			# 		l=int(abs(ll[id_,70,10])/2.)
+			# 		h=int(round(abs(ll[id_,70,10])/2.))
+			# 		shift=-(ll[id_,70,10]%2-1)
+			# 		days=np.arange(mm[id_,70,10]-l+shift,mm[id_,70,10]+h+shift)
+			# 		print(ll[id_,70,10],len(days),shift)
+			# 		print(state_check_[days,70,10])
+			# 		ax.plot(day_in_year[days],tt[days,70,10])
+			# 		#print tt[days,70,10],np.max(tt[days,70,10]),x90_hottest_day[np.where(original_period_id[:,70,10]==id_)[0],70,10]
+			# 		ax.scatter([day_in_year[mm[id_,70,10]]],[hottest_day[np.where(original_period_id[:,70,10]==id_)[0],70,10]],color='g')
+			# plt.savefig('test.png',dpi=300)
 #
