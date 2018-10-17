@@ -92,8 +92,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
 			year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
 
-			lon=da.read_nc(in_file.replace('_period',''))['lon']; lon.units="degrees_east"
-			lat=da.read_nc(in_file.replace('_period',''))['lat']; lat.units="degrees_north"
+			lon=da.read_nc(raw_file)['lon']; lon.units="degrees_east"
+			lat=da.read_nc(raw_file)['lat']; lat.units="degrees_north"
 
 			period=da.read_nc(in_file)
 			mm=np.asarray(period['period_midpoints']-tas.time[0],np.int32)
