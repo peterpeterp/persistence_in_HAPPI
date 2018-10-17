@@ -14,9 +14,8 @@ seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1},
 
 for style in ['tas','cpd','pr']:
 	for scenario in ['Plus20-Future','All-Hist']:
-		all_files=glob.glob(working_path+scenario+'/'+style+'*period*')
+		all_files=glob.glob(working_path+scenario+'/'+style+'*period.nc')
 
-		print working_path+scenario+'/'+style+'*period*'
 		print all_files
 
 		nc_in=Dataset(all_files[0],'r')

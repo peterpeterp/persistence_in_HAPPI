@@ -56,6 +56,10 @@ for style,state,row in zip(['tas','tas','pr','pr','cpd','cpd'],['warm','cold','d
 		crange=color_range[state][stat]
 		to_plot=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
 		im=ax.pcolormesh(lon,lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap,transform=ccrs.PlateCarree());
+
+		aggree = np.sum(np.sign(ensemble),axis=0)
+		im__=ax.contourf(np.roll(lon,180,axis=-1),lat,aggree , hatches=['/'*7],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
+
 		ax.annotate(state+'\n'+stat, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 		cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 		tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)

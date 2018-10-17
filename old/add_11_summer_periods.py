@@ -26,8 +26,10 @@ except:
 for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
     run_count=0
     all_files=glob.glob(working_path+scenario+'/*_period*')
+    if os.path.isdir(working_path+scenario+'/summerStat') == False:
+        os.system('mkdir '+working_path+scenario+'/summerStat')
     for in_file in all_files:
-        out_file=in_file.replace('_period','_summer')
+        out_file=in_file.replace('_period','_summer').replace('/tas_Aday_','/summerStat/tas_Aday_')
         if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
         if os.path.isfile(out_file)==False:
             print in_file
@@ -45,24 +47,26 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
             seas=np.asarray(period['period_season'],np.int32)
             state=np.asarray(period['period_state'],np.int32)
 
-            x90_thresh=np.asarray(da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][scenario,'JJA','warm','qu_90'],np.float)
+            #x90_thresh=np.asarray(da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][scenario,'JJA','warm','qu_90'],np.float)
 
-            time0=time.time()
-            x90_hottest_day,x90_cum_temp,x90_mean_temp,x90_hottest_day_shift,TXx_in_x90,original_period_id=summer_period_analysis(ll,mm,seas,state,tt,x90_thresh,year,len(period.lat),len(period.lon),len(period.period_id))
-            print time.time()-time0
+            result = {
+                'hottest_day':da.DimArray(axes=[[7,14,21,28],range(n_ID),tas.lat,tas.lon],dims=['length_thresh','ID','lat','lon']),
+                'mean_temp':da.DimArray(axes=[[7,14,21,28],range(n_ID),tas.lat,tas.lon],dims=['length_thresh','ID','lat','lon']),
+                'hottest_day_shift':da.DimArray(axes=[[7,14,21,28],range(n_ID),tas.lat,tas.lon],dims=['length_thresh','ID','lat','lon']),
+                'original_period_id':da.DimArray(axes=[[7,14,21,28],range(n_ID),tas.lat,tas.lon],dims=['length_thresh','ID','lat','lon']),
+                'TXx_in_x90':da.DimArray(TXx_in_x90[0:len(set(year)),:,:],axes=[[7,14,21,28],sorted(set(year)),tas.lat,tas.lon],dims=['length_thresh','year','lat','lon']),
+            }
 
-            for tmp in [x90_hottest_day,x90_cum_temp,x90_mean_temp]:
-                tmp[tmp==-99]=np.nan
+            for per_len_thresh in [7,14,21,28]:
+                time0=time.time()
+                hottest_day,x90_cum_temp,mean_temp,hottest_day_shift,TXx_in_x90,original_period_id=summer_period_analysis(ll,mm,seas,state,tt,per_len_thresh,year,len(period.lat),len(period.lon),len(period.period_id))
+                print time.time()-time0
+
+                for tmp,name in zip([hottest_day,mean_temp]):
+                    tmp[tmp==-99]=np.nan
 
             n_ID=x90_hottest_day.shape[0]
-            ds=da.Dataset({
-                'x90_hottest_day':da.DimArray(x90_hottest_day,axes=[range(n_ID),tas.lat,tas.lon],dims=['ID','lat','lon']),
-                'x90_cum_temp':da.DimArray(x90_cum_temp,axes=[range(n_ID),tas.lat,tas.lon],dims=['ID','lat','lon']),
-                'x90_mean_temp':da.DimArray(x90_mean_temp,axes=[range(n_ID),tas.lat,tas.lon],dims=['ID','lat','lon']),
-                'x90_hottest_day_shift':da.DimArray(x90_hottest_day_shift,axes=[range(n_ID),tas.lat,tas.lon],dims=['ID','lat','lon']),
-                'original_period_id':da.DimArray(original_period_id,axes=[range(n_ID),tas.lat,tas.lon],dims=['ID','lat','lon']),
-                'TXx_in_x90':da.DimArray(TXx_in_x90[0:len(set(year)),:,:],axes=[sorted(set(year)),tas.lat,tas.lon],dims=['year','lat','lon']),
-            })
+            ds=da.Dataset()
             ds.write_nc(out_file,mode='w')
 
             print time.time()-time0

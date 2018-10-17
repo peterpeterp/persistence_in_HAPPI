@@ -10,7 +10,8 @@ sns.set()
 import cartopy.crs as ccrs
 import cartopy
 
-cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", sns.color_palette("cubehelix", 8)[::-1])
+cmap = {'mean': matplotlib.colors.LinearSegmentedColormap.from_list("", sns.cubehelix_palette(8)),
+		'qu_95': matplotlib.colors.LinearSegmentedColormap.from_list("", sns.cubehelix_palette(8, start=.5, rot=-.75))}
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
@@ -61,7 +62,7 @@ for style,state in zip(['pr','pr','cpd','cpd'],['dry','wet','dry-warm','wet-cold
 			if name == 'HAPPI':
 				ensemble=np.zeros([4,180,360])*np.nan
 				for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-					ensemble[i,:,:]=sum_meanQu[style][model]['*'.join(['All-Hist',season,state,stat])]
+					ensemble[i,:,:]=models[style][model]['*'.join(['All-Hist',season,state,stat])]
 				to_plot=sum_meanQu[style][model]['*'.join(['All-Hist',season,state,stat])].copy()
 				to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
 				to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
@@ -70,7 +71,7 @@ for style,state in zip(['pr','pr','cpd','cpd'],['dry','wet','dry-warm','wet-cold
 
 			ax.annotate(name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 			crange=color_range[state][stat]
-			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap,transform=ccrs.PlateCarree());
+			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[stat],transform=ccrs.PlateCarree());
 
 	cbar_ax=fig.add_axes([0.1,0.55,0.8,0.4])
 	cbar_ax.axis('off')
@@ -90,7 +91,6 @@ for style,state in zip(['pr','pr','cpd','cpd'],['dry','wet','dry-warm','wet-cold
 	fig.tight_layout()
 	plt.savefig('plots/paper/FigureSI1_climatology_'+state+'.png',dpi=300)
 
-sadsd
 # warm cold
 for style,state in zip(['tas','tas'],['warm','cold']):
 	plt.close('all')
@@ -111,7 +111,7 @@ for style,state in zip(['tas','tas'],['warm','cold']):
 			if name == 'HAPPI':
 				ensemble=np.zeros([4,180,360])*np.nan
 				for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-					ensemble[i,:,:]=sum_meanQu[style][model]['*'.join(['All-Hist',season,state,stat])]
+					ensemble[i,:,:]=models[style][model]['*'.join(['All-Hist',season,state,stat])]
 				to_plot=sum_meanQu[style][model]['*'.join(['All-Hist',season,state,stat])].copy()
 				to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
 				to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
@@ -120,7 +120,7 @@ for style,state in zip(['tas','tas'],['warm','cold']):
 
 			ax.annotate(name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 			crange=color_range[state][stat]
-			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap,transform=ccrs.PlateCarree());
+			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[stat],transform=ccrs.PlateCarree());
 
 	cbar_ax=fig.add_axes([0.2,0.55,0.8,0.4])
 	cbar_ax.axis('off')

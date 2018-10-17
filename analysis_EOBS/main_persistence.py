@@ -30,9 +30,9 @@ def try_several_times(command,trials=2,seconds=60):
 	return(result)
 
 
-# os.chdir('/Users/peterpfleiderer/Projects/Persistence')
+os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-sys.path.append('../weather_persistence/')
+sys.path.append('weather_persistence/')
 import persistence_functions as prsfc; reload(prsfc)
 
 start_time=time.time()
@@ -102,7 +102,7 @@ prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_m
 #################
 # Compound State
 #################
-compound_state_file='data/EOBS/All-Hist/compound_state.nc4'
+compound_state_file=pr_state_file.replace('rr_0.50','cpd_0.50')
 prsfc.compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
 
 gc.collect()

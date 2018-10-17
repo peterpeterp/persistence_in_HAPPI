@@ -28,16 +28,13 @@ color_range={'warm':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
 # ------------------- cold-warm mean
 plt.close('all')
 asp=0.5
-fig,axes = plt.subplots(nrows=5,ncols=2,figsize=(8,4),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[1,4,4,4,4]})
+fig,axes = plt.subplots(nrows=4,ncols=2,figsize=(8,4),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[4,4,4,4]})
 
-for ax in axes[0,:]:
-	ax.outline_patch.set_edgecolor('white')
-
-for ax in axes[1:,:].flatten():
+for ax in axes[:,:].flatten():
 	ax.coastlines(edgecolor='black')
 	ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(1,5)):
+for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(4)):
 
 	ax= axes[row,0]
 
@@ -54,13 +51,13 @@ for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','we
 
 	to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
 	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap,transform=ccrs.PlateCarree());
-	ax.annotate(state+'\n'+stat, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
+	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(1,5)):
+for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(4)):
 
 	ax= axes[row,1]
 
@@ -76,21 +73,25 @@ for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','we
 
 		ensemble[i,:,:] = frac_fu -frac_hist
 
-	lat,lon = state_days.lat,state_days.lon
-	lon=np.roll(lon,len(lon)/2)
+	#aggree = np.roll(np.sum(np.sign(ensemble),axis=0),len(lon)/2,axis=-1)
+	aggree = np.sum(np.sign(ensemble),axis=0)
 
-	to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
-	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap_change,transform=ccrs.PlateCarree() ,vmin=-5 , vmax=5);
-	ax.annotate(state+'\n'+stat, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
+	lat,lon = state_days.lat,state_days.lon
+	#lon=np.roll(lon,len(lon)/2)
+
+	to_plot=np.nanmean(ensemble,axis=0)
+	#to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
+	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap_change,transform=ccrs.PlateCarree() ,vmin=-4 , vmax=4);
+	im__=ax.contourf(lon,lat,aggree , hatches=['/'*7],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
+	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-plt.annotate(s='changes in mean persistence [days]', xy=(0.5,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=12,rotation='90')
-plt.annotate(s='changes in 95th percentile of persistence [days]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=12,rotation='90')
+plt.annotate(s='state fraction in 2006-2015 [%]', xy=(0.5,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=12,rotation='90')
+plt.annotate(s='differene in state fraction +2$^\circ$C vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=12,rotation='90')
 
-plt.suptitle('ensemble mean difference +2$^\circ$C vs 2006-2015', fontweight='bold')
 fig.tight_layout()
 plt.savefig('plots/paper/Figure_state_percentage.png',dpi=300)
 

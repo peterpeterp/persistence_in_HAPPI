@@ -1,11 +1,11 @@
 import os,sys,glob,time,collections,gc
 import numpy as np
-from netCDF4 import Dataset,netcdftime,num2date
+from netCDF4 import Dataset,num2date
 import cPickle as pickle
 import dimarray as da
 
 try:
-	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
 except:
 	os.chdir('/global/homes/p/pepflei/')
 

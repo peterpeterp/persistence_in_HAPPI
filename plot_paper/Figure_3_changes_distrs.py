@@ -148,19 +148,26 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	title='rel. change in exceedance probabilites in JJA')
 plt.savefig('plots/paper/Figure2_a.png',dpi=600)
 
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[30,9], \
-# 	arg1='summer', arg2=['tas','pr','cpd'], arg3=['warm','dry','dry-warm'], arg4=sns.color_palette("hls", 3), title='rel. change in exceedance probabilites in JJA')
-# plt.savefig('plots/paper/Figure2_a.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[30,9], \
-# 	arg1='summer', arg2=['tas','pr','cpd'], arg3=['cold','wet','wet-cold'], arg4=sns.color_palette("hls", 3), title='rel. change in exceedance probabilites in JJA')
-# plt.savefig('plots/paper/Figure2_b.png',dpi=600)
-#
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[30,9], \
-# 	arg1='winter', arg2=['tas','pr','cpd'], arg3=['warm','dry','dry-warm'], arg4=sns.color_palette("hls", 3), title='rel. change in exceedance probabilites in DJF')
-# plt.savefig('plots/paper/Figure2_a_DJF.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[30,9], \
-# 	arg1='winter', arg2=['tas','pr','cpd'], arg3=['cold','wet','wet-cold'], arg4=sns.color_palette("hls", 3), title='rel. change in exceedance probabilites in DJF')
-# plt.savefig('plots/paper/Figure2_b_DJF.png',dpi=600)
+fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+	arg1='summer',
+	arg2=['tas','pr','cpd'],
+	arg3=['cold','wet','wet-cold'],
+	arg4=['#1C86EE','#00FFFF','#458B74'],
+	title='rel. change in exceedance probabilites in JJA')
+plt.savefig('plots/paper/Figure2_b.png',dpi=600)
+
+fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+	arg1='winter',
+	arg2=['tas','pr','cpd'],
+	arg3=['warm','dry','dry-warm'],
+	arg4=['#FF3030','#FF8C00','#8B3A62'],
+	title='rel. change in exceedance probabilites in DJF')
+plt.savefig('plots/paper/Figure2_a_DJF.png',dpi=600)
+
+fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+	arg1='winter',
+	arg2=['tas','pr','cpd'],
+	arg3=['cold','wet','wet-cold'],
+	arg4=['#1C86EE','#00FFFF','#458B74'],
+	title='rel. change in exceedance probabilites in DJF')
+plt.savefig('plots/paper/Figure2_b_DJF.png',dpi=600)
