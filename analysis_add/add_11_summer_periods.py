@@ -85,14 +85,16 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			result=try_several_times('cdo -O yseasmean '+raw_file+' '+out_file.replace('_summer.nc','_seasMean.nc'),2,60)
 
 			state_check=da.read_nc(in_file.replace('_period','_state'))['state']
-			tas=da.read_nc(raw_file)['tas'][state_check.time,:,:]
+			nc_tas=da.read_nc(raw_file)
+			print(nc_tas)
+			tas=nc_tas['tas'][state_check.time,:,:]
 			#tas=da.read_nc(raw_file)['tas'].ix[45:-45,::]
 			tt=np.asarray(tas.squeeze(),np.float)
 			datevar = num2date(tas.time,units = "days since 1979-01-01 00:00:00",calendar = "proleptic_gregorian")
 			year=np.array([int(str(date).split("-")[0])	for date in datevar[:]],np.int32)
 
-			lon=da.read_nc(raw_file)['lon']; lon.units="degrees_east"
-			lat=da.read_nc(raw_file)['lat']; lat.units="degrees_north"
+			lon=nc_tas['lon']; lon.units="degrees_east"
+			lat=nc_tas['lat']; lat.units="degrees_north"
 
 			period=da.read_nc(in_file)
 			mm=np.asarray(period['period_midpoints']-tas.time[0],np.int32)
