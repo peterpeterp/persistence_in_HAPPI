@@ -86,6 +86,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 			state_check=da.read_nc(in_file.replace('_period','_state'))['state']
 			nc_tas=da.read_nc(raw_file)
+			print(raw_file)
 			print(nc_tas)
 			tas=nc_tas['tas'][state_check.time,:,:]
 			#tas=da.read_nc(raw_file)['tas'].ix[45:-45,::]
