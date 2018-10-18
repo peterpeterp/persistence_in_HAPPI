@@ -45,7 +45,7 @@ def get_regional_distribution(regions,model,style,add_name,states_to_analyze,sce
 								tmp[season]+=distr_dict[str(y)+'_'+str(x)][season]
 
 			for season in ['MAM','JJA','SON','DJF']:
-				if len(tmp[season])>5:
+				if len(tmp[season])>=2:
 					for state,state_name in states_to_analyze.items():
 						count,pers=counter_to_pers(tmp[season],state)
 						region_dict[region][scenario][season][state_name]['period_length']=pers
