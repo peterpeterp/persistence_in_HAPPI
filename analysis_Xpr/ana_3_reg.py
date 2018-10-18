@@ -41,7 +41,7 @@ def get_regional_distribution(regions,model,style,add_name,states_to_analyze,sce
 				for y in distr_dict['lat']:
 					if polygon.contains(Point(x__,y)):
 						for season in ['MAM','JJA','SON','DJF']:
-							if len(distr_dict[str(y)+'_'+str(x)][season].keys())>10:
+							if len(distr_dict[str(y)+'_'+str(x)][season].keys())>=2:
 								tmp[season]+=distr_dict[str(y)+'_'+str(x)][season]
 
 			for season in ['MAM','JJA','SON','DJF']:
