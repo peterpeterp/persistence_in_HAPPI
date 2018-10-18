@@ -59,7 +59,7 @@ grid=model_dict[model]['grid']
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 
-	all_files=glob.glob(working_path+scenario+'/tas_Aday_*_period*')
+	all_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*_period*')
 	if os.path.isdir(working_path+scenario+'/summerStat') == False:
 		os.system('mkdir '+working_path+scenario+'/summerStat')
 	if os.path.isdir(working_path+scenario+'/tas') == False:
@@ -69,11 +69,11 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	for in_file,progress in zip(all_files, np.array([['-']+['']*(len(all_files)/20+1)]*20).flatten()[0:len(all_files)]):
 		sys.stdout.write(progress); sys.stdout.flush()
 		run = in_file.split('_')[-2]
-		out_file=in_file.replace('_period','_summer').replace('/tas_Aday_','/summerStat/tas_Aday_')
+		out_file=in_file.replace('_period','_summer').replace('/tas/tas_Aday_','/summerStat/tas_Aday_')
 		if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
 		if os.path.isfile(out_file)==False:
 
-			raw_file=in_file.replace('_period','').replace('/tas_Aday_','/tas/tas_Aday_')
+			raw_file=in_file.replace('_period','')
 			if os.path.isfile(raw_file) == False:
 				tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
