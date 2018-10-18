@@ -1,4 +1,5 @@
-import os,sys,glob,time,collections,gc,itertools,timeit
+import os,sys,glob,time,collections,gc,itertools,timeit,signal
+
 import numpy as np
 from netCDF4 import Dataset,num2date
 import dimarray as da
