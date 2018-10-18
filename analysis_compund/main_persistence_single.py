@@ -97,9 +97,9 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			prsfc.get_persistence(pr_state_file,states_to_analyze={1:'10mm'},overwrite=True)
 
 			pr_state_file=raw_file.replace('.nc','_state5mm.nc')
-			prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=10)
+			prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=5)
 			prsfc.get_persistence(pr_state_file,states_to_analyze={1:'5mm'},overwrite=True)
 
 			# clean
-			os.system('rm '+land_file+' '+raw_file)
+			os.system('rm '+' '.join([raw_file,land_file,raw_file.replace('.nc','_state10mm.nc'),raw_file.replace('.nc','_state5mm.nc')]))
 			gc.collect()
