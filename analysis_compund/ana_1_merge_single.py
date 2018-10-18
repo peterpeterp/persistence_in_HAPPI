@@ -5,7 +5,7 @@ import cPickle as pickle
 
 model=sys.argv[1]
 print model
-style=sys.argv[2]
+# style=sys.argv[2]
 
 overwrite=True
 
