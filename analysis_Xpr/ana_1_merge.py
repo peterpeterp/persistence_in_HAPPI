@@ -15,7 +15,7 @@ seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1},
 
 for style in ['pr']:
 	for scenario in ['Plus20-Future','All-Hist']:
-		for state in ['period-10mm','period-5mm']:
+		for state in ['period5mm']:
 			all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
 
 			print all_files
