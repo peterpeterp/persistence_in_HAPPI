@@ -68,5 +68,5 @@ pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 srex['mid-lat'] = {'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 #srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
-for style,states_to_analyze,add_name in zip(['pr','pr'],[{1:'5mm'},{1:'10mm'}],['_period-5mm','_period-10mm']):
+for style,states_to_analyze,add_name in zip(['pr','pr'],[{1:'5mm'},{1:'10mm'}],['period-5mm','period-10mm']):
 	region_dict=get_regional_distribution(regions=srex,model=model,style=style,states_to_analyze=states_to_analyze,add_name=add_name,scenarios=['All-Hist','Plus20-Future'],regions_id='srex')
