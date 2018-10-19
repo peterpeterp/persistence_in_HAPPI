@@ -40,7 +40,7 @@ import __settings
 model_dict=__settings.model_dict
 
 for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
-	state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state10mm.nc'))
+	state_files = sorted(glob.glob(working_path+scenario+'/'+'pr'+'/'+'pr'+'_*_state10mm.nc'))
 	for state_file in state_files:
 		percentage_file = state_file.replace('state.nc','numberState1.nc').replace('/pr/','/stateCount/')
 		#os.system('rm '+percentage_file)
@@ -56,5 +56,5 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 			os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
 	os.system('mkdir data/' + model + '/state_stats')
-	try_several_times('cdo -O ensmean ' + working_path+scenario+'/stateCount/'+style+'_*_numberState1.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberState1.nc',3,240)
-	try_several_times('cdo -O ensmean ' + working_path+scenario+'/stateCount/'+style+'_*_numberDays.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberDays.nc',3,240)
+	try_several_times('cdo -O ensmean ' + working_path+scenario+'/stateCount/'+'pr'+'_*_numberState1.nc ' + 'data/' + model + '/state_stats/' + 'pr' + '_' + model +'_' +scenario + '_numberState1.nc',3,240)
+	try_several_times('cdo -O ensmean ' + working_path+scenario+'/stateCount/'+'pr'+'_*_numberDays.nc ' + 'data/' + model + '/state_stats/' + 'pr' + '_' + model +'_' +scenario + '_numberDays.nc',3,240)
