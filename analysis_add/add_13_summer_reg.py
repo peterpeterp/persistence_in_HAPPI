@@ -37,6 +37,7 @@ for model in models:
 	masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 	for name,mask in masks.items():
 		mask[mask>0] = 1
+		masks[name] = mask
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
 		seasMean = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'].squeeze().ix[2]
