@@ -81,13 +81,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		'length' : da.DimArray(['7','14','21','28'],axes=[['7','14','21','28']],dims=['length']),
 		'lon': example_file['lon'],
 		'lat': example_file['lat'],
-		'hottest_day':da.DimArray(axes=[['7','14','21','28'],example_file.lat,example_file.lon],dims=['length','lat','lon']),
-		'mean_temp':da.DimArray(axes=[['7','14','21','28'],example_file.lat,example_file.lon],dims=['length','lat','lon']),
-		'hottest_day_shift':da.DimArray(axes=[['7','14','21','28'],example_file.lat,example_file.lon],dims=['length','lat','lon']),
 	})
 
 	for var in ['hottest_day','hottest_day_shift','mean_temp']:
-		out_file[var] = np.nanmean(merged_[var],axis=0)
+		out_file[var] = da.DimArray(np.nanmean(merged_[var],axis=0),axes=[['7','14','21','28'],example_file.lat,example_file.lon],dims=['length','lat','lon'])
 
 	out_file.write_nc('data/'+model+'/tas_'+model+'_'+scenario+'_summerStat.nc','w')
 #
