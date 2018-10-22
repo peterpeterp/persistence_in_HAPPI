@@ -34,6 +34,7 @@ for var in ['hottest_day','hottest_day_shift','mean_temp']:
 out_file['seasMean'] = da.DimArray(axes=[models,scenarios,regions],dims=['model','scenario','region'])
 
 for model in models:
+	print('**************'+model+'**************')
 	masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 	for name,mask in masks.items():
 		mask[mask!=0] = 1
