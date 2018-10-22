@@ -34,12 +34,12 @@ for var in ['hottest_day','hottest_day_shift','mean_temp']:
 out_file['seasMean'] = da.DimArray(axes=[models,scenarios,regions],dims=['model','scenario','region'])
 
 for model in models:
-	masks_in = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
-	masks = {}
+	masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 	for name,mask in masks_in.items():
+		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
 		masks[name] = mask
-		print(mask)
+
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
 		seasMean = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'].squeeze().ix[2]
