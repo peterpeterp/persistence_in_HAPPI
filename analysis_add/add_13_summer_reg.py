@@ -53,6 +53,7 @@ for model in models:
 		seasMean.lon = np.round(seasMean.lon,03)
 		print(seasMean)
 		print(masks['CEU'])
+		print(summerStat['hottest_day'])
 
 		for var in ['hottest_day','hottest_day_shift','mean_temp']:
 			for region in masks.keys():
