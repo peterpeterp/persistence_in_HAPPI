@@ -70,7 +70,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		'hottest_day_shift':da.DimArray(axes=[range(100),['7','14','21','28'],example_file.lat,example_file.lon],dims=['run','length','lat','lon']),
 	})
 
-	for id,in_file in all_files.enumerate():
+	for id,in_file in enumerate(all_files):
 		print(id)
 		tmp = da.read_nc(in_file)
 
