@@ -81,27 +81,29 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			###############
 
 			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/pr/'
-			raw_file=working_path+scenario+'/pr/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			# check if run exists
+			if len(glob.glob(tmp_path+run+'/*'))>0:
+				raw_file=working_path+scenario+'/pr/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 
-			# get daily pr
-			out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-			command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-			result=try_several_times(command,2,60)
-			result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-			result=try_several_times('rm '+out_file_name_tmp)
+				# get daily pr
+				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+				result=try_several_times(command,2,60)
+				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+				result=try_several_times('rm '+out_file_name_tmp)
 
-			# mask ocean
-			land_file=raw_file.replace('.nc','_land.nc')
-			result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
+				# mask ocean
+				land_file=raw_file.replace('.nc','_land.nc')
+				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
-			pr_state_file=raw_file.replace('.nc','_state5mm.nc')
-			prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=5)
-			#prsfc.get_persistence(pr_state_file,states_to_analyze={1:'5mm'},overwrite=True)
+				pr_state_file=raw_file.replace('.nc','_state5mm.nc')
+				prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=5)
+				#prsfc.get_persistence(pr_state_file,states_to_analyze={1:'5mm'},overwrite=True)
 
-			pr_state_file=raw_file.replace('.nc','_state10mm.nc')
-			prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=10)
-			#prsfc.get_persistence(pr_state_file,states_to_analyze={1:'10mm'},overwrite=True)
+				pr_state_file=raw_file.replace('.nc','_state10mm.nc')
+				prsfc.precip_to_index(land_file,pr_state_file,overwrite=True,unit_multiplier=86400,threshold=10)
+				#prsfc.get_persistence(pr_state_file,states_to_analyze={1:'10mm'},overwrite=True)
 
-			# clean
-			os.system('rm '+' '.join([raw_file,land_file])) # ,raw_file.replace('.nc','_state10mm.nc')
-			gc.collect()
+				# clean
+				os.system('rm '+' '.join([raw_file,land_file])) # ,raw_file.replace('.nc','_state10mm.nc')
+				gc.collect()
