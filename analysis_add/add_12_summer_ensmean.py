@@ -59,8 +59,8 @@ in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
-	result=try_several_times('cdo ensmean /global/cscratch1/sd/pepflei/'+model+'/'+scenario+'/summerStat/*seasMean.nc ../data/'+model+'/tas_'+model+'_'+scenario+'_seasMean.nc')
-#
+	result=try_several_times('cdo ensmean /global/cscratch1/sd/pepflei/'+model+'/'+scenario+'/summerStat/*seasMean.nc data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')
+
 # 	all_files=glob.glob(working_path+scenario+'/summerStat/tas_Aday_*_summer.nc')
 #
 # 	example_file=da.read_nc(all_files[0])
@@ -87,5 +87,5 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 # 	for var in ['hottest_day','hottest_day_shift','mean_temp']:
 # 		out_file[var] = da.DimArray(np.nanmean(merged_[var],axis=0),axes=[['7','14','21','28'],example_file.lat,example_file.lon],dims=['length','lat','lon'])
 #
-# 	out_file.write_nc('data/'+model+'/tas_'+model+'_'+scenario+'_summerStat.nc','w')
-# #
+# 	out_file.write_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc','w')
+# # #
