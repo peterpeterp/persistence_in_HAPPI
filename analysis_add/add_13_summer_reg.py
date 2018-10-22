@@ -46,6 +46,7 @@ for model in models:
 		seasMean = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'].squeeze().ix[2]
 		print(da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'])
 		print(seasMean)
+		print(np.nansum(seasMean))
 
 		for var in ['hottest_day','hottest_day_shift','mean_temp']:
 			for region in masks.keys():
@@ -55,6 +56,7 @@ for model in models:
 		for region in masks.keys():
 			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean * masks[region])
 			print(np.nansum(masks[region]))
+
 		out_file['seasMean'][model,scenario,'NHml'] = np.nanmean(seasMean[35:60,:])
 
 		print('CEU',out_file['hottest_day'][model,scenario,'CEU'].values)
