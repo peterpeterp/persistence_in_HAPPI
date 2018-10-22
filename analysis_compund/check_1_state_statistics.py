@@ -39,7 +39,7 @@ sys.path.append('persistence_in_models/')
 import __settings
 model_dict=__settings.model_dict
 
-for style in ['pr','cpd','tas']:
+for style in ['pr']:	#,'cpd','tas'
 	for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
