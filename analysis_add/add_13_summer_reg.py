@@ -39,9 +39,8 @@ for model in models:
 	for name,mask in masks.items():
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
-		masks[name] = mask
-		mask[name].lat = np.round(mask[name].lat,03)
-		mask[name].lon = np.round(mask[name].lon,03)
+		masks[name] = da.DimArray(mask, axes=[np.round(mask.lat,03),np.round(mask.lon,03)], dims=['lat','lon'])
+
 
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
