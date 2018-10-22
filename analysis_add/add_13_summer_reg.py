@@ -40,8 +40,8 @@ for model in models:
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
 		masks[name] = mask
-		mask[name].lat = np.round(masks['lat'].values,03)
-		mask[name].lon = np.round(masks['lon'].values,03)
+		mask[name].lat = np.round(mask[name].lat,03)
+		mask[name].lon = np.round(mask[name].lon,03)
 
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
