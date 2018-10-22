@@ -52,14 +52,17 @@ for model in models:
 				out_file[var][model,scenario,region,:].values = np.nanmean(summerStat[var] * masks[region], axis=(1,2))
 			out_file[var][model,scenario,'NHml',:].values = np.nanmean(summerStat[var][:,35:60,:], axis=(1,2))
 
-
 		for region in masks.keys():
 			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean * masks[region])
 		out_file['seasMean'][model,scenario,'NHml'] = np.nanmean(seasMean[35:60,:])
 
-		print(region,out_file['hottest_day'][model,scenario,'CEU'].values)
-		print(region,out_file['mean_temp'][model,scenario,'CEU'].values)
-		print(region,out_file['seasMean'][model,scenario,'CEU'])
+		print('CEU',out_file['hottest_day'][model,scenario,'CEU'].values)
+		print('CEU',out_file['mean_temp'][model,scenario,'CEU'].values)
+		print('CEU',out_file['seasMean'][model,scenario,'CEU'])
+
+		print('NHml',out_file['hottest_day'][model,scenario,'NHml'].values)
+		print('NHml',out_file['mean_temp'][model,scenario,'NHml'].values)
+		print('NHml',out_file['seasMean'][model,scenario,'NHml'])
 
 out_file = da.Dataset(out_file)
 out_file.write_nc('data/tas_summerStat_srex.nc','w')
