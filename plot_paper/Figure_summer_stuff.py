@@ -28,15 +28,7 @@ except:
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 
-big_dict={}
-for style in ['pr']:
-	big_dict[style]={}
-	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-
-		infile = 'data/'+dataset+'/'+style+'_period5mm_'+dataset+'_regional_distrs_srex.pkl'
-		if os.path.isfile(infile):
-			pkl_file=open(infile, 'rb')
-			big_dict[style][dataset] = pickle.load(pkl_file);	pkl_file.close()
+data = da.read_nc('data/tas_summerStat_srex.nc')
 
 
 NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
@@ -67,55 +59,42 @@ colors=['black']+sns.color_palette("colorblind", 4)
 # ---------------------------- changes
 def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.axis('off')
-	legend_elements=[]
-	legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='EOBS'))
-	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='Model Spread'))
-	for style,state,color in zip(arg2,arg3,arg4):
-		# legend_elements.append(Line2D([0], [0], color='w', label=state))
-		legend_elements.append(Line2D([0], [0], color=color, label=' '))
-		legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
-		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
+	# legend_elements=[]
+	# legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
+	# legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='EOBS'))
+	# legend_elements.append(Patch(facecolor='w', alpha=0.3, label='Model Spread'))
+	# for style,state,color in zip(arg2,arg3,arg4):
+	# 	# legend_elements.append(Line2D([0], [0], color='w', label=state))
+	# 	legend_elements.append(Line2D([0], [0], color=color, label=' '))
+	# 	legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
+	# 	legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
 
 
 	#subax.legend(handles=legend_elements ,title='                                     '+arg3[0]+'        '+arg3[1]+'       '+arg3[2] ,loc='lower right',fontsize=9,ncol=4, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
 def axis_settings(subax,label=False):
-	subax.set_yscale('log')
-	subax.set_xlim((0,35))
-	subax.set_ylim((0.01,100))
-	subax.set_xticks([7,14,21,28,35])
-	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=8)
-	subax.set_yticks([0.01,0.1,1,10,100])
-	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=8)
-	locmin = mticker.LogLocator(base=10, subs=[1.0])
-	subax.yaxis.set_minor_locator(locmin)
-	subax.yaxis.set_minor_formatter(mticker.NullFormatter())
-	subax.yaxis.get_label().set_backgroundcolor('w')
-	for tick in subax.yaxis.get_major_ticks():
-		tick.label.set_backgroundcolor('w')
-	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
-
+	# subax.set_yscale('log')
+	# subax.set_xlim((0,35))
+	# subax.set_ylim((0.01,100))
+	# subax.set_xticks([7,14,21,28,35])
+	# subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=8)
+	# subax.set_yticks([0.01,0.1,1,10,100])
+	# subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=8)
+	# locmin = mticker.LogLocator(base=10, subs=[1.0])
+	# subax.yaxis.set_minor_locator(locmin)
+	# subax.yaxis.set_minor_formatter(mticker.NullFormatter())
+	# subax.yaxis.get_label().set_backgroundcolor('w')
+	# for tick in subax.yaxis.get_major_ticks():
+	# 	tick.label.set_backgroundcolor('w')
+	# subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
+	pass
 	return(subax)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
-	for style,state,color in zip(arg2,arg3,arg4):
-		ensemble=np.zeros([4,35])*np.nan
-		nmax=35
-		for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-			print(dataset)
-			try:
-				tmp_h=big_dict[style][dataset][region]['All-Hist'][season][state]
-				count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
-				nmax=min(nmax,len(count_h))
-				ensemble[i,:nmax]=count_h[0:nmax]
-			except:
-				pass
-		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
-		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4)
+	subax.plot(1,np.nanmean(data['mean_temp'][:,:,region,'7']),'*b')
 
 
 	lb_color ='none'
@@ -131,4 +110,4 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg3=['5mm'],
 	arg4=['#FF3030'],
 	title='exceedance probabilites of persistence in JJA')
-plt.savefig('plots/paper/Figure1_a_XX.png',dpi=600)
+plt.savefig('plots/paper/Figure_summer.png',dpi=600)

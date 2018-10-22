@@ -41,12 +41,12 @@ for model in models:
 
 		for var in ['hottest_day','hottest_day_shift','mean_temp']:
 			for region in masks.keys():
-				out_file[var][model,scenario,region,:].values = np.nanmean(summerStat[var] * masks[region], axis=(1,2))
+				out_file[var][model,scenario,region,:].values = np.nanmean(summerStat[var].ix[np.where(masks[region]!=0)], axis=(1,2))
 			out_file[var][model,scenario,'NHml',:].values = np.nanmean(summerStat[var][:,35:60,:], axis=(1,2))
 
 
 		for region in masks.keys():
-			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean * masks[region])
+			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean.ix[np.where(masks[region]!=0)])
 		out_file['seasMean'][model,scenario,'NHml'] = np.nanmean(seasMean[35:60,:])
 
 out_file = da.Dataset(out_file)
