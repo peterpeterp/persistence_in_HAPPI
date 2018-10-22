@@ -54,6 +54,7 @@ for model in models:
 
 		for region in masks.keys():
 			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean * masks[region])
+			print(np.nansum(masks[region]))
 		out_file['seasMean'][model,scenario,'NHml'] = np.nanmean(seasMean[35:60,:])
 
 		print('CEU',out_file['hottest_day'][model,scenario,'CEU'].values)
