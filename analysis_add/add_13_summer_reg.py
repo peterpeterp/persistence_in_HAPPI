@@ -59,6 +59,9 @@ for model in models:
 
 		for var in ['hottest_day','hottest_day_shift','mean_temp']:
 			for region in masks.keys():
+				'''
+				using values is unsafe. would be better to fix lat and lon
+				'''
 				out_file[var][model,scenario,region,:].values = np.nanmean(summerStat[var].values * masks[region].values, axis=(1,2))
 			out_file[var][model,scenario,'NHml',:].values = np.nanmean(summerStat[var][:,35:60,:], axis=(1,2))
 

@@ -47,7 +47,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
-		'NHml':{'edge':'darkblue','color':'none','alpha':1,'pos':(-142,28),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'NHml':{'edge':'darkblue','color':'none','alpha':1,'pos':(-142,42),'xlabel':'','ylabel':'temperature change [K]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
@@ -59,42 +59,47 @@ colors=['black']+sns.color_palette("colorblind", 4)
 # ---------------------------- changes
 def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.axis('off')
-	# legend_elements=[]
-	# legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
-	# legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='EOBS'))
-	# legend_elements.append(Patch(facecolor='w', alpha=0.3, label='Model Spread'))
-	# for style,state,color in zip(arg2,arg3,arg4):
-	# 	# legend_elements.append(Line2D([0], [0], color='w', label=state))
-	# 	legend_elements.append(Line2D([0], [0], color=color, label=' '))
-	# 	legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
-	# 	legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
+	legend_elements=[]
+	legend_elements.append(Patch(facecolor='orange', alpha=0.3, label='+1.5$^\circ$C vs 2006-2015'))
+	legend_elements.append(Patch(facecolor='red', alpha=0.3, label='+2$^\circ$C vs 2006-2015'))
+	legend_elements.append(Line2D([0], [0], color='k', label='ensemble mean'))
 
-
-	#subax.legend(handles=legend_elements ,title='                                     '+arg3[0]+'        '+arg3[1]+'       '+arg3[2] ,loc='lower right',fontsize=9,ncol=4, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
+	subax.legend(handles=legend_elements, loc='lower right',fontsize=9, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
 def axis_settings(subax,label=False):
-	# subax.set_yscale('log')
-	# subax.set_xlim((0,35))
-	# subax.set_ylim((0.01,100))
-	# subax.set_xticks([7,14,21,28,35])
-	# subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=8)
-	# subax.set_yticks([0.01,0.1,1,10,100])
-	# subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=8)
-	# locmin = mticker.LogLocator(base=10, subs=[1.0])
-	# subax.yaxis.set_minor_locator(locmin)
-	# subax.yaxis.set_minor_formatter(mticker.NullFormatter())
-	# subax.yaxis.get_label().set_backgroundcolor('w')
-	# for tick in subax.yaxis.get_major_ticks():
-	# 	tick.label.set_backgroundcolor('w')
-	# subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
-	pass
+	subax.set_xlim((0.5,3.5))
+	subax.set_ylim((0.0,2.5))
+	subax.set_xticks(range(1,4))
+	subax.set_xticklabels(['seas. mean','period mean\n(+14 day periods)','hottest day\n(+14 day periods)'])
+	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=8,rotation=90)
+	subax.set_yticks([0.5,1,1.5,2])
+	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=8)
+	locmin = mticker.LogLocator(base=10, subs=[1.0])
+	subax.yaxis.set_minor_locator(locmin)
+	subax.yaxis.set_minor_formatter(mticker.NullFormatter())
+	subax.yaxis.get_label().set_backgroundcolor('w')
+	for tick in subax.yaxis.get_major_ticks()+subax.xaxis.get_major_ticks():
+		tick.label.set_backgroundcolor('w')
+	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
 	return(subax)
+
+def plot_bar(ax,x,to_plot,color):
+	ax.fill_between([x-0.1,x+0.1],[np.nanmin(to_plot,axis=0),np.nanmin(to_plot,axis=0)],[np.nanmax(to_plot,axis=0),np.nanmax(to_plot,axis=0)],color=color,alpha=0.4)
+	ax.plot([x-0.1,x+0.1],[np.nanmean(to_plot,axis=0),np.nanmean(to_plot,axis=0)],color='k')
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
-	subax.plot(1,np.nanmean(data['mean_temp'][:,:,region,'7']),'*b')
+	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['orange','red']):
+		to_plot = (data['seasMean'][:,scenario,region] - data['seasMean'][:,'All-Hist',region])
+		plot_bar(subax,1,to_plot,color)
+
+		to_plot = (data['mean_temp'][:,scenario,region,'14'] - data['mean_temp'][:,'All-Hist',region,'7'] )
+		plot_bar(subax,2,to_plot,color)
+
+		to_plot = (data['hottest_day'][:,scenario,region,'14'] - data['hottest_day'][:,'All-Hist',region,'14'] )
+		plot_bar(subax,3,to_plot,color)
 
 
 	lb_color ='none'
@@ -109,5 +114,5 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg2=['pr'],
 	arg3=['5mm'],
 	arg4=['#FF3030'],
-	title='exceedance probabilites of persistence in JJA')
+	title='temperature changes in JJA')
 plt.savefig('plots/paper/Figure_summer.png',dpi=600)
