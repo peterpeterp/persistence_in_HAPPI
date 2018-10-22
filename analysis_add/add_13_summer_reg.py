@@ -35,8 +35,9 @@ out_file['seasMean'] = da.DimArray(axes=[models,scenarios,regions],dims=['model'
 
 for model in models:
 	print('**************'+model+'**************')
-	masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
-	for name,mask in masks.items():
+	masks_in = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
+	masks = {}
+	for name,mask in masks_in.items():
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
 		print(mask)
