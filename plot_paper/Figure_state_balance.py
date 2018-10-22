@@ -34,7 +34,7 @@ for ax in axes[:,:].flatten():
 	ax.coastlines(edgecolor='black')
 	ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(4)):
+for style,state_,state_name,row in zip(['pr','cpd','pr','pr'],[-1,1,'5mm','5mm'],['dry','dry-warm','5mm','5mm'],range(4)):
 
 	ax= axes[row,0]
 
@@ -42,7 +42,7 @@ for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','we
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 		state_days = da.read_nc('data/'+model+'/state_stats/'+'_'.join([style,model,'All-Hist','numberState'+str(state_)+'_1x1.nc']))['qu']
 		days = da.read_nc('data/'+model+'/state_stats/'+'_'.join(['pr',model,'All-Hist','numberDays_1x1.nc']))['qu']
-		ensemble[i,:,:] = state_days.ix[2,:,:] / days.ix[2,:,:] * state_ * 100
+		ensemble[i,:,:] = np.abs(state_days.ix[2,:,:] / days.ix[2,:,:])  * 100
 
 
 	lat,lon = state_days.lat,state_days.lon
@@ -57,7 +57,7 @@ for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','we
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-for style,state_,state,row in zip(['pr','pr','cpd','cpd'],[-1,1,1,-1],['dry','wet','dry-warm','wet-cold'],range(4)):
+for style,state_,state,row in zip(['pr','cpd','pr','pr'],[-1,1,1,1],['dry','dry-warm','5mm','10mm'],range(4)):
 
 	ax= axes[row,1]
 

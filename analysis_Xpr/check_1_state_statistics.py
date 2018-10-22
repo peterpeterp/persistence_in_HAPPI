@@ -56,9 +56,9 @@ for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 	try_several_times('cdo -O ensmean ' + working_path+scenario+'/stateCount/'+'pr'+'_*_numberState10mm.nc ' + 'data/' + model + '/state_stats/' + 'pr' + '_' + model +'_' +scenario + '_numberState10mm.nc',3,240)
 
 
-	state_files = sorted(glob.glob(working_path+scenario+'/'+'pr'+'/'+'pr'+'_*_state10mm.nc'))
+	state_files = sorted(glob.glob(working_path+scenario+'/'+'pr'+'/'+'pr'+'_*_state5mm.nc'))
 	for state_file in state_files:
-		percentage_file = state_file.replace('_state10mm.nc','_numberState5mm.nc').replace('/pr/','/stateCount/')
+		percentage_file = state_file.replace('_state5mm.nc','_numberState5mm.nc').replace('/pr/','/stateCount/')
 
 		if os.path.isfile(percentage_file) == False:
 			result=try_several_times('cdo -O chname,state,qu ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
