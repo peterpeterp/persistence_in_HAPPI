@@ -71,6 +71,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	})
 
 	for id,in_file in all_files.enumerate():
+		print(id)
 		tmp = da.read_nc(in_file)
 
 		for var in ['hottest_day','hottest_day_shift','mean_temp']:
