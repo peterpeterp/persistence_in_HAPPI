@@ -39,6 +39,9 @@ for model in models:
 	for name,mask in masks.items():
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
+		print(mask)
+		print(mask.lat)
+		print(np.round(mask.lat,03))
 		masks[name] = da.DimArray(mask.values, axes=[np.round(mask.lat,03),np.round(mask.lon,03)], dims=['lat','lon'])
 
 
