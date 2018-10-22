@@ -69,7 +69,9 @@ except:
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 	if scenario==chosen_scenario:
 		os.system('mkdir '+working_path+scenario)
-		run_list=sorted([path.split('/')[-1].split('_')[-1].split('.')[0] for path in glob.glob('/global/cscratch1/sd/pepflei/EKE/'+model+'/All-Hist/monEKE*')])[0:100]
+
+		run_list=[model_dict[model]['run_name']+str(i).zfill(3) for i in range(101)]
+
 		for run in run_list:
 			print(run)
 			start_time=time.time()
