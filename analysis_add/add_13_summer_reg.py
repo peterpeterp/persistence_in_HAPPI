@@ -36,6 +36,8 @@ out_file['seasMean'] = da.DimArray(axes=[models,scenarios,regions],dims=['model'
 for model in models:
 	print('**************'+model+'**************')
 	masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
+	masks['lat'].values = np.round(masks['lat'].values,03)
+	masks['lon'].values = np.round(masks['lon'].values,03)
 	for name,mask in masks.items():
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
@@ -44,7 +46,10 @@ for model in models:
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
 		seasMean = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'].squeeze().ix[2]
-		print(da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'])
+		summerStat['lat'].values = np.round(summerStat['lat'].values,03)
+		summerStat['lon'].values = np.round(summerStat['lon'].values,03)
+		seasMean['lat'].values = np.round(seasMean['lat'].values,03)
+		seasMean['lon'].values = np.round(seasMean['lon'].values,03)
 		print(seasMean)
 		print(masks['CEU'])
 		print(np.nansum(seasMean))
