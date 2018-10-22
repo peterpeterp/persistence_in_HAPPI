@@ -72,7 +72,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 all_regs=NH_regs.copy()
 
 polygons=srex.copy()
-polygons['NHml']={'points':[(-180,23),(180,23),(180,66),(-180,66)]}
+polygons['NHml']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
 colors=['black']+sns.color_palette("colorblind", 4)
 
