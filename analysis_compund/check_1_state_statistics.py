@@ -41,10 +41,9 @@ model_dict=__settings.model_dict
 
 for style in ['pr']:	#,'cpd','tas'
 	for scenario in ['All-Hist','Plus20-Future']:
-		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'_*_state.nc'))
+		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
-			percentage_file = state_file.replace('state.nc','numberState1.nc')
-			#os.system('rm '+percentage_file)
+			percentage_file = state_file.replace('state.nc','numberState1.nc').replace('/'+style+'/','/stateCount/')
 
 			if os.path.isfile(percentage_file.replace('State1','Days')) == False:
 				result=try_several_times('cdo -O chname,state,qu ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
