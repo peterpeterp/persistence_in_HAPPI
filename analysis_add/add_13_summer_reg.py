@@ -41,6 +41,7 @@ for model in models:
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
 		masks[name] = da.DimArray(mask.values, axes=[np.round(mask.lat,03),np.round(mask.lon,03)], dims=['lat','lon'])
+		print(masks[name])
 
 
 	for scenario in scenarios:
@@ -62,7 +63,6 @@ for model in models:
 
 		for region in masks.keys():
 			out_file['seasMean'][model,scenario,region] = np.nanmean(seasMean * masks[region])
-			print(np.nansum(masks[region]))
 
 		out_file['seasMean'][model,scenario,'NHml'] = np.nanmean(seasMean[35:60,:])
 
