@@ -49,6 +49,7 @@ for model in models:
 	for scenario in scenarios:
 		summerStat = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_summerStat.nc')
 		seasMean = da.read_nc('data/'+model+'/summer/tas_'+model+'_'+scenario+'_seasMean.nc')['tas'].squeeze().ix[2]
+		print(seasMean)
 		summerStat['lat'].values = np.round(summerStat['lat'].values,03)
 		summerStat['lon'].values = np.round(summerStat['lon'].values,03)
 		seasMean['lat'].values = np.round(seasMean['lat'].values,03)
