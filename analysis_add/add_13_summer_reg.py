@@ -40,7 +40,7 @@ for model in models:
 	for name,mask in masks_in.items():
 		mask[mask!=0] = 1
 		mask[mask==0] = np.nan
-		masks[name] = da.DimArray(mask.values, axes=[np.round(mask.lat,03),np.round(mask.lon,03)], dims=['lat','lon'])
+		masks[name] = mask.copy()
 		masks[name].lat = np.round(masks[name].lat,03)
 		masks[name].lon = np.round(masks[name].lon,03)
 
