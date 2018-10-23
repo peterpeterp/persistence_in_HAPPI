@@ -56,3 +56,51 @@ for style,style_orig in zip(['tas','cpd','pr'],['tg','cpd','rr']):
 		output = open('data/'+model+'/'+style+'_'+model+'_'+scenario+'_counter.pkl', 'wb')
 		pickle.dump(distr_dict, output)
 		output.close()
+
+
+
+for style,style_orig in zip(['pr'],['rr']):
+	for scenario in ['All-Hist']:
+		for state in ['period10mm','period5mm']:
+
+			all_files=sorted(glob.glob(working_path+scenario+'/'+style_orig+'*'+state+'.nc'))
+
+			print all_files
+
+			nc_in=Dataset(all_files[0],'r')
+			lat=nc_in.variables['latitude'][:]
+			lon=nc_in.variables['longitude'][:]
+			nc_in.close()
+
+			distr_dict={}
+			for y in lat:
+				for x in lon:
+					distr_dict[str(y)+'_'+str(x)]={'MAM':collections.Counter(),'JJA':collections.Counter(),'SON':collections.Counter(),'DJF':collections.Counter()}
+
+			for file in all_files:
+				start_time=time.time()
+				print file
+				nc_in=Dataset(file,'r')
+				try:
+					period_length=nc_in.variables['period_length'][:,:,:]
+					period_season=nc_in.variables['period_season'][:,:,:]
+
+					for iy in range(len(lat)):
+						sys.stdout.write('.')	;	sys.stdout.flush()
+						for ix in range(len(lon)):
+							for season in seasons.keys():
+								in_season=np.where(period_season[:,iy,ix]==seasons[season]['index'])[0]
+								distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]+=collections.Counter(period_length[:,iy,ix][in_season])
+				except:
+					failed_files=open(working_path+scenario+'/damaged_files.txt','w')
+					failed_files.write(file+'\n')
+					failed_files.close()
+
+				print time.time()-start_time
+
+			distr_dict['lon']=lon
+			distr_dict['lat']=lat
+
+			output = open('data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
+			pickle.dump(distr_dict, output)
+			output.close()

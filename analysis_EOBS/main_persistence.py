@@ -113,3 +113,11 @@ gc.collect()
 prsfc.get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
 prsfc.get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
 prsfc.get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
+
+pr_state_file=raw_file.replace('.nc','_state5mm.nc')
+prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=86400,threshold=5)
+prsfc.get_persistence(pr_state_file,states_to_analyze={1:'5mm'},overwrite=True,lat_name='latitude',lon_name='longitude')
+
+pr_state_file=raw_file.replace('.nc','_state10mm.nc')
+prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=86400,threshold=10)
+prsfc.get_persistence(pr_state_file,states_to_analyze={1:'10mm'},overwrite=True,lat_name='latitude',lon_name='longitude')
