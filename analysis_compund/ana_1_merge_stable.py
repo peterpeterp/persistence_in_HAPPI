@@ -5,7 +5,6 @@ import cPickle as pickle
 
 model=sys.argv[1]
 print model
-# style=sys.argv[2]
 
 overwrite=True
 
@@ -13,9 +12,10 @@ working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
-for style,state in zip(['pr','tas','tas','cpd'],['dry','warm','cold','dry-warm']):
-	for scenario in ['Plus15-Future']:
-		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
+for style in ['tas','cpd','pr']:
+	for scenario in ['Plus20-Future','All-Hist']:
+		all_files=glob.glob(working_path+scenario+'/'+style+'*period.nc')
+
 		print all_files
 
 		nc_in=Dataset(all_files[0],'r')
@@ -52,6 +52,6 @@ for style,state in zip(['pr','tas','tas','cpd'],['dry','warm','cold','dry-warm']
 		distr_dict['lon']=lon
 		distr_dict['lat']=lat
 
-		output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
+		output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_counter.pkl', 'wb')
 		pickle.dump(distr_dict, output)
 		output.close()
