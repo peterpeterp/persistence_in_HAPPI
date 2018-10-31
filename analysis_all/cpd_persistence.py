@@ -75,37 +75,35 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			start_time=time.time()
 
 			###############
-			# Precipitation
+			# Compound
 			###############
+			tas_state_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*_state.nc')
+			if len(tas_state_files)==1:
+				tas_state_file = tas_state_files[0]
+			else:
+				break
 
-			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/pr/'
-			if len(glob.glob(tmp_path+run+'/*'))>0:
-				raw_file=working_path+scenario+'/pr/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-				pr_state_file=raw_file.replace('.nc','_state.nc')
-				if os.path.isfile(pr_state_file) == False:
+			pr_state_files=glob.glob(working_path+scenario+'/pr/pr_Aday_*_state.nc')
+			if len(pr_state_files)==1:
+				pr_state_file = pr_state_files[0]
+			else:
+				break
 
-					# get daily pr
-					out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-					command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-					result=try_several_times(command,2,60)
-					result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-					result=try_several_times('rm '+out_file_name_tmp)
+			compound_state_file=tas_state_file.replace('tas/tas_Aday','cpd/cpd_Aday')
+			
+			prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
+			prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'])
+			gc.collect()
 
-					# mask ocean
-					land_file=raw_file.replace('.nc','_land.nc')
-					result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
 
-					prsfc.precip_to_index(land_file,pr_state_file,unit_multiplier=86400, states={'dry':{'mod':'below','threshold':1}, 'wet':{'mod':'above','threshold':1}, '5mm':{'mod':'above','threshold':5}, '10mm':{'mod':'above','threshold':10}})
 
-					# clean
-					os.system('rm '+land_file+' '+raw_file)
 
-				###############
-				# Persistence
-				###############
 
-				prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'])
-				gc.collect()
+
+
+
+
+
 
 
 
