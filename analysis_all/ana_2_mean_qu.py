@@ -59,7 +59,7 @@ for state,style in state_dict.items():
 	lat=big_dict[scenario]['lat']
 	lon=big_dict[scenario]['lon']
 
-	if 'SummaryMeanQu' not in globals:
+	if 'SummaryMeanQu' not in globals():
 		SummaryMeanQu=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(state_dict.keys()),np.asarray(types),lat,lon], dims=['scenario','season','state','type','lat','lon'])
 
 	for scenario in scenarios:
