@@ -19,32 +19,41 @@ events = {
 
 for event_name,event in events.items():
 
-	lat_,lon_ = event['lat'],event['lon']
+	# lat_,lon_,year_ = event['lat'],event['lon'],event['year']
+	# for filename in glob.glob(data_path+'*.nc'):
+	# 	os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/tmp/'))
 
-	nc_period=da.read_nc(data_path+'tg_0.50deg_reg_v17.0_period.nc')
-	tas_period={}
-	for name, value in nc_period.items():
-		tas_period[name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+'/tmp/'+'tg_0.50deg_reg_v17.0_period.nc')
+	# tas_period={}
+	# for name, value in nc_period.items():
+	# 	tas_period[name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+'/tmp/'+'rr_0.50deg_reg_v17.0_period.nc')
+	# pr_period={}
+	# for name, value in nc_period.items():
+	# 	pr_period[name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+'/tmp/'+'cpd_0.50deg_reg_v17.0_period.nc')
+	# cpd_period={}
+	# for name, value in nc_period.items():
+	# 	cpd_period[name]=value[:,lat_,lon_]
+	#
 
-	nc_period=da.read_nc(data_path+'rr_0.50deg_reg_v17.0_period.nc')
-	pr_period={}
-	for name, value in nc_period.items():
-		pr_period[name]=value[:,lat_,lon_]
-
-	nc_period=da.read_nc(data_path+'cpd_0.50deg_reg_v17.0_period.nc')
-	cpd_period={}
-	for name, value in nc_period.items():
-		cpd_period[name]=value[:,lat_,lon_]
-
-	nc_tas=da.read_nc(data_path+'tg_0.50deg_reg_v17.0_anom.nc')
-	tas_anom=nc_tas['tas_anom'][:,lat_,lon_]
-	nc_pr=da.read_nc(data_path+'rr_0.50deg_reg_v17.0.nc')
-	pr=nc_pr['rr'][:,lat_,lon_]
-
-	tas_state=da.read_nc(data_path+'tg_0.50deg_reg_v17.0_state.nc')['state'][:,lat_,lon_]
-	pr_state=da.read_nc(data_path+'rr_0.50deg_reg_v17.0_state.nc')['state'][:,lat_,lon_]
-	cpd_state=da.read_nc(data_path+'cpd_0.50deg_reg_v17.0_state.nc')['state'][:,lat_,lon_]
+	#
+	states={}
+	states['warm']=da.read_nc(data_path+'/tmp/'+'tg_0.50deg_reg_v17.0_state.nc')['warm'][:,lat_,lon_]
+	states['cold']=da.read_nc(data_path+'/tmp/'+'tg_0.50deg_reg_v17.0_state.nc')['cold'][:,lat_,lon_]
+	states['dry']=da.read_nc(data_path+'/tmp/'+'rr_0.50deg_reg_v17.0_state.nc')['dry'][:,lat_,lon_]
+	states['5mm']=da.read_nc(data_path+'/tmp/'+'rr_0.50deg_reg_v17.0_state.nc')['5mm'][:,lat_,lon_]
+	states['10mm']=da.read_nc(data_path+'/tmp/'+'rr_0.50deg_reg_v17.0_state.nc')['10mm'][:,lat_,lon_]
+	states['dry-warm']=da.read_nc(data_path+'/tmp/'+'cpd_0.50deg_reg_v17.0_state.nc')['dry-warm'][:,lat_,lon_]
 	gc.collect()
+
+	nc_tas=da.read_nc(data_path+'/tmp/'+'tg_0.50deg_reg_v17.0_anom.nc')
+	tas_anom=nc_tas['tas_anom'][:,lat_,lon_]
+	nc_pr=da.read_nc(data_path+'/tmp/'+'rr_0.50deg_reg_v17.0.nc')
+	pr=nc_pr['rr'][:,lat_,lon_]
 
 	tas_time=nc_tas['time']
 	datevar=num2date(tas_time, units = tas_time.units)
@@ -53,7 +62,6 @@ for event_name,event in events.items():
 	pr_time=nc_pr['time']
 	datevar=num2date(pr_time, units = pr_time.units)
 	pr_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
-
 
 	months={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'Mai',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Okt',11:'Nov',12:'Dez'}
 	ticks=np.array([(dd.year,dd.month,yearfrc) for dd,yearfrc in zip(datevar,pr_time_axis) if dd.day == 15 and yearfrc>event['year'] and yearfrc<=event['year']+1])
@@ -70,34 +78,38 @@ for event_name,event in events.items():
 
 	axes[0].axis('off')
 	axes[0].set_title('cold+wet - warm+dry')
-	mid=cpd_period['period_midpoints'].values
-	nona = np.where(np.isfinite(mid))
-	mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
-	periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
-	length=cpd_period['period_length'].ix[periods_] / 365.
-	for ll,mm in zip(length,mid[periods_]):
-		axes[0].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[-1,-1],[1,1],color={-1:'darkcyan',1:'darkmagenta',0:'white'}[np.sign(ll)],alpha=0.3)
+	#mid=cpd_period['period_midpoints'].values
+	#nona = np.where(np.isfinite(mid))
+	#mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
+	#periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+	#length=cpd_period['period_length'].ix[periods_] / 365.
+	#for ll,mm in zip(length,mid[periods_]):
+	#	axes[0].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[-1,-1],[1,1],color={-1:'darkcyan',1:'darkmagenta',0:'white'}[np.sign(ll)],alpha=0.3)
 
-	mid=pr_period['period_midpoints'].values
-	nona = np.where(np.isfinite(mid))
-	mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
-	periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
-	length=pr_period['period_length'].ix[periods_] / 365.
-	for ll,mm in zip(length,mid[periods_]):
-		axes[1].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[7,7],[12,12],color={-1:'brown',1:'cyan'}[np.sign(ll)],alpha=0.3)
+	#mid=pr_period['period_midpoints'].values
+	#nona = np.where(np.isfinite(mid))
+	#mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
+	#periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+	#length=pr_period['period_length'].ix[periods_] / 365.
+	#for ll,mm in zip(length,mid[periods_]):
+#		axes[1].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[7,7],[12,12],color={-1:'brown',1:'cyan'}[np.sign(ll)],alpha=0.3)
 	axes[1].plot(pr_time_axis[pr_time_id],pr.ix[pr_time_id],color='gray')
 	axes[1].set_title('dry - wet')
 	axes[1].set_ylabel('precip [mm]')
 	axes[1].set_ylim(0,50)
 
-	mid=tas_period['period_midpoints'].values
-	nona = np.where(np.isfinite(mid))
-	mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = tas_time.units)])
-	periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
-	length=tas_period['period_length'].ix[periods_] / 365.
-	for ll,mm in zip(length,mid[periods_]):
-		axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[-3,-3],[3,3],color={-1:'blue',1:'red'}[np.sign(ll)],alpha=0.3)
+	#mid=tas_period['period_midpoints'].values
+	#nona = np.where(np.isfinite(mid))
+	#mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = tas_time.units)])
+	#periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+	#length=tas_period['period_length'].ix[periods_] / 365.
+	#for ll,mm in zip(length,mid[periods_]):
+	#	axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[-3,-3],[3,3],color={-1:'blue',1:'red'}[np.sign(ll)],alpha=0.3)
 	axes[2].plot(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],color='gray')
+	for tt,ttas,st in zip(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],states['warm'].ix[tas_time_id]):
+		if st:
+			axes[2].plot(tt,ttas,'.r')
+
 	axes[2].set_xticks(ticks[:,2])
 	axes[2].set_xticklabels([months[mn] for mn in ticks[:,1]])
 	axes[2].set_title('cold - warm')
@@ -105,4 +117,4 @@ for event_name,event in events.items():
 
 	plt.suptitle(event['name'])
 	# plt.tight_layout()
-	plt.savefig('plots/paper/EOBS_compound_'+event_name+'.png')
+	plt.savefig('plots/paper/EOBS_compound_'+event_name+'__.png')
