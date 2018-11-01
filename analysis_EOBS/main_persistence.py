@@ -80,44 +80,28 @@ else:
 
 # state
 tas_state_file=raw_file.replace('.nc','_state.nc')
-prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,var_name='tas_anom',overwrite=True)
+prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,var_name='tas_anom')
 
 #################
 # Precipitation
 #################
 raw_file='data/EOBS/All-Hist/rr_0.50deg_reg_v17.0.nc'
-# if os.path.isfile(raw_file.replace('.nc','_nofeb29.nc')) == False:
-# 	nc=da.read_nc(raw_file)
-# 	pr=nc['rr']
-# 	pr_time=nc['time']
-# 	datevar=num2date(pr_time,units = pr_time.units)
-# 	feb29_id = [id for id,dd in zip(range(len(datevar)),datevar) if dd.month==2 and dd.day==29]
-# 	no_feb29d_id = [id for id in range(len(datevar)) if id not in feb29_id]
-# 	pr=pr.ix[no_feb29d_id,:,:]
-# 	da.Dataset({'rr':pr}).write_nc(raw_file.replace('.nc','_nofeb29.nc'))
 
 pr_state_file=raw_file.replace('.nc','_state.nc')
-prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=1,threshold=1)
+prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',unit_multiplier=1, states={'dry':{'mod':'below','threshold':1}, 'wet':{'mod':'above','threshold':1}, '5mm':{'mod':'above','threshold':5}, '10mm':{'mod':'above','threshold':10}})
+
+
 
 #################
 # Compound State
 #################
 compound_state_file=pr_state_file.replace('rr_0.50','cpd_0.50')
-prsfc.compound_precip_temp_index(tas_state_file,pr_state_file,compound_state_file)
-
+prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
 gc.collect()
 
 #################
 # Persistence
 #################
-prsfc.get_persistence(compound_state_file,compound_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
-prsfc.get_persistence(pr_state_file,pr_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
-prsfc.get_persistence(tas_state_file,tas_state_file.replace('_state.nc','_period.nc'),overwrite=True,lat_name='latitude',lon_name='longitude')
-
-pr_state_file=raw_file.replace('.nc','_state5mm.nc')
-prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=86400,threshold=5)
-prsfc.get_persistence(pr_state_file,states_to_analyze={1:'5mm'},overwrite=True,lat_name='latitude',lon_name='longitude')
-
-pr_state_file=raw_file.replace('.nc','_state10mm.nc')
-prsfc.precip_to_index(raw_file,pr_state_file,var_name='rr',overwrite=True,unit_multiplier=86400,threshold=10)
-prsfc.get_persistence(pr_state_file,states_to_analyze={1:'10mm'},overwrite=True,lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(tas_state_file,states_to_analyze=['warm','cold'],lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'],lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'],lat_name='latitude',lon_name='longitude')
