@@ -13,7 +13,7 @@ working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
-for style,state in zip(['pr','tas','tas','cpd'],['dry','warm','cold','dry-warm']):
+for style,state in zip(['tas'],['warm']):
 	for scenario in ['Plus15-Future']:
 		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
 		print all_files
@@ -41,6 +41,7 @@ for style,state in zip(['pr','tas','tas','cpd'],['dry','warm','cold','dry-warm']
 					for ix in range(len(lon)):
 						for season in seasons.keys():
 							in_season=np.where(period_season[:,iy,ix]==seasons[season]['index'])[0]
+							print(period_season[:,iy,ix][in_season])
 							distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]+=collections.Counter(period_length[:,iy,ix][in_season])
 			except:
 				failed_files=open(working_path+scenario+'/damaged_files.txt','w')
