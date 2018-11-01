@@ -70,7 +70,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	if scenario==chosen_scenario:
 		os.system('mkdir '+working_path+scenario)
 		run_list=[model_dict[model]['run_name']+str(i).zfill(3) for i in range(101)]
-		for run in run_list:
+		for run in run_list[0]:
 			print(run)
 			start_time=time.time()
 
@@ -83,7 +83,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			if len(glob.glob(tmp_path+run+'/*'))>0:
 				raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 				tas_state_file=raw_file.replace('.nc','_state.nc')
-				
+
 				# get daily temp
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
 				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
