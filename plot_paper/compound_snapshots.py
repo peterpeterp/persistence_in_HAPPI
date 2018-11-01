@@ -19,9 +19,9 @@ events = {
 
 for event_name,event in events.items():
 
-	lat_,lon_,year_ = event['lat'],event['lon'],event['year']
-	for filename in glob.glob(data_path+'*.nc'):
-		os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/tmp/'))
+	# lat_,lon_,year_ = event['lat'],event['lon'],event['year']
+	# for filename in glob.glob(data_path+'*.nc'):
+	# 	os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/tmp/'))
 
 	#
 	# nc_period=da.read_nc(data_path+'/tmp/'+'tg_0.50deg_reg_v17.0_period.nc')
