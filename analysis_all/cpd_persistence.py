@@ -72,28 +72,29 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		run_list=[model_dict[model]['run_name']+str(i).zfill(3) for i in range(101)]
 		for run in run_list:
 			print(run)
+			go = True
 			start_time=time.time()
 
 			###############
 			# Compound
 			###############
-			tas_state_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*_state.nc')
+			tas_state_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*'+run+'*_state.nc')
 			if len(tas_state_files)==1:
 				tas_state_file = tas_state_files[0]
 			else:
-				break
+				go = False
 
-			pr_state_files=glob.glob(working_path+scenario+'/pr/pr_Aday_*_state.nc')
+			pr_state_files=glob.glob(working_path+scenario+'/pr/pr_Aday_*'+run+'*_state.nc')
 			if len(pr_state_files)==1:
 				pr_state_file = pr_state_files[0]
 			else:
-				break
+				go = False
 
-			compound_state_file=tas_state_file.replace('tas/tas_Aday','cpd/cpd_Aday')
-			
-			prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
-			prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'])
-			gc.collect()
+			if go:
+				compound_state_file=tas_state_file.replace('tas/tas_Aday','cpd/cpd_Aday')
+				prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
+				prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'])
+				gc.collect()
 
 
 
