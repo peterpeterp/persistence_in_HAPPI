@@ -70,7 +70,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	if scenario==chosen_scenario:
 		os.system('mkdir '+working_path+scenario)
 		run_list=[model_dict[model]['run_name']+str(i).zfill(3) for i in range(101)]
-		for run in run_list[0]:
+		for run in run_list[:1]:
 			print(run)
 			start_time=time.time()
 
