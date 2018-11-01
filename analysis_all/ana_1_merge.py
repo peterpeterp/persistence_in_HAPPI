@@ -41,7 +41,6 @@ for style,state in zip(['tas'],['warm']):
 					for ix in range(len(lon)):
 						for season in seasons.keys():
 							in_season=np.where(period_season[:,iy,ix]==seasons[season]['index'])[0]
-							print(period_season[:,iy,ix][in_season])
 							distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]+=collections.Counter(period_length[:,iy,ix][in_season])
 			except:
 				failed_files=open(working_path+scenario+'/damaged_files.txt','w')
