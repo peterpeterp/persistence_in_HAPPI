@@ -49,6 +49,7 @@ for style,info in style_dict.items():	#,'cpd','tas'
 	for scenario in ['Plus15-Future']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
+			print(state_file)
 
 			states = info['states']
 			data = da.read_nc(state_file)
