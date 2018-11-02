@@ -46,7 +46,11 @@ types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_
 
 state_dict = {
 	'warm':'tas',
-}
+	'dry':'pr',
+	'5mm':'pr',
+	'10mm':'pr',
+	'dry-warm':'cpd',
+	}
 
 for state,style in state_dict.items():
 
