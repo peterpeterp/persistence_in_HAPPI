@@ -23,6 +23,7 @@ color_range={'warm':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
 			'wet':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
 			'dry-warm':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
 			'wet-cold':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
+			'wet-cold':{'mean':(-0.25,0.25),'qu_95':(-0.5,0.5)},
 			}
 
 # ------------------- cold-warm mean
@@ -34,15 +35,21 @@ for ax in axes[:,:].flatten():
 	ax.coastlines(edgecolor='black')
 	ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-for style,state_,state_name,row in zip(['pr','cpd','pr','pr'],[-1,1,'5mm','5mm'],['dry','dry-warm','5mm','5mm'],range(4)):
+for style,state_,state_name,row in zip(['pr','cpd','pr','pr'],[-1,1,'5mm','5mm'],['dry','dry-warm','5mm','10mm'],range(4)):
 
 	ax= axes[row,0]
 
 	ensemble=np.zeros([4,180,360])*np.nan
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
+		print(state_name)
+		print('data/'+model+'/state_stats/'+'_'.join([style,model,'All-Hist','numberState'+str(state_)+'_1x1.nc']))
+		print('data/'+model+'/state_stats/'+'_'.join(['pr',model,'All-Hist','numberDays_1x1.nc']))
 		state_days = da.read_nc('data/'+model+'/state_stats/'+'_'.join([style,model,'All-Hist','numberState'+str(state_)+'_1x1.nc']))['qu']
 		days = da.read_nc('data/'+model+'/state_stats/'+'_'.join(['pr',model,'All-Hist','numberDays_1x1.nc']))['qu']
 		ensemble[i,:,:] = np.abs(state_days.ix[2,:,:] / days.ix[2,:,:])  * 100
+		print(state_days.ix[2,:,:][20:50,:].values)
+		print(days.ix[2,:,:][20:50,:].values)
+		print(np.abs(state_days.ix[2,:,:][20:50,:].values / days.ix[2,:,:][20:50,:].values)  * 100)
 
 
 	lat,lon = state_days.lat,state_days.lon
@@ -51,13 +58,13 @@ for style,state_,state_name,row in zip(['pr','cpd','pr','pr'],[-1,1,'5mm','5mm']
 
 	to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
 	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap,transform=ccrs.PlateCarree());
-	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
+	ax.annotate(state_name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-for style,state_,state,row in zip(['pr','cpd','pr','pr'],[-1,1,1,1],['dry','dry-warm','5mm','10mm'],range(4)):
+for style,state_,state,row in zip(['pr','cpd','pr','pr'],[-1,1,'5mm','5mm'],['dry','dry-warm','5mm','10mm'],range(4)):
 
 	ax= axes[row,1]
 
@@ -65,13 +72,13 @@ for style,state_,state,row in zip(['pr','cpd','pr','pr'],[-1,1,1,1],['dry','dry-
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 		state_days = da.read_nc('data/'+model+'/state_stats/'+'_'.join([style,model,'All-Hist','numberState'+str(state_)+'_1x1.nc']))['qu']
 		days = da.read_nc('data/'+model+'/state_stats/'+'_'.join(['pr',model,'All-Hist','numberDays_1x1.nc']))['qu']
-		frac_hist = state_days.ix[2,:,:] / days.ix[2,:,:] * state_ * 100
+		frac_hist = np.abs(state_days.ix[2,:,:] / days.ix[2,:,:])  * 100
 
 		state_days = da.read_nc('data/'+model+'/state_stats/'+'_'.join([style,model,'Plus20-Future','numberState'+str(state_)+'_1x1.nc']))['qu']
 		days = da.read_nc('data/'+model+'/state_stats/'+'_'.join(['pr',model,'Plus20-Future','numberDays_1x1.nc']))['qu']
-		frac_fu = state_days.ix[2,:,:] / days.ix[2,:,:] * state_ * 100
+		frac_fu = np.abs(state_days.ix[2,:,:] / days.ix[2,:,:])  * 100
 
-		ensemble[i,:,:] = frac_fu -frac_hist
+		ensemble[i,:,:] = frac_fu - frac_hist
 
 	#aggree = np.roll(np.sum(np.sign(ensemble),axis=0),len(lon)/2,axis=-1)
 	aggree = np.sum(np.sign(ensemble),axis=0)

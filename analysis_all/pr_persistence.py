@@ -82,7 +82,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			if len(glob.glob(tmp_path+run+'/*'))>0:
 				raw_file=working_path+scenario+'/pr/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 				pr_state_file=raw_file.replace('.nc','_state.nc')
-				if os.path.isfile(pr_state_file) == False:
+				if os.path.isfile(pr_state_file) == False or True:
 
 					# get daily pr
 					out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
@@ -104,7 +104,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				# Persistence
 				###############
 
-				prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'])
+				#prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'])
 				gc.collect()
 
 
