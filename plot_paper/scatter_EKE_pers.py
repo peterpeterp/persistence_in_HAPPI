@@ -26,7 +26,7 @@ for region in srex.keys():
 regions = ['ENA','CAS','NHml','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS']
 
 plt.close('all')
-fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
+fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(5,4))
 for styleState,marker in zip(['cpd_dry-warm'],['*']):
 	for region in regions:
 		x = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
@@ -41,11 +41,11 @@ ax.set_ylabel('relative change in the probability of \ndry-warm periods exceedin
 ax.set_xlabel('change in EKE [%]')
 plt.colorbar(im, ax=ax,label='central latitude [deg]')
 fig.tight_layout()
-plt.savefig('plots/paper/Figure_EKE_scatter.png',dpi=300)
+plt.savefig('plots/paper/scatter_EKE_pers_single.png',dpi=300)
 
 
 plt.close('all')
-fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
+fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(5,4))
 for model,marker in zip(EKE.model,['v','^','o','s']):
 	for region in regions:
 		x = ( EKE[model,'Plus20-Future',region].flatten()-EKE[model,'All-Hist',region].flatten() ) / EKE[model,'All-Hist',region].flatten() * 100
@@ -65,7 +65,7 @@ ax.set_ylabel('relative change in the probability of \ndry-warm periods exceedin
 ax.set_xlabel('change in EKE [%]')
 plt.colorbar(im, ax=ax,label='central latitude [deg]')
 fig.tight_layout()
-plt.savefig('plots/paper/Figure_EKE_scatter__.png',dpi=300)
+plt.savefig('plots/paper/scatter_EKE_pers.png',dpi=300)
 
 
 

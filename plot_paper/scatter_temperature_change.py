@@ -28,7 +28,7 @@ for region in srex.keys():
 regions = ['ENA','CAS','NHml','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS']
 
 plt.close('all')
-fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
+fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(5,4))
 for model,marker in zip(EKE.model,['v','^','o','s']):
 	for region in regions:
 		y = ( temp['mean_temp'][model,'Plus20-Future',region,'14'].flatten() - temp['mean_temp'][model,'All-Hist',region,'14'].flatten() )
@@ -48,14 +48,14 @@ for model,marker in zip(EKE.model,['v','^','o','s']):
 plt.legend(scatterpoints=1, frameon=False, labelspacing=1, title='Models')
 
 
-ax.set_ylabel('change in mean temperature of periods longer than 2 weeks [$^\circ$C]')
+ax.set_ylabel('change in mean temperature of \nperiods longer than 2 weeks [$^\circ$C]')
 ax.set_xlabel('change in seasonal temperature [$^\circ$C]')
 plt.colorbar(im, ax=ax,label='central latitude [deg]')
 fig.tight_layout()
-plt.savefig('plots/paper/Figure_temp_scatter.png',dpi=300)
+plt.savefig('plots/paper/scatter_temperature_change.png',dpi=300)
 
 plt.close('all')
-fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
+fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(5,4))
 for region in regions:
 	y = np.array(np.nanmean( temp['mean_temp'][:,'Plus20-Future',region,'14'].flatten() - temp['mean_temp'][:,'All-Hist',region,'14'].flatten() ))
 	x = np.array(np.nanmean( temp['seasMean'][:,'Plus20-Future',region].flatten()-temp['seasMean'][:,'All-Hist',region].flatten() ))
@@ -69,34 +69,29 @@ ax.plot([0,3],[0,3])
 ax.set_xlim(1,1.8)
 ax.set_ylim(1,1.8)
 
-ax.set_ylabel('change in mean temperature of periods longer than 2 weeks [$^\circ$C]')
+ax.set_ylabel('change in mean temperature of \nperiods longer than 2 weeks [$^\circ$C]')
 ax.set_xlabel('change in seasonal temperature [$^\circ$C]')
 plt.colorbar(im, ax=ax,label='central latitude [deg]')
 fig.tight_layout()
-plt.savefig('plots/paper/Figure_temp_scatter_.png',dpi=300)
-
-
-
-
-
+plt.savefig('plots/paper/scatter_temperature_change_single.png',dpi=300)
 
 # plt.close('all')
 # fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
-# for styleState,marker in zip(['cpd_dry-warm'],['*']):
-# 	for region in regions:
-# 		y = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
-# 		x = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,'14']-pers[:,'All-Hist',region,styleState,'14'] ) / pers[:,'All-Hist',region,styleState,'14'])]) * 100
-# 		im=ax.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
-# 		ax.text(y,x,region,fontsize=8)
+# for region in regions:
+# 	y = np.array(np.nanmean( temp['mean_temp'][:,'All-Hist',region,'14'].flatten() - temp['mean_temp'][:,'All-Hist',region,'7'].flatten()))
+# 	x = np.array(np.nanmean( temp['mean_temp'][:,'Plus20-Future',region,'14'].flatten() - temp['mean_temp'][:,'Plus20-Future',region,'7'].flatten()))
+# 	plt.scatter(x,y, marker = 'v', c = srex[region]['av_lat'], cmap='viridis',vmin=20,vmax=70)
+# 	plt.text(x,y,region,fontsize=6)
 #
-# ax.axvline(x=0,c='k')
-# ax.axhline(y=0,c='k')
+# # ax.axvline(x=0,c='k')
+# # ax.axhline(y=0,c='k')
+# # ax.plot([0,3],[0,3])
+# #
+# # ax.set_xlim(1,1.8)
+# # ax.set_ylim(1,1.8)
 #
-# ax.set_ylabel('relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
-# ax.set_xlabel('change in EKE [%]')
+# ax.set_ylabel('change in mean temperature of periods longer than 2 weeks [$^\circ$C]')
+# ax.set_xlabel('change in seasonal temperature [$^\circ$C]')
 # plt.colorbar(im, ax=ax,label='central latitude [deg]')
 # fig.tight_layout()
-# plt.savefig('plots/paper/Figure_EKE_scatter.png',dpi=300)
-
-
-#
+# plt.savefig('plots/paper/Figure_temp_scatter___.png',dpi=300)

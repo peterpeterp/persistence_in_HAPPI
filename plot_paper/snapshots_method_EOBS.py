@@ -132,4 +132,4 @@ for event_name,event in events.items():
 
 	plt.suptitle(event['name'])
 	# plt.tight_layout()
-	plt.savefig('plots/paper/EOBS_compound_'+event_name+'.png')
+	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
