@@ -14,6 +14,8 @@ cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", [sns.color_palett
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
+temp = da.read_nc('data/tas_summerStat_srex.nc')
+
 EKE = da.read_nc('data/EKE_summerMean_srex.nc')['EKE']
 pers = da.read_nc('data/JJA_summary_srex.nc')['exceed_prob']
 
@@ -25,36 +27,24 @@ for region in srex.keys():
 
 regions = ['ENA','CAS','NHml','NAS','CAM','CNA','NEU','WAS','TIB','CGI','MED','WNA','ALA','CEU','EAS']
 
-plt.close('all')
-fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
-for styleState,marker in zip(['cpd_dry-warm'],['*']):
-	for region in regions:
-		y = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
-		x = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,'14']-pers[:,'All-Hist',region,styleState,'14'] ) / pers[:,'All-Hist',region,styleState,'14'])]) * 100
-		im=ax.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
-		ax.text(y,x,region,fontsize=8)
 
-ax.axvline(x=0,c='k')
-ax.axhline(y=0,c='k')
-
-ax.set_ylabel('relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
-ax.set_xlabel('change in EKE [%]')
-plt.colorbar(im, ax=ax,label='central latitude [deg]')
-fig.tight_layout()
-plt.savefig('plots/paper/Figure_EKE_scatter.png',dpi=300)
 
 
 plt.close('all')
 fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
 for model,marker in zip(EKE.model,['v','^','o','s']):
 	for region in regions:
-		y = ( EKE[model,'Plus20-Future',region].flatten()-EKE[model,'All-Hist',region].flatten() ) / EKE[model,'All-Hist',region].flatten() * 100
-		x = ( pers[model,'Plus20-Future',region,'cpd_dry-warm','14'].flatten()-pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() ) / pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() * 100
+		y = ( temp['mean_temp'][model,'Plus20-Future',region,'14'].flatten()-temp['mean_temp'][model,'All-Hist',region,'14'].flatten() )
+		x = ( temp['seasMean'][model,'Plus20-Future',region].flatten()-temp['seasMean'][model,'All-Hist',region].flatten() )
 		plt.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
 		plt.text(y,x,region,fontsize=6)
 
 ax.axvline(x=0,c='k')
 ax.axhline(y=0,c='k')
+ax.plot([0,3],[0,3])
+
+ax.set_xlim(0.5,2.5)
+ax.set_ylim(0.5,2.5)
 
 for model,marker in zip(EKE.model,['v','^','o','s']):
     plt.scatter([], [], c='k',label=model, marker=marker)
@@ -65,10 +55,26 @@ ax.set_ylabel('relative change in the probability of \ndry-warm periods exceedin
 ax.set_xlabel('change in EKE [%]')
 plt.colorbar(im, ax=ax,label='central latitude [deg]')
 fig.tight_layout()
-plt.savefig('plots/paper/Figure_EKE_scatter__.png',dpi=300)
+plt.savefig('plots/paper/Figure_temp_scatter.png',dpi=300)
 
 
-
+# plt.close('all')
+# fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
+# for styleState,marker in zip(['cpd_dry-warm'],['*']):
+# 	for region in regions:
+# 		y = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
+# 		x = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,'14']-pers[:,'All-Hist',region,styleState,'14'] ) / pers[:,'All-Hist',region,styleState,'14'])]) * 100
+# 		im=ax.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
+# 		ax.text(y,x,region,fontsize=8)
+#
+# ax.axvline(x=0,c='k')
+# ax.axhline(y=0,c='k')
+#
+# ax.set_ylabel('relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
+# ax.set_xlabel('change in EKE [%]')
+# plt.colorbar(im, ax=ax,label='central latitude [deg]')
+# fig.tight_layout()
+# plt.savefig('plots/paper/Figure_EKE_scatter.png',dpi=300)
 
 
 #

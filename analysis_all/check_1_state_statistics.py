@@ -40,29 +40,28 @@ import __settings
 model_dict=__settings.model_dict
 
 style_dict = {
-	'pr':['dry','5mm','10mm'],
-	'tas':['warm'],
-	'cpd':['dry-warm'],
+	'pr':{'states':['dry','5mm','10mm'],'days':3650},
+	'tas':{'states':['warm'],'days':3560},
+	'cpd':{'states':['dry-warm'],'days':3560},
 }
 
-for style,states in style_dict.items():	#,'cpd','tas'
+for style,info in style_dict.items():	#,'cpd','tas'
 	for scenario in ['Plus15-Future']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
-			percentage_file = state_file.replace('state.nc','numberXXX.nc').replace('/'+style+'/','/stateCount/')
 
+			states = info['states']
+			data = da.read_nc(state_file)
 
-			# # number of valid time steps
-			# result=try_several_times('cdo -O setmissval,nan ' + state_file.replace('_state.nc','.nc') + ' ' + state_file.replace('_state.nc','.nc_tmp1') ,3,60)
-			# result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-			# result=try_several_times('cdo -O yseassum -setrtoc,-9999,9999,1 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('XXX','Valid') ,3,60)
-			# os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
+			if 'stateCount' not in globals():
+				stateCount = da.Dataset({})
+				for state in states:
+					stateCount[state] = da.DimArray(np.zeros([len(data.lat),len(data.lon)]), axes=[data.lat,data.lon],dims=['lat','lon'])
+					stateCount[state].days = 0
 
 			# number of states
 			for state in states:
-				result=try_several_times('cdo -O yseassum -selvar,'+state+' ' + state_file + ' ' + percentage_file.replace('XXX',state) ,3,60)
+				stateCount[state].values += np.nansum(data[state],axis=0)
+				stateCount[state].days += info['days']
 
-
-		os.system('mkdir data/' + model + '/state_stats')
-		for state in states:
-			try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_number'+state+'.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_number'+state+'.nc',3,240)
+		stateCount.write_nc('data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_stateCount.nc')
