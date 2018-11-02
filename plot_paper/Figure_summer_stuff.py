@@ -95,11 +95,9 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 		to_plot = (data['seasMean'][:,scenario,region] - data['seasMean'][:,'All-Hist',region])
 		plot_bar(subax,1,to_plot,color)
 
-		to_plot = (data['mean_temp'][:,scenario,region,'14'] - data['mean_temp'][:,'All-Hist',region,'7'] )
+		to_plot = (data['mean_temp'][:,scenario,region,'14'] - data['mean_temp'][:,'All-Hist',region,'14'] )
 		plot_bar(subax,2,to_plot,color)
 
-		to_plot = (data['hottest_day'][:,scenario,region,'14'] - data['hottest_day'][:,'All-Hist',region,'14'] )
-		plot_bar(subax,3,to_plot,color)
 
 
 	lb_color ='none'

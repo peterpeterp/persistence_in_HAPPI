@@ -66,3 +66,4 @@ for style,info in style_dict.items():	#,'cpd','tas'
 				stateCount[state].days += info['days']
 
 		stateCount.write_nc('data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_stateCount.nc')
+		del stateCount

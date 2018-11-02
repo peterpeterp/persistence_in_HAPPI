@@ -29,10 +29,10 @@ plt.close('all')
 fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
 for styleState,marker in zip(['cpd_dry-warm'],['*']):
 	for region in regions:
-		y = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
-		x = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,'14']-pers[:,'All-Hist',region,styleState,'14'] ) / pers[:,'All-Hist',region,styleState,'14'])]) * 100
-		im=ax.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
-		ax.text(y,x,region,fontsize=8)
+		x = np.array([np.nanmean( (EKE[:,'Plus20-Future',region]-EKE[:,'All-Hist',region] ) / EKE[:,'All-Hist',region])]) * 100
+		y = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,'14']-pers[:,'All-Hist',region,styleState,'14'] ) / pers[:,'All-Hist',region,styleState,'14'])]) * 100
+		im=ax.scatter(x,y, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
+		ax.text(x,y,region,fontsize=8)
 
 ax.axvline(x=0,c='k')
 ax.axhline(y=0,c='k')
@@ -48,10 +48,10 @@ plt.close('all')
 fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,4))
 for model,marker in zip(EKE.model,['v','^','o','s']):
 	for region in regions:
-		y = ( EKE[model,'Plus20-Future',region].flatten()-EKE[model,'All-Hist',region].flatten() ) / EKE[model,'All-Hist',region].flatten() * 100
-		x = ( pers[model,'Plus20-Future',region,'cpd_dry-warm','14'].flatten()-pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() ) / pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() * 100
-		plt.scatter(y,x, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
-		plt.text(y,x,region,fontsize=6)
+		x = ( EKE[model,'Plus20-Future',region].flatten()-EKE[model,'All-Hist',region].flatten() ) / EKE[model,'All-Hist',region].flatten() * 100
+		y = ( pers[model,'Plus20-Future',region,'cpd_dry-warm','14'].flatten()-pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() ) / pers[model,'All-Hist',region,'cpd_dry-warm','14'].flatten() * 100
+		plt.scatter(x,y, marker = marker, c = [srex[region]['av_lat']], cmap='viridis',vmin=20,vmax=70)
+		plt.text(x,y,region,fontsize=6)
 
 ax.axvline(x=0,c='k')
 ax.axhline(y=0,c='k')
