@@ -45,24 +45,23 @@ style_dict = {
 	'cpd':['dry-warm'],
 }
 
-for style in ['pr']:	#,'cpd','tas'
-	for scenario in ['All-Hist','Plus20-Future']:
+for style,states in style_dict.items():	#,'cpd','tas'
+	for scenario in ['Plus15-Future']:
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
-			percentage_file = state_file.replace('state.nc','numberState1.nc').replace('/'+style+'/','/stateCount/')
+			percentage_file = state_file.replace('state.nc','numberXXX.nc').replace('/'+style+'/','/stateCount/')
 
-			if os.path.isfile(percentage_file.replace('State1','Days')) == False:
-				result=try_several_times('cdo -O chname,state,qu ' + state_file + ' ' + state_file.replace('.nc','.nc_tmp1') ,3,60)
-				result=try_several_times('cdo -O setmissval,nan ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
-				result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + state_file.replace('.nc','.nc_tmp3') ,3,60)
-				result=try_several_times('cdo -O yseassum -setrtoc,-100,0,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file ,3,60)
-				result=try_several_times('cdo -O yseassum -setrtoc,0,100,0 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + percentage_file.replace('State1','State-1') ,3,60)
-				result=try_several_times('cdo -O setrtoc,-100,-0.1,1 ' + state_file.replace('.nc','.nc_tmp3') + ' ' + state_file.replace('.nc','.nc_tmp4') ,3,60)
-				result=try_several_times('cdo -O yseassum -setrtoc,0.1,100,1 ' + state_file.replace('.nc','.nc_tmp4') + ' ' + percentage_file.replace('State1','Days') ,3,60)
+			# number of valid time steps
+			result=try_several_times('cdo -O setmissval,nan ' + state_file.replace('_state.nc','.nc') + ' ' + state_file.replace('_state.nc','.nc_tmp1') ,3,60)
+			result=try_several_times('cdo -O setmissval,0 ' + state_file.replace('.nc','.nc_tmp1') + ' ' + state_file.replace('.nc','.nc_tmp2') ,3,60)
+			result=try_several_times('cdo -O yseassum -setrtoc,-9999,9999,1 ' + state_file.replace('.nc','.nc_tmp2') + ' ' + percentage_file.replace('XXX','Valid') ,3,60)
+			os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
 
-				os.system('rm '+state_file.replace('.nc','.nc_tmp*'))
+			# number of states
+			for state in states:
+				result=try_several_times('cdo -O yseassum -selvar,'+state+' ' + state_file + ' ' + percentage_file.replace('XXX',state) ,3,60)
+
 
 		os.system('mkdir data/' + model + '/state_stats')
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberState1.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberState1.nc',3,240)
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberState-1.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberState-1.nc',3,240)
-		try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_numberDays.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_numberDays.nc',3,240)
+		for state in states+['Valid']:
+			try_several_times('cdo -O ensmean ' + working_path+scenario+'/'+style+'_*_number'+state+'.nc ' + 'data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_number'+state+'.nc',3,240)
