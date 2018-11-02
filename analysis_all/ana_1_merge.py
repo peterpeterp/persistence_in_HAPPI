@@ -13,8 +13,16 @@ working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
-for style,state in zip(['tas'],['warm']):
-	for scenario in ['All-Hist']:
+state_dict = {
+	'tas':'warm',
+	'pr':'dry',
+	'pr':'5mm',
+	'pr':'10mm',
+	'cpd':'dry-warm'
+	}
+
+for style,state in state_dict.items():
+	for scenario in ['Plus15-Future']:
 		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
 		print all_files
 
