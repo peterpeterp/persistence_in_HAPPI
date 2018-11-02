@@ -40,7 +40,9 @@ import __settings
 model_dict=__settings.model_dict
 
 style_dict = {
-	'pr':
+	'pr':['dry','5mm','10mm'],
+	'tas':['warm'],
+	'cpd':['dry-warm'],
 }
 
 for style in ['pr']:	#,'cpd','tas'
