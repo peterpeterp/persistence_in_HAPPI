@@ -40,7 +40,7 @@ model=sys.argv[1]
 print model
 
 scenarios=['Plus20-Future','All-Hist']
-scenarios=['All-Hist']
+scenarios=['Plus15-Future']
 seasons=['MAM','JJA','SON','DJF','year']
 types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99','npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99']
 
