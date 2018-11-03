@@ -109,7 +109,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				# Persistence
 				###############
 
-				prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'])
+				if os.path.isfile(pr_state_file.replace('state','period_dry')) == False:
+					prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','wet','5mm','10mm'])
 				gc.collect()
 
 
