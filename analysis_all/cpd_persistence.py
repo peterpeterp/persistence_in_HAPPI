@@ -93,7 +93,8 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			if go:
 				compound_state_file=tas_state_file.replace('tas/tas_Aday','cpd/cpd_Aday')
 				prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
-				prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'])
+				if os.path.isfile(compound_state_file) == False:
+					prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'])
 				gc.collect()
 
 
