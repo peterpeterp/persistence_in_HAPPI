@@ -84,6 +84,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				pr_state_file=raw_file.replace('.nc','_state.nc')
 				if os.path.isfile(pr_state_file):
 					nc = da.read_nc(pr_state_file)
+					print(nc)
 					if 'state' in nc.keys():
 						os.system('rm '+pr_state_file)
 
