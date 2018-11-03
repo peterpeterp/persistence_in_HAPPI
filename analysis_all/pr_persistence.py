@@ -82,6 +82,11 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			if len(glob.glob(tmp_path+run+'/*'))>0:
 				raw_file=working_path+scenario+'/pr/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 				pr_state_file=raw_file.replace('.nc','_state.nc')
+				if os.path.isfile(pr_state_file):
+					nc = da.read_nc(pr_state_file)
+					if 'state' in nc.keys():
+						os.system('rm '+pr_state_file)
+
 				if os.path.isfile(pr_state_file) == False:
 
 					# get daily pr
