@@ -44,8 +44,6 @@ def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Pl
 				for season in ['MAM','JJA','SON','DJF']:
 					print region,scenario,season
 					region_dict[region][scenario][state][season]={}
-					for state_name in states_to_analyze.values():
-						region_dict[region][scenario][state][season]={}
 					tmp[season]=collections.Counter()
 
 				if 'cells_in_region' not in locals():
