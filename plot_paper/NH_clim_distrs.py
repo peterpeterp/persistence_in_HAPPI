@@ -30,28 +30,13 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 if 'big_dict' not in globals():
 	big_dict={}
-	for style in ['tas','pr','cpd']:
-		big_dict[style]={}
 
+	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree','HadGHCND','EOBS']:
+		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
+		if os.path.isfile(infile):
+			pkl_file=open(infile, 'rb')
+			big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
 
-		for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree','HadGHCND','EOBS']:
-			infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
-			if os.path.isfile(infile):
-				pkl_file=open(infile, 'rb')
-				big_dict[style][dataset] = pickle.load(pkl_file);	pkl_file.close()
-			infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_mid-lat.pkl'
-			if os.path.isfile(infile):
-				pkl_file=open(infile, 'rb')
-				big_dict[style][dataset]['NHml'] = pickle.load(pkl_file)['mid-lat'];	pkl_file.close()
-
-			infile = 'data/'+dataset+'/'+style+'_'+dataset+'_regional_distrs_srex.pkl'
-			if os.path.isfile(infile):
-				pkl_file=open(infile, 'rb')
-				big_dict[style][dataset] = pickle.load(pkl_file);	pkl_file.close()
-			infile = 'data/'+dataset+'/'+style+'_'+dataset+'_regional_distrs_mid-lat.pkl'
-			if os.path.isfile(infile):
-				pkl_file=open(infile, 'rb')
-				big_dict[style][dataset]['NHml'] = pickle.load(pkl_file)['mid-lat'];	pkl_file.close()
 
 NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
 		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
