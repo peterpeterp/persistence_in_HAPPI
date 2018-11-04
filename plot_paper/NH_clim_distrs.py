@@ -54,7 +54,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
-		'NHml':{'edge':'darkblue','color':'none','alpha':1,'pos':(-142,28),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'mid-lat':{'edge':'darkblue','color':'none','alpha':1,'pos':(-142,28),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
@@ -104,32 +104,34 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	for style,state,color in zip(arg2,arg3,arg4):
 		ensemble=np.zeros([4,35])*np.nan
 		nmax=35
-		for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-			tmp_h=big_dict[style][dataset][region]['All-Hist'][season][state]
+		for dataset,i in zip(['CAM4-2degree'],range(1)):	# 'MIROC5','NorESM1','ECHAM6-3-LR',
+			tmp_h=big_dict[dataset][region]['All-Hist'][state][season]
 			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
 			nmax=min(nmax,len(count_h))
 			ensemble[i,:nmax]=count_h[0:nmax]
-		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
+			print(tmp_h)
+			print(count_h)
+		subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
 		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4)
 
-		if state=='rr':
-			print(style,state)
-			print(np.nanpercentile(ensemble[:,[7,14,21,28]],[50],axis=0)*100)
-
-	for style,state,color in zip(arg2,arg3,arg4):
-		if region in ['CEU','NEU','MED']:
-			tmp_h=big_dict[style]['EOBS'][region]['All-Hist'][season][state]
-			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
-			subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='--')
-			if state=='rr':
-				print('EOBS',style,state)
-				print(count_h[[7,14,21,28]]*100)
-
-	tmp_h=big_dict['tas']['HadGHCND'][region]['All-Hist'][season][arg3[0]]
-	count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
-	subax.plot(range(1,len(count_h)+1),count_h,color=arg4[0])
-	print('HadGHCND',style,state)
-	print(count_h[[7,14,21,28]]*100)
+	# 	if state=='rr':
+	# 		print(style,state)
+	# 		print(np.nanpercentile(ensemble[:,[7,14,21,28]],[50],axis=0)*100)
+	#
+	# for style,state,color in zip(arg2,arg3,arg4):
+	# 	if region in ['CEU','NEU','MED']:
+	# 		tmp_h=big_dict[style]['EOBS'][region]['All-Hist'][season][state]
+	# 		count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
+	# 		subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='--')
+	# 		if state=='rr':
+	# 			print('EOBS',style,state)
+	# 			print(count_h[[7,14,21,28]]*100)
+	#
+	# tmp_h=big_dict['tas']['HadGHCND'][region]['All-Hist'][season][arg3[0]]
+	# count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
+	# subax.plot(range(1,len(count_h)+1),count_h,color=arg4[0])
+	# print('HadGHCND',style,state)
+	# print(count_h[[7,14,21,28]]*100)
 
 	lb_color ='none'
 	if all_regs[region]['edge'] != 'none':

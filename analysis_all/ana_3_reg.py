@@ -46,8 +46,8 @@ def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Pl
 					region_dict[region][scenario][state][season]={}
 					tmp[season]=collections.Counter()
 
-				if 'cells_in_region' not in locals():
-					cells_in_region = []
+				if 'cells_in_region' not in region_dict[region]:
+					region_dict[region]['cells_in_region'] = []
 					polygon=Polygon(regions[region]['points'])
 					for x in distr_dict['lon']:
 						if x>180:
@@ -56,11 +56,10 @@ def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Pl
 							x__=x
 						for y in distr_dict['lat']:
 							if polygon.contains(Point(x__,y)):
-								cells_in_region.append(str(y)+'_'+str(x))
+								region_dict[region]['cells_in_region'].append(str(y)+'_'+str(x))
 
-				region_dict[region]['cells_in_region'] = cells_in_region
 
-				for cell in cells_in_region:
+				for cell in region_dict[region]['cells_in_region']:
 					for season in ['MAM','JJA','SON','DJF']:
 						if len(distr_dict[cell][season].keys())>=2:
 							tmp[season]+=distr_dict[cell][season]
