@@ -11,10 +11,11 @@ os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 data_path='data/EOBS/All-Hist/'
 
 events = {
-	'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
+	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
+	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'year':2018, 'name':'Berlin 2018'},
 	#'balkanFL2014':{'lon':20.25, 'lat':44.25, 'year':2014},
-	'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
-	'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
+	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
+	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
 	}
 
 for event_name,event in events.items():
@@ -22,47 +23,47 @@ for event_name,event in events.items():
 	lat_,lon_,year_ = event['lat'],event['lon'],event['year']
 	if os.path.isdir(data_path+event_name) == False:
 		os.system('mkdir '+data_path+event_name)
-		for filename in glob.glob(data_path+'*.nc'):
+		for filename in glob.glob(data_path+'*merged*.nc'):
 			os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/'+event_name+'/'))
 
 	periods={}
-	nc_period=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_v17.0_period_warm.nc')
+	nc_period=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_period_warm.nc')
 	periods['warm']={}
 	for name, value in nc_period.items():
 		periods['warm'][name]=value[:,lat_,lon_]
 
-	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_period_dry.nc')
+	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_dry.nc')
 	periods['dry']={}
 	for name, value in nc_period.items():
 		periods['dry'][name]=value[:,lat_,lon_]
 
-	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_period_5mm.nc')
-	periods['5mm']={}
-	for name, value in nc_period.items():
-		periods['5mm'][name]=value[:,lat_,lon_]
-
-	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_period_10mm.nc')
-	periods['10mm']={}
-	for name, value in nc_period.items():
-		periods['10mm'][name]=value[:,lat_,lon_]
-
-	nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_v17.0_period_dry-warm.nc')
-	periods['dry-warm']={}
-	for name, value in nc_period.items():
-		periods['dry-warm'][name]=value[:,lat_,lon_]
+	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_5mm.nc')
+	# periods['5mm']={}
+	# for name, value in nc_period.items():
+	# 	periods['5mm'][name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
+	# periods['10mm']={}
+	# for name, value in nc_period.items():
+	# 	periods['10mm'][name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_period_dry-warm.nc')
+	# periods['dry-warm']={}
+	# for name, value in nc_period.items():
+	# 	periods['dry-warm'][name]=value[:,lat_,lon_]
 
 	states={}
-	states['warm']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_v17.0_state.nc')['warm'][:,lat_,lon_]
-	states['cold']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_v17.0_state.nc')['cold'][:,lat_,lon_]
-	states['dry']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_state.nc')['dry'][:,lat_,lon_]
-	states['5mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_state.nc')['5mm'][:,lat_,lon_]
-	states['10mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0_state.nc')['10mm'][:,lat_,lon_]
-	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_v17.0_state.nc')['dry-warm'][:,lat_,lon_]
+	states['warm']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')['warm'][:,lat_,lon_]
+	states['cold']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')['cold'][:,lat_,lon_]
+	states['dry']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['dry'][:,lat_,lon_]
+	states['5mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['5mm'][:,lat_,lon_]
+	states['10mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['10mm'][:,lat_,lon_]
+	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
 	gc.collect()
 
-	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_v17.0_anom.nc')
+	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_anom_detrended.nc')
 	tas_anom=nc_tas['tas_anom'][:,lat_,lon_]
-	nc_pr=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_v17.0.nc')
+	nc_pr=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged.nc')
 	pr=nc_pr['rr'][:,lat_,lon_]
 
 	tas_time=nc_tas['time']
@@ -107,22 +108,25 @@ for event_name,event in events.items():
 	axes[1].set_ylabel('precip [mm]')
 	axes[1].set_ylim(-1,70)
 
-	#axes[2].axis('off')
+	# axes[2].axis('off')
 	# axes[2].set_title('periods')
 
 	state_names = ['warm','dry','dry-warm','5mm','10mm']
 	colors = ['red','orange','darkmagenta','cyan','blue']
 	positions = [8,7,6,5,4]
+	state_names = ['warm','dry']
+	colors = ['red','orange']
+	positions = [8,7]
 
-	for state,color,pos in zip(state_names,colors,positions):
-		mid=periods[state]['period_midpoints'].values
-		nona = np.where(np.isfinite(mid))
-		mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
-		periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
-		length=periods[state]['period_length'].ix[periods_] / 365.
-		for ll,mm in zip(length,mid[periods_]):
-			axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
-
+	# for state,color,pos in zip(state_names,colors,positions):
+	# 	mid=periods[state]['period_midpoints'].values
+	# 	nona = np.where(np.isfinite(mid))
+	# 	mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
+	# 	periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+	# 	length=periods[state]['period_length'].ix[periods_] / 365.
+	# 	for ll,mm in zip(length,mid[periods_]):
+	# 		axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
+	#
 
 
 	axes[2].set_yticks(positions)
@@ -130,6 +134,6 @@ for event_name,event in events.items():
 	axes[2].set_xticks(ticks[:,2])
 	axes[2].set_xticklabels([months[mn] for mn in ticks[:,1]])
 
-	plt.suptitle(event['name'])
+	plt.suptitle(event['name']+' ('+str(lat_)+'N, '+str(lon_)+'E)')
 	# plt.tight_layout()
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')

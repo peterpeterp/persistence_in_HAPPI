@@ -8,70 +8,99 @@ from shapely.geometry.polygon import Polygon
 
 sys.path.append('/global/homes/p/pepflei/weather_persistence/')
 sys.path.append('/Users/peterpfleiderer/Projects/Persistence/weather_persistence/')
-import persistence_support as persistence_support; reload(persistence_support)
-from persistence_support import *
 
 
-def get_regional_distribution(regions,model,style,states,scenarios=['All-Hist','Plus20-Future','Plus15-Future'],add_name=''):
+try:
+	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
+except:
+	os.chdir('/global/homes/p/pepflei/')
+
+def counter_to_pers(counter,state=1):
+	# to distribution
+	pers_tmp=np.array(range(1,max([state*key+1 for key in counter.keys()])))
+	count,pers=[],[]
+	for pp,i in zip(pers_tmp,range(len(pers_tmp))):
+		if pp*state in counter.keys():
+			if abs(pp*state)!=0:
+				count.append(counter[pp*state])
+				pers.append(pp)
+	count=np.array(count)
+	pers=np.array(pers)
+	return count,pers
+
+def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Plus20-Future','Plus15-Future'],regions_id=''):
 	region_dict={}
 	for region in regions.keys():
 		region_dict[region]={}
 		for scenario in scenarios:
-			pkl_file = open('data/'+model+'/'+style+'_'+model+'_'+scenario+'_counter.pkl', 'rb')
-			distr_dict = pickle.load(pkl_file)	;	pkl_file.close()
 			region_dict[region][scenario]={}
-			tmp={}
-			for season in ['MAM','JJA','SON','DJF']:
-				print region,scenario,season
-				region_dict[region][scenario][season]={states[0]:{},states[1]:{}}
-				tmp[season]=collections.Counter()
-			polygon=Polygon(regions[region]['points'])
-			for x in distr_dict['lon']:
-				if x>180:
-					x__=x-360
-				else:
-					x__=x
-				for y in distr_dict['lat']:
-					if polygon.contains(Point(x__,y)):
-						for season in ['MAM','JJA','SON','DJF']:
-							if len(distr_dict[str(y)+'_'+str(x)][season].keys())>10:
-								tmp[season]+=distr_dict[str(y)+'_'+str(x)][season]
+			for state,style in state_dict.items():
+				region_dict[region][scenario][state]={}
+				pkl_file = open('data/'+model+'/'+style_dict[style]+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'rb')
+				distr_dict = pickle.load(pkl_file)	;	pkl_file.close()
 
-			for season in ['MAM','JJA','SON','DJF']:
-				if len(tmp[season])>5:
-					for state,state_name in zip([-1,1],states):
-						count,pers=counter_to_pers(tmp[season],state)
-						region_dict[region][scenario][season][state_name]['period_length']=pers
-						region_dict[region][scenario][season][state_name]['count']=count
-						region_dict[region][scenario][season]['counter']=tmp[season]
+				tmp={}
+				for season in ['MAM','JJA','SON','DJF']:
+					print region,scenario,season
+					region_dict[region][scenario][state][season]={}
+					tmp[season]=collections.Counter()
 
-	output = open('data/'+model+'/'+style+'_'+model+'_regional_distrs_'+add_name+'.pkl', 'wb')
+				if 'cells_in_region' not in region_dict[region]:
+					region_dict[region]['cells_in_region'] = []
+					polygon=Polygon(regions[region]['points'])
+					for x in distr_dict['lon']:
+						if x>180:
+							x__=x-360
+						else:
+							x__=x
+						for y in distr_dict['lat']:
+							if polygon.contains(Point(x__,y)):
+								region_dict[region]['cells_in_region'].append(str(y)+'_'+str(x))
+
+
+				for cell in region_dict[region]['cells_in_region']:
+					for season in ['MAM','JJA','SON','DJF']:
+						if len(distr_dict[cell][season].keys())>=2:
+							tmp[season]+=distr_dict[cell][season]
+
+				for season in ['MAM','JJA','SON','DJF']:
+					if len(tmp[season])>=2:
+						count,pers=counter_to_pers(tmp[season])
+						region_dict[region][scenario][state][season]['period_length']=pers
+						region_dict[region][scenario][state][season]['count']=count
+						region_dict[region][scenario][state][season]['counter']=tmp[season]
+
+	output = open('data/'+model+'/'+model+'_regional_distrs_'+regions_id+'.pkl', 'wb')
 	pickle.dump(region_dict, output)
 	output.close()
 	return region_dict
 
 
 model='EOBS'
+print model
 
-overwrite=True
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
-
-working_path='data/EOBS/'
-
-# region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,-23),(180,-23),(180,-66),(-180,-66)]}},model,add_name='mid-lat-SH')
-
-for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-warm'],['dry','wet']]):
-	region_dict=get_regional_distribution({'mid-lat':{'points':[(-180,35),(180,35),(180,60),(-180,60)]}},model,style,states,scenarios=['All-Hist'],add_name='mid-lat')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
-srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
-for style,states in zip(['tas','cpd','pr'],[['cold','warm'],['wet-cold','dry-warm'],['dry','wet']]):
-	region_dict=get_regional_distribution(srex,model,style,states,scenarios=['All-Hist'],add_name='srex')
+srex['mid-lat'] = {'points':[(-180,35),(180,35),(180,60),(-180,60)]}
+#srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
 
-# wave_polys={'box1':{'points':[(-117.5,35),(-90,35),(-90,60),(-117.5,60)]},
-# 			'box2':{'points':[(-17.5,35),(12.5,35),(12.5,60),(-17.5,60)]},
-# 			'box3':{'points':[(43.5,35),(65,35),(65,60),(43.5,60)]},
-# 			}
-# region_dict=get_regional_distribution(wave_polys,model,add_name='wavePolys')
+style_dict = {
+	'tas':'tg',
+	'pr':'rr',
+	'cpd':'cpd'
+}
+
+state_dict = {
+	'warm':'tas',
+	'dry':'pr',
+	'5mm':'pr',
+	'10mm':'pr',
+	'dry-warm':'cpd',
+	}
+region_dict=get_regional_distribution(regions=srex,model=model,state_dict=state_dict,scenarios=['All-Hist'],regions_id='srex')
+
+
+
+#
