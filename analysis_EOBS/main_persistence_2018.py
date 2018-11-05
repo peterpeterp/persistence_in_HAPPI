@@ -66,22 +66,9 @@ result=try_several_times('cdo -O ydaymean '+detrend_file+' '+yday_clim,1,120)
 anom_file=merged_file.replace('.nc','_anom.nc')
 result=try_several_times('cdo -O sub '+detrend_file+' '+yday_clim+' '+anom_file,1,120)
 
-
-result=try_several_times('cdo -O ymonmean -selyear,1950/2017 '+detrended+' '+detrended.replace('.nc','_monClim.nc'))
-monClim = da.read_nc(merged_file.replace('.nc','_monClim.nc'))['tg']
-
-anom = tas.copy()
-for mon in range(1,13):
-	anom.ix[np.where(month==mon)[0],:,:] -= monClim.ix[mon-1,:,:]
-
-anom = da.DimArray(anom.copy(), axes=tas.axes, dims=tas.dims, dtype=np.short)
-
-da.Dataset({'time':tas_time,'tas_anom':anom,'latitude':nc['latitude'],'longitude':nc['longitude']}).write_nc(detrended.replace('.nc','_anom.nc'))
-
-
 # # state
 tas_state_file=merged_file.replace('.nc','_state.nc')
-prsfc.temp_anomaly_to_ind(anom_file,tas_state_file,var_name='tas_anom')
+prsfc.temp_anomaly_to_ind(anom_file,tas_state_file,var_name='tg')
 
 # clean
 os.system('rm '+merged_file+' '+a+' '+b)

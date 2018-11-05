@@ -72,6 +72,33 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 		run_list=[model_dict[model]['run_name']+str(i).zfill(3) for i in range(101)]
 		for run in run_list:
 			print(run)
+			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
+			# check if run exists
+			if len(glob.glob(tmp_path+run+'/*'))>0:
+				raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+				tas_state_file=raw_file.replace('.nc','_state.nc')
+
+				# get daily temp
+				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+				result=try_several_times(command,2,60)
+				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+				result=try_several_times('rm '+out_file_name_tmp)
+
+				# mask ocean
+				land_file=raw_file.replace('.nc','_land.nc')
+				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
+
+				# get ydaymean
+				yday_clim=raw_file.replace('.nc','_clim.nc')
+				result=try_several_times('cdo -O ydaymean '+land_file+' '+yday_clim,1,120)
+
+		climatology_file = '../data/'+model+'/'+'tas'+'_'+model+'_'+scenario+'_dayClim.nc'
+		result=try_several_times('cdo -O ensmean '+working_path+scenario+'/tas/tas_Aday*'+model+'*'+scenario+'*_clim.nc '+climatology_file,1,120)
+
+
+		for run in run_list:
+			print(run)
 			start_time=time.time()
 
 			###############
@@ -82,42 +109,16 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# check if run exists
 			if len(glob.glob(tmp_path+run+'/*'))>0:
 				raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-				tas_state_file=raw_file.replace('.nc','_state.nc')
+				land_file=raw_file.replace('.nc','_land.nc')
 
-				# # get daily temp
-				# out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-				# command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-				# result=try_several_times(command,2,60)
-				# result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-				# result=try_several_times('rm '+out_file_name_tmp)
-				#
-				# # mask ocean
-				# land_file=raw_file.replace('.nc','_land.nc')
-				# result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
-				#
-				# # detrend
-				# a=raw_file.replace('.nc','_a.nc')
-				# b=raw_file.replace('.nc','_b.nc')
-				# result=try_several_times('cdo -O trend '+land_file+' '+a+' '+b)
-				# detrend_1=raw_file.replace('.nc','_detrend_1.nc')
-				# result=try_several_times('cdo -O subtrend '+land_file+' '+a+' '+b+' '+detrend_1,1,120)
-				#
-				# runmean=raw_file.replace('.nc','_runmean.nc')
-				# result=try_several_times('cdo -O runmean,90 '+detrend_1+' '+runmean,1,120)
-				#
-				# detrend_cut=raw_file.replace('.nc','_detrend_cut.nc')
-				# command='cdo -O delete,timestep='
-				# for i in range(1,46,1): command+=str(i)+','
-				# for i in range(1,46,1): command+=str(-i)+','
-				# result=try_several_times(command+' '+detrend_1+' '+detrend_cut)
-				# anom_file=raw_file.replace('.nc','_anom.nc')
-				# result=try_several_times('cdo -O sub '+detrend_cut+' '+runmean+' '+anom_file,1,120)
-				#
-				# # # state
-				# prsfc.temp_anomaly_to_ind(anom_file,tas_state_file)
-				#
-				# # clean
-				# os.system('rm '+raw_file+' '+land_file+' '+a+' '+b+' '+detrend_1+' '+runmean+' '+detrend_cut)
+				anom_file=raw_file.replace('.nc','_anom.nc')
+				result=try_several_times('cdo -O sub '+land_file+' '+climatology_file+' '+anom_file,1,120)
+
+				# # state
+				prsfc.temp_anomaly_to_ind(anom_file,tas_state_file)
+
+				# clean
+				os.system('rm '+raw_file)
 
 				# ###############
 				# # Persistence

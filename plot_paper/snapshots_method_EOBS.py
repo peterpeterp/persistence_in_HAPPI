@@ -61,8 +61,8 @@ for event_name,event in events.items():
 	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
 	gc.collect()
 
-	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_anom_detrended.nc')
-	tas_anom=nc_tas['tas_anom'][:,lat_,lon_]
+	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_anom.nc')
+	tas_anom=nc_tas['tg'][:,lat_,lon_]
 	nc_pr=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged.nc')
 	pr=nc_pr['rr'][:,lat_,lon_]
 
@@ -118,15 +118,15 @@ for event_name,event in events.items():
 	colors = ['red','orange']
 	positions = [8,7]
 
-	# for state,color,pos in zip(state_names,colors,positions):
-	# 	mid=periods[state]['period_midpoints'].values
-	# 	nona = np.where(np.isfinite(mid))
-	# 	mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
-	# 	periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
-	# 	length=periods[state]['period_length'].ix[periods_] / 365.
-	# 	for ll,mm in zip(length,mid[periods_]):
-	# 		axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
-	#
+	for state,color,pos in zip(state_names,colors,positions):
+		mid=periods[state]['period_midpoints'].values
+		nona = np.where(np.isfinite(mid))
+		mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
+		periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+		length=periods[state]['period_length'].ix[periods_] / 365.
+		for ll,mm in zip(length,mid[periods_]):
+			axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
+
 
 
 	axes[2].set_yticks(positions)
