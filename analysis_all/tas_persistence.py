@@ -123,7 +123,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				# ###############
 				# # Persistence
 				# ###############
-				prsfc.get_persistence(tas_state_file,states_to_analyze=['warm','cold'])
+				prsfc.get_persistence(tas_state_file,states_to_analyze=['warm'])
 				gc.collect()
 
 

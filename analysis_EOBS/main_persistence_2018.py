@@ -96,6 +96,6 @@ gc.collect()
 #################
 # Persistence
 #################
-prsfc.get_persistence(tas_state_file,states_to_analyze=['warm'],lat_name='latitude',lon_name='longitude')
-#prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','5mm','10mm'],lat_name='latitude',lon_name='longitude')
-#prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'],lat_name='latitude',lon_name='longitude')
+#prsfc.get_persistence(tas_state_file,states_to_analyze=['warm'],lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(pr_state_file,states_to_analyze=['10mm'],lat_name='latitude',lon_name='longitude')
+prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'],lat_name='latitude',lon_name='longitude')
