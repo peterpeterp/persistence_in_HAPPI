@@ -90,7 +90,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			else:
 				go = False
 
-			if go:
+			if go or True:
 				compound_state_file=tas_state_file.replace('tas/tas_Aday','cpd/cpd_Aday')
 				prsfc.compound_precip_temp_index(combinations={'dry-warm':[[pr_state_file,'dry'],[tas_state_file,'warm']]} ,out_file=compound_state_file)
 				if os.path.isfile(compound_state_file.replace('state','period_dry-warm')) == False:
@@ -100,7 +100,11 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 
 
-
+'''
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/cpd_persistence.py $model All-Hist > out/${model}+cpdHi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/cpd_persistence.py $model Plus20-Future > out/${model}+cpd20 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/cpd_persistence.py $model Plus15-Future > out/${model}+cpd15 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+'''
 
 
 
