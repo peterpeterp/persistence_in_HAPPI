@@ -6,6 +6,7 @@ import dimarray as da
 import subprocess as sub
 import scipy
 from scipy import signal
+from scipy import stats
 
 
 def wait_timeout(proc, seconds):
@@ -49,30 +50,66 @@ start_time=time.time()
 raw_file='data/EOBS/All-Hist/tg_0.50deg_reg_v17.0.nc'
 
 result=try_several_times('cdo -O mergetime '+raw_file+' '+raw_file.replace('v17.0','2018')+' '+raw_file.replace('v17.0','merged'),1,120)
-merged_file = raw_file	#.replace('v17.0','merged')
+merged_file = raw_file.replace('v17.0','merged')
 
-nc =  da.read_nc(merged_file)
+clean_file = merged_file.replace('.nc','_cut.nc')
+try_several_times('cdo -O delete,timestep=25111/25202 '+merged_file+' '+clean_file,1,600)
+
+nc =  da.read_nc(clean_file)
 tas = nc['tg']
 tas_time = nc['time']
 time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(tas_time,units = tas_time.units)])
 month=np.array([dd.month for dd in num2date(tas_time,units = tas_time.units)])
+yday=np.array([dd.timetuple().tm_yday for dd in num2date(tas_time,units = tas_time.units)])
 
-yday_clim=merged_file.replace('.nc','_clim.nc')
-result=try_several_times('cdo -O ydaymean '+merged_file+' '+yday_clim,1,120)
 
-clim_file=merged_file.replace('.nc','_anom.nc')
-result=try_several_times('cdo -O sub '+merged_file+' '+yday_clim+' '+clim_file,1,120)
+for day in range(1,367):
+	days = np.where((yday == day))[0]
+	tmp_file = clean_file.replace('.nc','.nc_'+str(day))
+	da.Dataset({'tg':tas.ix[days],'latitude':nc['latitude'],'longitude':nc['longitude'],'time':nc['time'].ix[days]}).write_nc(tmp_file)
+	result=try_several_times('cdo -O detrend '+tmp_file+' '+tmp_file+'_detrend',1,120)
 
-anom_file=merged_file.replace('.nc','_anom_detrend.nc')
-result=try_several_times('cdo -O detrend '+clim_file+' '+anom_file,1,360)
+
+all_files = glob.glob(clean_file.replace('.nc','.nc_*_detrend'))
+try_several_times('cdo -O mergetime '+' '.join(all_files[:100])+' '+clean_file.replace('.nc','_anom_1.nc'),1,600)
+try_several_times('cdo -O mergetime '+' '.join(all_files[100:200])+' '+clean_file.replace('.nc','_anom_2.nc'),1,600)
+try_several_times('cdo -O mergetime '+' '.join(all_files[200:])+' '+clean_file.replace('.nc','_anom_3.nc'),1,600)
+try_several_times('cdo -O mergetime '+clean_file.replace('.nc','_anom_1.nc')+' '+clean_file.replace('.nc','_anom_2.nc')+' '+clean_file.replace('.nc','_anom_3.nc')+' '+clean_file.replace('.nc','_anom.nc'),1,600)
+
+result = try_several_times('rm '+clean_file.replace('.nc','.nc_*'),1,120)
+result = try_several_times('rm '+clean_file.replace('.nc','_anom_1.nc'),1,120)
+result = try_several_times('rm '+clean_file.replace('.nc','_anom_2.nc'),1,120)
+result = try_several_times('rm '+clean_file.replace('.nc','_anom_3.nc'),1,120)
+
+result = try_several_times('cdo -O ydaymean '+clean_file.replace('.nc','_anom.nc')+' '+clean_file.replace('.nc','_clim.nc'),1,120)
+result = try_several_times('cdo -O sub '+clean_file.replace('.nc','_anom.nc')+' '+clean_file.replace('.nc','_clim.nc')+' '+clean_file.replace('.nc','_anom_detrend.nc'),1,120)
+#
+#
+# time_ = time.time()
+# anom = tas.copy() * np.nan
+# for y in tas.latitude:
+# 	print(y, time.time() - time_);	time_ = time.time()
+# 	for x in tas.longitude:
+# 		for day in range(1,367):
+# 			days = np.where(yday == day)[0]
+# 			tmp = tas[days,y,x].values
+# 			notna = np.where(np.isfinite(tmp))[0]
+# 			if len(notna)>1:
+# 				tmp = tmp[notna]
+# 				m, b, r_val, p_val, std_err = stats.linregress(time_axis[days[notna]],tmp)
+# 				tmp -= (m*time_axis[days[notna]] + b)
+# 				tmp -= np.nanmean(tmp)
+# 				anom[:,y,x].ix[days[notna]] = tmp
+#
+# #anom__ = da.DimArray(anom.values, axes=tas.axes, dims=tas.dims)
+# da.Dataset({'tg':anom,'latitude':nc['latitude'],'longitude':nc['longitude'],'time':nc['time']}).write_nc(merged_file.replace('.nc','_anom.nc'))
+#
+
+
 
 # # state
-tas_state_file=merged_file.replace('.nc','_state.nc')
-prsfc.temp_anomaly_to_ind(anom_file,tas_state_file,var_name='tg')
-
-# clean
-os.system('rm '+merged_file+' '+a+' '+b)
-
+tas_state_file=clean_file.replace('.nc','_state.nc')
+prsfc.temp_anomaly_to_ind(clean_file.replace('.nc','_anom_detrend.nc'),tas_state_file,var_name='tg')
 
 #################
 # Precipitation

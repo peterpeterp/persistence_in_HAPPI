@@ -16,21 +16,9 @@ cmap = {'tas': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white",
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-obs_eobs={}
-for style in ['tas','pr','cpd']:
-	obs_eobs[style] = da.read_nc('data/EOBS/'+style+'_EOBS_SummaryMeanQu.nc')['SummaryMeanQu']
-
-obs_had={}
-for style in ['tas']:
-	obs_had[style] = da.read_nc('data/HadGHCND/HadGHCND_SummaryMeanQu.nc')['SummaryMeanQu']
-
-if 'models' not in globals():
-	models={}
-	for style in ['tas','pr','cpd']:
-		models[style]={}
-		for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
-			models[style][model]=da.read_nc('data/'+model+'/'+style+'_'+model+'_SummaryMeanQu_1x1.nc')
-
+big_summary={}
+big_summary['EOBS'] = da.read_nc('data/EOBS/EOBS_SummaryMeanQu.nc')['SummaryMeanQu']
+big_summary['HadGHCND'] = da.read_nc('data/HadGHCND/HadGHCND_SummaryMeanQu.nc')['SummaryMeanQu']
 
 season='JJA'
 
@@ -50,8 +38,11 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 	for ax in list(axes[0,:].flatten()) :
 		ax.outline_patch.set_edgecolor('white')
 
-	for style,state,row in zip(['tas','pr','cpd'],['warm','dry','dry-warm'],range(1,4)):
-		for name,data,ax in zip(['HadGHCND','EOBS','HAPPI'],[obs_had,obs_eobs,models],axes[row,:]):
+	for state,row in zip(['warm','dry','dry-warm'],range(1,4)):
+		im={}
+		for name,ax in zip(['HadGHCND','EOBS'],axes[row,:]):
+			data = big_summary[name]
+			to_plot = None
 			if name == 'EOBS':
 				ax.set_extent([-15,60,10,80],crs=ccrs.PlateCarree())
 			else:
@@ -59,15 +50,17 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 
 			if name == 'HAPPI':
 				ensemble=np.zeros([4,180,360])*np.nan
-				for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-					ensemble[i,:,:]=models[style][model]['*'.join(['All-Hist',season,state,stat])]
-				to_plot=models[style][model]['*'.join(['All-Hist',season,state,stat])].copy()
-				to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
-				to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
-			elif (name=='HadGHCND' and style=='pr')==False and (name=='HadGHCND' and style=='cpd')==False:
-				to_plot=data[style]['All-Hist',season,state,stat]
+				# for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
+				# 	ensemble[i,:,:]=models[style][model]['*'.join(['All-Hist',season,state,stat])]
+				# to_plot=models[style][model]['*'.join(['All-Hist',season,state,stat])].copy()
+				# to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
+				# to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
+			elif name=='EOBS':
+				to_plot=data['All-Hist',season,state,stat]
+			elif (name=='HadGHCND' and state=='warm'):
+				to_plot=data['All-Hist',season,state,stat]
 
-			if (name=='HadGHCND' and style=='pr')==False and (name=='HadGHCND' and style=='cpd')==False:
+			if to_plot is not None:
 				ax.annotate(name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 				crange=color_range[state][stat]
 				im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[style],transform=ccrs.PlateCarree());
@@ -86,4 +79,4 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 
 	plt.suptitle(title+' persistence', fontweight='bold')
 	fig.tight_layout()
-	plt.savefig('plots/paper/Figure??_validation_'+stat+'.png',dpi=300)
+	plt.savefig('plots/paper/map_validation_'+stat+'.png',dpi=300)
