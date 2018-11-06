@@ -37,20 +37,20 @@ for event_name,event in events.items():
 	for name, value in nc_period.items():
 		periods['dry'][name]=value[:,lat_,lon_]
 
-	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_5mm.nc')
-	# periods['5mm']={}
-	# for name, value in nc_period.items():
-	# 	periods['5mm'][name]=value[:,lat_,lon_]
-	#
-	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
-	# periods['10mm']={}
-	# for name, value in nc_period.items():
-	# 	periods['10mm'][name]=value[:,lat_,lon_]
-	#
-	# nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_period_dry-warm.nc')
-	# periods['dry-warm']={}
-	# for name, value in nc_period.items():
-	# 	periods['dry-warm'][name]=value[:,lat_,lon_]
+	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_5mm.nc')
+	periods['5mm']={}
+	for name, value in nc_period.items():
+		periods['5mm'][name]=value[:,lat_,lon_]
+
+	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
+	periods['10mm']={}
+	for name, value in nc_period.items():
+		periods['10mm'][name]=value[:,lat_,lon_]
+
+	nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_period_dry-warm.nc')
+	periods['dry-warm']={}
+	for name, value in nc_period.items():
+		periods['dry-warm'][name]=value[:,lat_,lon_]
 
 	states={}
 	states['warm']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')['warm'][:,lat_,lon_]
@@ -69,6 +69,7 @@ for event_name,event in events.items():
 	tas_time=nc_tas['time']
 	datevar=num2date(tas_time, units = tas_time.units)
 	tas_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
+	#tas_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
 
 	pr_time=nc_pr['time']
 	datevar=num2date(pr_time, units = pr_time.units)
@@ -108,15 +109,15 @@ for event_name,event in events.items():
 	axes[1].set_ylabel('precip [mm]')
 	axes[1].set_ylim(-1,70)
 
+	for ax in axes:
+		ax.set_xlim(event['year'],event['year']+1)
+
 	# axes[2].axis('off')
 	# axes[2].set_title('periods')
 
 	state_names = ['warm','dry','dry-warm','5mm','10mm']
 	colors = ['red','orange','darkmagenta','cyan','blue']
 	positions = [8,7,6,5,4]
-	state_names = ['warm','dry']
-	colors = ['red','orange']
-	positions = [8,7]
 
 	for state,color,pos in zip(state_names,colors,positions):
 		mid=periods[state]['period_midpoints'].values

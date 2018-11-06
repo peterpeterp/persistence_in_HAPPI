@@ -80,8 +80,6 @@ def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Pl
 model=sys.argv[1]
 print model
 
-
-
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 srex['mid-lat'] = {'points':[(-180,35),(180,35),(180,60),(-180,60)]}

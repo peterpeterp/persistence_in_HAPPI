@@ -66,5 +66,5 @@ for state,style in state_dict.items():
 			output.close()
 
 '''
-for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/ana_1_merge.py $model Plus20-Future > out/${model}+merge20 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/ana_1_merge.py $model Plus15-Future > out/${model}+merge15 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
 '''

@@ -14,7 +14,7 @@ working_path='data/EOBS/'
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
 state_dict = {
-	'warm':'tg',
+	#'warm':'tg',
 	'dry':'rr',
 	'5mm':'rr',
 	'10mm':'rr',
@@ -23,7 +23,7 @@ state_dict = {
 
 for state,style in state_dict.items():
 	for scenario in ['All-Hist']:
-		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'*'+state+'.nc'))
+		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'*merged*'+state+'.nc'))
 		print all_files
 
 		nc_in=Dataset(all_files[0],'r')
