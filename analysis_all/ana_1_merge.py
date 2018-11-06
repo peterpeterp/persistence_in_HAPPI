@@ -5,7 +5,7 @@ import cPickle as pickle
 
 model=sys.argv[1]
 print model
-scenario=sys.argv[2]
+chosen_scenario=sys.argv[2]
 
 overwrite=True
 
@@ -64,3 +64,7 @@ for state,style in state_dict.items():
 			output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
 			pickle.dump(distr_dict, output)
 			output.close()
+
+'''
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/ana_1_merge.py $model Plus20-Future > out/${model}+merge20 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+'''
