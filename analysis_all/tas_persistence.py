@@ -128,6 +128,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				gc.collect()
 
 
-
-
+'''
+for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_all/tas_persistence.py $model All-Hist > out/${model}+tasHi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+'''
 #

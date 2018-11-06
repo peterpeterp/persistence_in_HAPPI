@@ -15,10 +15,10 @@ seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1},
 
 state_dict = {
 	'warm':'tas',
-	'dry':'pr',
-	'5mm':'pr',
-	'10mm':'pr',
-	'dry-warm':'cpd',
+	# 'dry':'pr',
+	# '5mm':'pr',
+	# '10mm':'pr',
+	# 'dry-warm':'cpd',
 	}
 
 for state,style in state_dict.items():
