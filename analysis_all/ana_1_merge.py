@@ -5,7 +5,7 @@ import cPickle as pickle
 
 model=sys.argv[1]
 print model
-chosen_scenario=sys.argv[2]
+#chosen_scenario=sys.argv[2]
 
 overwrite=True
 
@@ -23,47 +23,47 @@ state_dict = {
 
 for state,style in state_dict.items():
 	for scenario in ['All-Hist','Plus15-Future','Plus20-Future']:
-		if scenario==chosen_scenario:
-			all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
-			print all_files
+		#if scenario==chosen_scenario:
+		all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'*'+state+'.nc'))
+		print all_files
 
-			nc_in=Dataset(all_files[0],'r')
-			lat=nc_in.variables['lat'][:]
-			lon=nc_in.variables['lon'][:]
-			nc_in.close()
+		nc_in=Dataset(all_files[0],'r')
+		lat=nc_in.variables['lat'][:]
+		lon=nc_in.variables['lon'][:]
+		nc_in.close()
 
-			distr_dict={}
-			for y in lat:
-				for x in lon:
-					distr_dict[str(y)+'_'+str(x)]={'MAM':collections.Counter(),'JJA':collections.Counter(),'SON':collections.Counter(),'DJF':collections.Counter()}
+		distr_dict={}
+		for y in lat:
+			for x in lon:
+				distr_dict[str(y)+'_'+str(x)]={'MAM':collections.Counter(),'JJA':collections.Counter(),'SON':collections.Counter(),'DJF':collections.Counter()}
 
-			for file in all_files:
-				start_time=time.time()
-				print file
-				nc_in=Dataset(file,'r')
-				try:
-					period_length=nc_in.variables['period_length'][:,:,:]
-					period_season=nc_in.variables['period_season'][:,:,:]
+		for file in all_files:
+			start_time=time.time()
+			print file
+			nc_in=Dataset(file,'r')
+			try:
+				period_length=nc_in.variables['period_length'][:,:,:]
+				period_season=nc_in.variables['period_season'][:,:,:]
 
-					for iy in range(len(lat)):
-						sys.stdout.write('.')	;	sys.stdout.flush()
-						for ix in range(len(lon)):
-							for season in seasons.keys():
-								in_season=np.where(period_season[:,iy,ix]==seasons[season]['index'])[0]
-								distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]+=collections.Counter(period_length[:,iy,ix][in_season])
-				except:
-					failed_files=open(working_path+scenario+'/damaged_files.txt','w')
-					failed_files.write(file+'\n')
-					failed_files.close()
+				for iy in range(len(lat)):
+					sys.stdout.write('.')	;	sys.stdout.flush()
+					for ix in range(len(lon)):
+						for season in seasons.keys():
+							in_season=np.where(period_season[:,iy,ix]==seasons[season]['index'])[0]
+							distr_dict[str(lat[iy])+'_'+str(lon[ix])][season]+=collections.Counter(period_length[:,iy,ix][in_season])
+			except:
+				failed_files=open(working_path+scenario+'/damaged_files.txt','w')
+				failed_files.write(file+'\n')
+				failed_files.close()
 
-				print time.time()-start_time
+			print time.time()-start_time
 
-			distr_dict['lon']=lon
-			distr_dict['lat']=lat
+		distr_dict['lon']=lon
+		distr_dict['lat']=lat
 
-			output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
-			pickle.dump(distr_dict, output)
-			output.close()
+		output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
+		pickle.dump(distr_dict, output)
+		output.close()
 
 ##################
 # regional distrs
