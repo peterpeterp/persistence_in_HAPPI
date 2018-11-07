@@ -145,3 +145,4 @@ for event_name,event in events.items():
 	plt.suptitle(event['name']+' ('+str(lat_)+'N, '+str(lon_)+'E)')
 	# plt.tight_layout()
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
+	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.pdf')
