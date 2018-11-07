@@ -6,14 +6,18 @@ import dimarray as da
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
-
+try:
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+except:
+	os.chdir('/global/homes/p/pepflei/')
+	
 data_path='data/EOBS/All-Hist/'
 
 events = {
-	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
+	'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
 	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'year':2018, 'name':'Berlin 2018'},
-	#'balkanFL2014':{'lon':20.25, 'lat':44.25, 'year':2014},
+	'balkanFL2014':{'lon':19.75, 'lat':44.25, 'year':2014,'name':'Valjevo 2014'},
+	'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
 	}

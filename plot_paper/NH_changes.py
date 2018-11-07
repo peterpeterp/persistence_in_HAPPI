@@ -33,22 +33,10 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 if 'big_dict' not in globals():
 	big_dict={}
-	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree','EOBS']:
-		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
-		if os.path.isfile(infile):
-			pkl_file=open(infile, 'rb')
-			big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
-
-	# observations
-	had_dict={}
-	for dataset in ['HadGHCND']:
+	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree','EOBS','HadGHCND']:
 		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
 		pkl_file=open(infile, 'rb')
-		had_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
-		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_mid-lat.pkl'
-		pkl_file=open(infile, 'rb')
-		had_dict[dataset]['mid-lat'] = pickle.load(pkl_file)['mid-lat'];	pkl_file.close()
-
+		big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
 
 
 NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
@@ -92,9 +80,6 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 
 
 	subax.legend(handles=legend_elements ,title='                                       '+'      '.join([aa+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
-
-
-
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
@@ -165,28 +150,3 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg4=['cyan','blue'],
 	title='exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/NH_changes_wet.png',dpi=600)
-
-
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='summer',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['cold','wet','wet-cold'],
-# 	arg4=['#1C86EE','#00FFFF','#458B74'],
-# 	title='exceedance probabilites of persistence in JJA')
-# plt.savefig('plots/paper/Figure1_b.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='winter',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['warm','dry','dry-warm'],
-# 	arg4=['#FF3030','#FF8C00','#8B3A62'],
-# 	title='exceedance probabilites of persistence in DJF')
-# plt.savefig('plots/paper/FigureSI1_a.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='winter',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['cold','wet','wet-cold'],
-# 	arg4=['#1C86EE','#00FFFF','#458B74'],
-# 	title='exceedance probabilites of persistence in DJF')
-# plt.savefig('plots/paper/FigureSI1_b.png',dpi=600)
