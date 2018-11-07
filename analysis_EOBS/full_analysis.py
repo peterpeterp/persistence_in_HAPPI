@@ -35,10 +35,10 @@ def try_several_times(command,trials=2,seconds=60):
 
 
 try:
-	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
-
+	os.chdir('/global/homes/p/pepflei/')
+	
 sys.path.append('weather_persistence/')
 import persistence_functions as prsfc; reload(prsfc)
 
