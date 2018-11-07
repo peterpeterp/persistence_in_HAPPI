@@ -69,7 +69,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	print('finding periods\n10------50-------100')
 	for in_file,progress in zip(all_files, np.array([['-']+['']*(len(all_files)/20+1)]*20).flatten()[0:len(all_files)]):
 		sys.stdout.write(progress); sys.stdout.flush()
-		run = in_file.split('_')[-2]
+		run = in_file.split('_')[-3]
 		out_file=in_file.replace('_period_warm','_summer').replace('/tas/tas_Aday_','/summerStat/tas_Aday_')
 		if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
 		if os.path.isfile(out_file)==False:
