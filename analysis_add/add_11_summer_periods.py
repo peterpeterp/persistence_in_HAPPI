@@ -60,7 +60,7 @@ grid=model_dict[model]['grid']
 
 for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106/2115','2106/2115','2006/2015']):
 
-	all_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*_period*')
+	all_files=glob.glob(working_path+scenario+'/tas/tas_Aday_*_period_warm*')
 	if os.path.isdir(working_path+scenario+'/summerStat') == False:
 		os.system('mkdir '+working_path+scenario+'/summerStat')
 	if os.path.isdir(working_path+scenario+'/tas') == False:
@@ -70,11 +70,11 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	for in_file,progress in zip(all_files, np.array([['-']+['']*(len(all_files)/20+1)]*20).flatten()[0:len(all_files)]):
 		sys.stdout.write(progress); sys.stdout.flush()
 		run = in_file.split('_')[-2]
-		out_file=in_file.replace('_period','_summer').replace('/tas/tas_Aday_','/summerStat/tas_Aday_')
+		out_file=in_file.replace('_period_warm','_summer').replace('/tas/tas_Aday_','/summerStat/tas_Aday_')
 		if overwrite and os.path.isfile(out_file):  os.system('rm '+out_file)
 		if os.path.isfile(out_file)==False:
 
-			raw_file=in_file.replace('_period','')
+			raw_file=in_file.replace('_period_warm','')
 			if os.path.isfile(raw_file) == False:
 				tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
 				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
@@ -85,7 +85,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 			result=try_several_times('cdo -O yseasmean '+raw_file+' '+out_file.replace('_summer.nc','_seasMean.nc'),2,60)
 
-			state_check=da.read_nc(in_file.replace('_period','_state'))['state']
+			state_check=da.read_nc(in_file.replace('_period_warm','_state'))['warm']
 			nc_tas=da.read_nc(raw_file)
 			#print(raw_file)
 			#print(nc_tas)
@@ -113,13 +113,13 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 				'hottest_day':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
 				'mean_temp':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
 				'hottest_day_shift':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
-				# 'original_period_id':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
+				# 'original_period_warm_id':da.DimArray(axes=[['7','14','21','28'],tas.lat,tas.lon],dims=['length','lat','lon']),
 				#'TXx_in_x90':da.DimArray(TXx_in_x90[0:len(set(year)),:,:],axes=[['7','14','21','28'],sorted(set(year)),tas.lat,tas.lon],dims=['length_thresh','year','lat','lon']),
 			}
 
 			for per_len_thresh in [7,14,21,28][::-1]:
 				thresh = mm.copy()[0,:,:] * 0.0 + float(per_len_thresh)
-				hottest_day,x90_cum_temp,mean_temp,hottest_day_shift,TXx_in_x90,original_period_id,max_len=summer_period_analysis(ll,mm,seas,state,tt,thresh,year,len(period.lat),len(period.lon),len(period.period_id))
+				hottest_day,x90_cum_temp,mean_temp,hottest_day_shift,TXx_in_x90,original_period_warm_id,max_len=summer_period_warm_analysis(ll,mm,seas,state,tt,thresh,year,len(period.lat),len(period.lon),len(period.period_id))
 
 				for tmp,name in zip([hottest_day,mean_temp,hottest_day_shift],['hottest_day','mean_temp','hottest_day_shift']):
 					tmp = np.array(tmp,np.float)
@@ -149,7 +149,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# 	colors[state_check_[year==yr,70,10]==-1]='b'
 			# 	colors[state_check_[year==yr,70,10]==1]='r'
 			# 	ax.scatter(day_in_year[year==yr],tas[:,tas.lat[70],tas.lon[10]].values[year==yr],color=colors)
-			# 	ids=original_period_id[:,70,10]
+			# 	ids=original_period_warm_id[:,70,10]
 			# 	ids=ids[0:np.argmax(ids)+1]
 			# 	xx=year[mm[ids,70,10]]
 			# 	ids=ids[year[mm[ids,70,10]]==yr]
@@ -162,7 +162,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			# 		print(ll[id_,70,10],len(days),shift)
 			# 		print(state_check_[days,70,10])
 			# 		ax.plot(day_in_year[days],tt[days,70,10])
-			# 		#print tt[days,70,10],np.max(tt[days,70,10]),x90_hottest_day[np.where(original_period_id[:,70,10]==id_)[0],70,10]
-			# 		ax.scatter([day_in_year[mm[id_,70,10]]],[hottest_day[np.where(original_period_id[:,70,10]==id_)[0],70,10]],color='g')
+			# 		#print tt[days,70,10],np.max(tt[days,70,10]),x90_hottest_day[np.where(original_period_warm_id[:,70,10]==id_)[0],70,10]
+			# 		ax.scatter([day_in_year[mm[id_,70,10]]],[hottest_day[np.where(original_period_warm_id[:,70,10]==id_)[0],70,10]],color='g')
 			# plt.savefig('test.png',dpi=300)
 #
