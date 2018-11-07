@@ -40,7 +40,7 @@ import __settings
 model_dict=__settings.model_dict
 
 style_dict = {
-	'pr':{'states':['dry','5mm','10mm'],'days':3650},
+	#'pr':{'states':['dry','5mm','10mm'],'days':3650},
 	'tas':{'states':['warm'],'days':3560},
 	'cpd':{'states':['dry-warm'],'days':3560},
 }

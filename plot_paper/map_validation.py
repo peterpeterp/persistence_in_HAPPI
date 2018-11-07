@@ -10,9 +10,9 @@ sns.set()
 import cartopy.crs as ccrs
 import cartopy
 
-cmap = {'tas': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","darksalmon","darkred"]),
-		'pr': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","yellow","saddlebrown"]),
-		'cpd': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","pink","darkmagenta"])}
+cmap = {'warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","darksalmon","darkred"]),
+		'dry': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","yellow","saddlebrown"]),
+		'dry-warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","pink","darkmagenta"])}
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
@@ -20,9 +20,13 @@ big_summary={}
 big_summary['EOBS'] = da.read_nc('data/EOBS/EOBS_SummaryMeanQu.nc')['SummaryMeanQu']
 big_summary['HadGHCND'] = da.read_nc('data/HadGHCND/HadGHCND_SummaryMeanQu.nc')['SummaryMeanQu']
 
+models = {}
+for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
+	models[model] = da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu_1x1.nc')
+
 season='JJA'
 
-color_range={'warm':{'mean':(3,7),'qu_95':(5,20)},
+color_range={'warm':{'mean':(3.5,6.5),'qu_95':(7,17)},
 			'cold':{'mean':(3,7),'qu_95':(5,20)},
 			'dry':{'mean':(3,14),'qu_95':(5,20)},
 			'wet':{'mean':(1,4),'qu_95':(2,10)},
@@ -40,8 +44,7 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 
 	for state,row in zip(['warm','dry','dry-warm'],range(1,4)):
 		im={}
-		for name,ax in zip(['HadGHCND','EOBS'],axes[row,:]):
-			data = big_summary[name]
+		for name,data,ax in zip(['HadGHCND','EOBS','HAPPI'],[big_summary['HadGHCND'],big_summary['EOBS'],models],axes[row,:]):
 			to_plot = None
 			if name == 'EOBS':
 				ax.set_extent([-15,60,10,80],crs=ccrs.PlateCarree())
@@ -50,11 +53,11 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 
 			if name == 'HAPPI':
 				ensemble=np.zeros([4,180,360])*np.nan
-				# for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-				# 	ensemble[i,:,:]=models[style][model]['*'.join(['All-Hist',season,state,stat])]
-				# to_plot=models[style][model]['*'.join(['All-Hist',season,state,stat])].copy()
-				# to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
-				# to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
+				for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
+					ensemble[i,:,:]=models[model]['*'.join(['All-Hist',season,state,stat])]
+				to_plot=models[model]['*'.join(['All-Hist',season,state,stat])].copy()
+				to_plot.values=np.roll(np.nanmean(ensemble,axis=0),180,axis=-1)
+				to_plot.lon=np.roll(to_plot.lon,180,axis=-1)
 			elif name=='EOBS':
 				to_plot=data['All-Hist',season,state,stat]
 			elif (name=='HadGHCND' and state=='warm'):
@@ -63,10 +66,9 @@ for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 			if to_plot is not None:
 				ax.annotate(name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 				crange=color_range[state][stat]
-				im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[style],transform=ccrs.PlateCarree());
+				im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[state],transform=ccrs.PlateCarree());
 				ax.coastlines(color='black')
 			else:
-				print(name,style)
 				ax.coastlines(color='white')
 				ax.outline_patch.set_edgecolor('white')
 
