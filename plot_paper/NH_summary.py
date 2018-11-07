@@ -68,7 +68,7 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+2.0$^\circ$CEnsemble Median'))
 	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='Model Spread'))
 	for style,state,color in zip(arg2,arg3,arg4):
-		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['*','+'],[-0.2,0.2]):
+		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
 			legend_elements.append(Line2D([0], [0], color='k', linestyle='', label=' ', marker=marker))
 		legend_elements.append(Patch(facecolor=color,alpha=0.4, label=' '))
 
@@ -103,7 +103,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
 	for state,per_length,color,pos in zip(arg3,arg2,arg4,range(1,1+len(arg3))):
-		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['*','+'],[-0.2,0.2]):
+		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
 			ensemble=np.zeros([4])*np.nan
 			nmax=35
 			for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
@@ -130,27 +130,3 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg4=['#FF3030','#FF8C00','#8B3A62','cyan','blue'],
 	title='rel. change in exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/NH_summary.png',dpi=600)
-
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='summer',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['cold','wet','wet-cold'],
-# 	arg4=['#1C86EE','#00FFFF','#458B74'],
-# 	title='exceedance probabilites of persistence in JJA')
-# plt.savefig('plots/paper/Figure1_b.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='winter',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['warm','dry','dry-warm'],
-# 	arg4=['#FF3030','#FF8C00','#8B3A62'],
-# 	title='exceedance probabilites of persistence in DJF')
-# plt.savefig('plots/paper/FigureSI1_a.png',dpi=600)
-#
-# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 	arg1='winter',
-# 	arg2=['tas','pr','cpd'],
-# 	arg3=['cold','wet','wet-cold'],
-# 	arg4=['#1C86EE','#00FFFF','#458B74'],
-# 	title='exceedance probabilites of persistence in DJF')
-# plt.savefig('plots/paper/FigureSI1_b.png',dpi=600)

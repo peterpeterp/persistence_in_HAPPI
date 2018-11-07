@@ -3,14 +3,17 @@ import numpy as np
 from netCDF4 import Dataset,num2date
 import random as random
 import dimarray as da
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+mpl.use('Agg')
 
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
 	os.chdir('/global/homes/p/pepflei/')
-	
+
 data_path='data/EOBS/All-Hist/'
 
 events = {
