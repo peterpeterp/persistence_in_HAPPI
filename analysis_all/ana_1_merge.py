@@ -7,6 +7,11 @@ model=sys.argv[1]
 print model
 #chosen_scenario=sys.argv[2]
 
+try:
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
+except:
+	os.chdir('/global/homes/p/pepflei/')
+
 overwrite=True
 
 working_path='/global/cscratch1/sd/pepflei/'+model+'/'
@@ -14,11 +19,11 @@ working_path='/global/cscratch1/sd/pepflei/'+model+'/'
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
 state_dict = {
-	'warm':'tas',
+	# 'warm':'tas',
 	# 'dry':'pr',
 	# '5mm':'pr',
 	# '10mm':'pr',
-	# 'dry-warm':'cpd',
+	'dry-warm':'cpd',
 	}
 
 for state,style in state_dict.items():
@@ -61,7 +66,7 @@ for state,style in state_dict.items():
 		distr_dict['lon']=lon
 		distr_dict['lat']=lat
 
-		output = open('../data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
+		output = open('data/'+model+'/'+style+'_'+model+'_'+scenario+'_'+state+'_counter.pkl', 'wb')
 		pickle.dump(distr_dict, output)
 		output.close()
 
