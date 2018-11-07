@@ -2,6 +2,9 @@ import os,sys,glob,time,collections,gc
 import numpy as np
 from netCDF4 import Dataset,num2date
 import cPickle as pickle
+import dimarray as da
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
 
 model='EOBS'
 

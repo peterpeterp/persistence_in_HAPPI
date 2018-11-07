@@ -1,7 +1,10 @@
 import os,sys,glob,time,collections,gc
 import numpy as np
-from netCDF4 import Dataset,netcdftime,num2date
+from netCDF4 import Dataset,num2date
 import cPickle as pickle
+import dimarray as da
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
 
 model=sys.argv[1]
 print model
@@ -23,7 +26,7 @@ state_dict = {
 	# 'dry':'pr',
 	# '5mm':'pr',
 	# '10mm':'pr',
-	'dry-warm':'cpd',
+	# 'dry-warm':'cpd',
 	}
 
 for state,style in state_dict.items():
