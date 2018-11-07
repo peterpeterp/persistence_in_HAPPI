@@ -57,30 +57,25 @@ time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2da
 month=np.array([dd.month for dd in num2date(tas_time.values,units = tas_time.units)])
 yday=np.array([dd.timetuple().tm_yday for dd in num2date(tas_time.values,units = tas_time.units)])
 
+anom = tas.copy() * np.nan
+for y in tas.lat:
+	print(y)
+	for x in tas.lon:
+		tmp__ = tas[:,y,x]
+		notna = np.where(np.isfinite(tmp__))[0]
+		if len(notna)>365*40:
+			for day in range(1,367):
+				days = np.where(yday[notna] == day)[0]
+				tmp = tmp__.values[notna[days]]
+				m, b, r_val, p_val, std_err = stats.linregress(time_axis[notna[days]],tmp)
+				tmp = tmp - (time_axis[notna[days]]*m + b)
+				tmp = tmp - np.nanmean(tmp)
+				anom[:,y,x].ix[notna[days]] = tmp
 
-for day in range(1,367):
-	days = np.where((yday == day))[0]
-	tmp_file = raw_file.replace('.nc','.nc_'+str(day))
-	da.Dataset({'tg':tas.ix[days],'lat':nc['lat'],'lon':nc['lon'],'time':nc['time'].ix[days]}).write_nc(tmp_file)
-	result=try_several_times('cdo -O detrend '+tmp_file+' '+tmp_file+'_detrend',1,120)
-
-
-all_files = glob.glob(raw_file.replace('.nc','.nc_*_detrend'))
-try_several_times('cdo -O mergetime '+' '.join(all_files[:100])+' '+raw_file.replace('.nc','_anom_1.nc'),1,600)
-try_several_times('cdo -O mergetime '+' '.join(all_files[100:200])+' '+raw_file.replace('.nc','_anom_2.nc'),1,600)
-try_several_times('cdo -O mergetime '+' '.join(all_files[200:])+' '+raw_file.replace('.nc','_anom_3.nc'),1,600)
-try_several_times('cdo -O mergetime '+raw_file.replace('.nc','_anom_1.nc')+' '+raw_file.replace('.nc','_anom_2.nc')+' '+raw_file.replace('.nc','_anom_3.nc')+' '+raw_file.replace('.nc','_anom.nc'),1,600)
-
-result = try_several_times('rm '+raw_file.replace('.nc','.nc_*'),1,120)
-result = try_several_times('rm '+raw_file.replace('.nc','_anom_1.nc'),1,120)
-result = try_several_times('rm '+raw_file.replace('.nc','_anom_2.nc'),1,120)
-result = try_several_times('rm '+raw_file.replace('.nc','_anom_3.nc'),1,120)
-
-result = try_several_times('cdo -O ydaymean '+raw_file.replace('.nc','_anom.nc')+' '+raw_file.replace('.nc','_clim.nc'),1,120)
-result = try_several_times('cdo -O sub '+raw_file.replace('.nc','_anom.nc')+' '+raw_file.replace('.nc','_clim.nc')+' '+raw_file.replace('.nc','_anom_detrend.nc'),1,120)
+da.Dataset({'tas':anom,'time':nc['time'],'lat':nc['lat'],'lon':nc['lon']}).write_nc(raw_file.replace('.nc','_anom.nc'))
 
 # # state
 tas_state_file=raw_file.replace('.nc','_state.nc')
-prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom_detrend.nc'),tas_state_file,var_name='tg')
+prsfc.temp_anomaly_to_ind(raw_file.replace('.nc','_anom.nc'),tas_state_file,var_name='tas')
 
 prsfc.get_persistence(tas_state_file,states_to_analyze=['warm'],lat_name='lat',lon_name='lon')
