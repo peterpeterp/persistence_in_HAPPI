@@ -38,7 +38,7 @@ try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
 	os.chdir('/global/homes/p/pepflei/')
-	
+
 sys.path.append('weather_persistence/')
 import persistence_functions as prsfc; reload(prsfc)
 
@@ -106,8 +106,11 @@ gc.collect()
 # Persistence
 #################
 prsfc.get_persistence(tas_state_file,states_to_analyze=['warm'],lat_name='latitude',lon_name='longitude')
+gc.collect()
 prsfc.get_persistence(pr_state_file,states_to_analyze=['dry','10mm','5mm'],lat_name='latitude',lon_name='longitude')
+gc.collect()
 prsfc.get_persistence(compound_state_file,states_to_analyze=['dry-warm'],lat_name='latitude',lon_name='longitude')
+gc.collect()
 
 #################
 # Bring it into the right format
@@ -180,6 +183,7 @@ for state,style in state_dict.items():
 		pickle.dump(distr_dict, output)
 		output.close()
 
+gc.collect()
 
 # regional
 def counter_to_pers(counter,state=1):
@@ -242,11 +246,7 @@ def get_regional_distribution(regions,model,state_dict,scenarios=['All-Hist','Pl
 	output.close()
 	return region_dict
 
-
-model='EOBS'
-print model
-
-
+gc.collect()
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
@@ -297,13 +297,7 @@ def quantile_from_cdf(x,qu):
 
 	return quantiles
 
-model='EOBS'
-
-overwrite=True
-
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
-
-working_path='data/EOBS/'
+working_path='data/'+model+'/'
 
 scenarios=['All-Hist']
 seasons=['MAM','JJA','SON','DJF','year']
