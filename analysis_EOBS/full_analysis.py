@@ -60,9 +60,9 @@ month=np.array([dd.month for dd in num2date(tas_time,units = tas_time.units)])
 yday=np.array([dd.timetuple().tm_yday for dd in num2date(tas_time,units = tas_time.units)])
 
 anom = tas.copy() * np.nan
-for y in tas.lat:
+for y in tas.latitude:
 	print(y)
-	for x in tas.lon:
+	for x in tas.longitude:
 		tmp__ = tas[:,y,x]
 		notna = np.where(np.isfinite(tmp__))[0]
 		if len(notna)>365*40:
@@ -75,7 +75,7 @@ for y in tas.lat:
 				anom[:,y,x].ix[notna[days]] = tmp
 
 anom_file = merged_file.replace('.nc','_anom.nc')
-da.Dataset({'tg':anom,'time':nc['time'],'lat':nc['lat'],'lon':nc['lon']}).write_nc(anom_file)
+da.Dataset({'tg':anom,'time':nc['time'],'latitude':nc['latitude'],'longitude':nc['longitude']}).write_nc(anom_file)
 
 
 
