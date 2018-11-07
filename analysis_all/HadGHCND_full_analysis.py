@@ -36,7 +36,6 @@ def try_several_times(command,trials=2,seconds=60):
 			break
 	return(result)
 
-
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
