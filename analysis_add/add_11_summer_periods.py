@@ -102,7 +102,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 			mm=np.asarray(period['period_midpoints']-tas.time[0],np.int32)
 			ll=np.asarray(period['period_length'],np.int32)
 			seas=np.asarray(period['period_season'],np.int32)
-			state=np.asarray(period['period_state'],np.int32)
+			state=np.asarray(period['period_length'].copy()*0+1,np.int32)
 
 			#x90_thresh=np.asarray(da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu.nc')['SummaryMeanQu'][scenario,'JJA','warm','qu_90'],np.float)
 
