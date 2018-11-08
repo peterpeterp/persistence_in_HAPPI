@@ -25,7 +25,7 @@ events = {
 	'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
-	'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
+	'euroHW2003':{'lon':2.75, 'lat':48.25, 'years':[2003.24,2003.75],'name': 'Paris 2003'},
 	}
 
 for event_name,event in events.items():
