@@ -78,11 +78,11 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 
 def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.set_xlim((0.5,len(arg3)+0.5))
-	subax.set_ylim((-50,50))
+	subax.set_ylim((-30,30))
 	subax.set_xticks(range(1,len(arg3)+1))
 	subax.set_xticklabels([a3+'\n'+str(a2)+'-day periods' for a3,a2 in zip(arg3,arg2)])
 	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=7,rotation=90)
-	subax.set_yticks([-40,-20,0,20,40])
+	subax.set_yticks([-20,-10,0,10,20])
 	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=7)
 	subax.yaxis.get_label().set_backgroundcolor('w')
 	for tick in subax.yaxis.get_major_ticks()+subax.xaxis.get_major_ticks():
@@ -125,7 +125,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 	arg1='summer',
-	arg2=[28,28,28,7,7],
+	arg2=[14,14,14,3,3],
 	arg3=['warm','dry','dry-warm','5mm','10mm'],
 	arg4=['#FF3030','#FF8C00','#8B3A62','cyan','blue'],
 	title='rel. change in exceedance probabilites of persistence in JJA')
