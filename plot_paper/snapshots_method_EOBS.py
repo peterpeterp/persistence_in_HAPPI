@@ -17,17 +17,18 @@ except:
 data_path='data/EOBS/All-Hist/'
 
 events = {
-	'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
-	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'year':2018, 'name':'Berlin 2018'},
-	'balkanFL2014':{'lon':19.75, 'lat':44.25, 'year':2014,'name':'Valjevo 2014'},
-	'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
+	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
+	# 'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'year':2018, 'name':'Berlin 2018'},
+	'Berlin2017-2018':{'lon':13.25, 'lat':53.25, 'years':[2017,2018], 'name':'Berlin 2017-2018'},
+	# 'balkanFL2014':{'lon':19.75, 'lat':44.25, 'year':2014,'name':'Valjevo 2014'},
+	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
 	}
 
 for event_name,event in events.items():
 
-	lat_,lon_,year_ = event['lat'],event['lon'],event['year']
+	lat_,lon_,year_ = event['lat'],event['lon'],min(event['years'])
 	if os.path.isdir(data_path+event_name) == False:
 		os.system('mkdir '+data_path+event_name)
 		for filename in glob.glob(data_path+'*merged*.nc'):
@@ -83,10 +84,10 @@ for event_name,event in events.items():
 	pr_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
 
 	months={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'Mai',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Okt',11:'Nov',12:'Dez'}
-	ticks=np.array([(dd.year,dd.month,yearfrc) for dd,yearfrc in zip(datevar,pr_time_axis) if dd.day == 15 and yearfrc>event['year'] and yearfrc<=event['year']+1])
+	ticks=np.array([(dd.year,dd.month,yearfrc) for dd,yearfrc in zip(datevar,pr_time_axis) if dd.day == 15 and yearfrc>min(event['years']) and yearfrc<=max(event['years'])])
 
-	pr_time_id=np.where((pr_time_axis>event['year']) & (pr_time_axis<=event['year']+1))[0]
-	tas_time_id=np.where((tas_time_axis>event['year']) & (tas_time_axis<=event['year']+1))[0]
+	pr_time_id=np.where((pr_time_axis>min(event['years'])) & (pr_time_axis<=max(event['years'])))[0]
+	tas_time_id=np.where((tas_time_axis>min(event['years'])) & (tas_time_axis<=max(event['years'])))[0]
 
 
 	plt.close()
@@ -117,7 +118,7 @@ for event_name,event in events.items():
 	axes[1].set_ylim(-1,70)
 
 	for ax in axes:
-		ax.set_xlim(event['year'],event['year']+1)
+		ax.set_xlim(min(event['years']),max(event['years']))
 
 	# axes[2].axis('off')
 	# axes[2].set_title('periods')
@@ -130,7 +131,7 @@ for event_name,event in events.items():
 		mid=periods[state]['period_midpoints'].values
 		nona = np.where(np.isfinite(mid))
 		mid = np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in num2date(mid[nona], units = pr_time.units)])
-		periods_ = np.where((mid>event['year']) & (mid<=event['year']+1))
+		periods_ = np.where((mid>min(event['years'])) & (mid<=max(event['years'])))
 		length=periods[state]['period_length'].ix[periods_] / 365.
 		for ll,mm in zip(length,mid[periods_]):
 			axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
