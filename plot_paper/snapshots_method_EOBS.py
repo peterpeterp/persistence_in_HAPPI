@@ -18,7 +18,8 @@ data_path='data/EOBS/All-Hist/'
 
 events = {
 	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
-	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'year':[2018.4,2018.7], 'name':'Berlin 2018'},
+	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.4,2018.7], 'name':'Berlin 2018'},
+	# 'BerlinFL2017':{'lon':13.25, 'lat':53.25, 'years':[2017.4,2017.7], 'name':'Berlin 2017'},
 	# 'Berlin2017-2018':{'lon':13.25, 'lat':53.25, 'years':[2017,2018.8], 'name':'Berlin 2017-2018'},
 	# 'balkanFL2014':{'lon':19.75, 'lat':44.25, 'year':2014,'name':'Valjevo 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
