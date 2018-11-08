@@ -118,6 +118,7 @@ for event_name,event in events.items():
 
 	axes[1].set_ylabel('precip [mm]')
 	axes[1].set_yscale('log')
+	axes[1].set_ylim(1,100)
 
 	for ax in axes:
 		ax.set_xlim(min(event['years']),max(event['years']))
