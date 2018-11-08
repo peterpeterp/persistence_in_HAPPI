@@ -18,13 +18,14 @@ data_path='data/EOBS/All-Hist/'
 
 events = {
 	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
-	# 'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
-	# 'BerlinFL2017':{'lon':13.25, 'lat':53.25, 'years':[2017.24,2017.75], 'name':'Berlin 2017'},
+	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
+	'BerlinFL2017':{'lon':13.25, 'lat':53.25, 'years':[2017.24,2017.75], 'name':'Berlin 2017'},
 	# 'Berlin2017-2018':{'lon':13.25, 'lat':53.25, 'years':[2017,2018.8], 'name':'Berlin 2017-2018'},
 	'balkanFL2014':{'lon':19.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Valjevo 2014'},
+	'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
-	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
+	'euroHW2003':{'lon':2.75, 'lat':48.25, 'year':2003,'name': 'Paris 2003'},
 	}
 
 for event_name,event in events.items():
@@ -116,7 +117,7 @@ for event_name,event in events.items():
 			axes[1].plot(tt,ttas,'.',color='orange')
 
 	axes[1].set_ylabel('precip [mm]')
-	axes[1].set_ylim(-1,70)
+	axes[1].set_yscale('log')
 
 	for ax in axes:
 		ax.set_xlim(min(event['years']),max(event['years']))
