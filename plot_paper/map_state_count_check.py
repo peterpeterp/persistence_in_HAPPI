@@ -56,9 +56,9 @@ for model,row in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4))
 	ax= axes[row,1]
 
 	hist_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA','dry'])]
-	hist_days = np.abs(hist_days / (91*1000)) *100
+	hist_days = np.abs(hist_days / (91*10*100)) *100
 	fut_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['Plus20-Future','JJA','dry'])]
-	fut_days = np.abs(fut_days / (91*1000)) *100
+	fut_days = np.abs(fut_days / (91*10*100)) *100
 
 	lat,lon = state_days.lat,state_days.lon
 	lon=np.roll(lon,len(lon)/2)
