@@ -40,10 +40,12 @@ import __settings
 model_dict=__settings.model_dict
 
 style_dict = {
-	#'pr':{'states':['dry','5mm','10mm'],'days':3650},
-	'tas':{'states':['warm'],'days':3560},
-	'cpd':{'states':['dry-warm'],'days':3560},
+	'pr':{'states':['dry','5mm','10mm'],'days':3650},
+	'tas':{'states':['warm'],'days':3650},
+	'cpd':{'states':['dry-warm'],'days':3650},
 }
+
+seasons={'MAM':[3,4,5],'JJA':[6,7,8],'SON':[9,10,11],'DJF':[12,1,2]}
 
 for style,info in style_dict.items():	#,'cpd','tas'
 	for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
@@ -52,18 +54,24 @@ for style,info in style_dict.items():	#,'cpd','tas'
 			print(state_file)
 
 			states = info['states']
-			data = da.read_nc(state_file)
+			nc = da.read_nc(state_file)
+
+			if 'calendar' in nc['time'].attrs.keys():
+				datevar=num2date(nc['time'].values,units = nc['time'].units, calendar = nc['time'].calendar)
+			else:
+				datevar=num2date(nc['time'].values,units = nc['time'].units)
+			month=np.array([date.month for date in datevar])
 
 			if 'stateCount' not in globals():
 				stateCount = da.Dataset({})
 				for state in states:
-					stateCount[state] = da.DimArray(np.zeros([len(data.lat),len(data.lon)]), axes=[data.lat,data.lon],dims=['lat','lon'])
-					stateCount[state].days = 0
+					stateCount[state] = da.DimArray(np.zeros([len(nc.lat),len(nc.lon)]), axes=[seasons.keys(),nc.lat,nc.lon],dims=['season','lat','lon'])
 
 			# number of states
 			for state in states:
-				stateCount[state].values += np.nansum(data[state],axis=0)
-				stateCount[state].days += info['days']
+				for season in seasons.keys():
+					days_in_season=np.where( (month==seasons[season][0]) | (month==seasons[season][1]) | (month==seasons[season][2]) )[0]
+					stateCount[state].values += np.nansum(nc[state].ix[days_in_season,:,:],axis=0)
 
 		stateCount.write_nc('data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_stateCount.nc')
 		del stateCount
