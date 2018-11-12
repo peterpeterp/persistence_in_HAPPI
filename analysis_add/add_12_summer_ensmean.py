@@ -73,10 +73,10 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 	for id,in_file in enumerate(all_files):
 		print(id)
-		tmp = da.read_nc(in_file)
-
-		for var in ['hottest_day','hottest_day_shift','mean_temp']:
-			merged_[var][id,:,:,:] = tmp[var]
+		if os.path.isfile(in_file):
+			tmp = da.read_nc(in_file)
+			for var in ['hottest_day','hottest_day_shift','mean_temp']:
+				merged_[var][id,:,:,:] = tmp[var]
 
 	out_file=da.Dataset({
 		'length' : da.DimArray(['7','14','21','28'],axes=[['7','14','21','28']],dims=['length']),
