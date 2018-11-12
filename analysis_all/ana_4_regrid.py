@@ -28,7 +28,7 @@ for model in ['ECHAM6-3-LR','MIROC5','NorESM1','CAM4-2degree']:
 	lon=data['lon']; lon.units="degrees_east"
 	lat=data['lat']; lat.units="degrees_north"
 	ds={'lon':lon,'lat':lat}
-	tmp=data['SummaryMeanQu']
+	tmp=data['ExceedanceProb']
 	for scenario in tmp.scenario:
 		for season in tmp.season:
 			for state in tmp.state:
@@ -85,10 +85,10 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	for state in ['warm','dry','dry-warm','5mm','10mm']:
 		for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 			tmp = da.read_nc('data/'+model+'/state_stats/'+state_dict[state]+'_'+model+'_'+scenario+'_stateCount.nc')
-			ds['*'.join([scenario,season,state])] = tmp[state]
+			ds['*'.join([scenario,season,state])] = tmp[state][season]
 
 	da.Dataset(ds).write_nc('data/'+model+'/state_stats/'+model+'_stateCount_regridReady.nc', mode='w')
-	os.system('cdo remapbil,data/grid1x1.cdo data/'+model+'/state_stats/'+model+'_stateCount_regridReady.nc data/state_stats/'+model+'/'+model+'_stateCount_1x1.nc')
+	os.system('cdo -O remapbil,data/grid1x1.cdo data/'+model+'/state_stats/'+model+'_stateCount_regridReady.nc data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')
 
 
 

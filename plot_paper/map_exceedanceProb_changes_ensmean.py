@@ -24,11 +24,11 @@ lon=np.roll(lon,180)
 
 season='JJA'
 
-color_range={'warm':{'14':(-15,15),'28':(-15,15)},
-			'dry':{'14':(-30,30),'28':(-30,30)},
-			'dry-warm':{'14':(-30,30),'28':(-30,30)},
-			'5mm':{'14':(-30,30),'28':(-30,30)},
-			'10mm':{'14':(-30,30),'28':(-30,30)},
+color_range={'warm':{'7':(-15,15),'14':(-15,15)},
+			'dry':{'7':(-30,30),'21':(-30,30)},
+			'dry-warm':{'7':(-30,30),'14':(-30,30)},
+			'5mm':{'3':(-30,30),'7':(-30,30)},
+			'10mm':{'3':(-30,30),'5':(-30,30)},
 			}
 
 # ------------------- cold-warm mean
@@ -42,9 +42,9 @@ for ax in axes[1:,:].flatten():
 	ax.coastlines(edgecolor='black')
 	ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-for state,row in zip(['warm','dry','dry-warm','warm','warm'],range(1,7)):
+for state,row in zip(['warm','dry','dry-warm','5mm','10mm'],range(1,7)):
 
-	for stat,ax,col in zip(['14','28'],axes[row,:],[0,2]):
+	for stat,ax,col in zip(color_range[state].keys(),axes[row,:],[0,2]):
 		ensemble=np.zeros([4,lat.shape[0],lon.shape[0]])*np.nan
 		for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 			ensemble[i,:,:]=(exceedanceProb[model]['*'.join(['Plus20-Future',season,state,stat])] - exceedanceProb[model]['*'.join(['All-Hist',season,state,stat])]) / exceedanceProb[model]['*'.join(['All-Hist',season,state,stat])] * 100

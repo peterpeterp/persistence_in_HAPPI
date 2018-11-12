@@ -71,7 +71,7 @@ for style,info in style_dict.items():	#,'cpd','tas'
 			for state in states:
 				for season in seasons.keys():
 					days_in_season=np.where( (month==seasons[season][0]) | (month==seasons[season][1]) | (month==seasons[season][2]) )[0]
-					stateCount[state][season].values += np.nansum(nc[state].ix[days_in_season,:,:],axis=0)
+					stateCount[state][season].values += np.nansum(nc[state].ix[days_in_season,:,:],axis=0) / float(len(days_in_season))
 
 		stateCount.write_nc('data/' + model + '/state_stats/' + style + '_' + model +'_' +scenario + '_stateCount.nc')
 		del stateCount

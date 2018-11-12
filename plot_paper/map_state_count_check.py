@@ -35,53 +35,37 @@ for ax in axes[:,:].flatten():
 	ax.coastlines(edgecolor='black')
 	ax.set_extent([-180,180,0,80],crs=ccrs.PlateCarree())
 
-for state,row in zip(['dry','dry-warm','5mm','10mm'],range(4)):
+for model,row in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 	ax= axes[row,0]
 
-	ensemble=np.zeros([4,180,360])*np.nan
-	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-		state_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA',state])]
-		ensemble[i,:,:] = np.abs(state_days / (91*1000)) *100
+	state_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA','dry'])]
+	state_days = np.abs(state_days / (91*1000)) *100
 
 	lat,lon = state_days.lat,state_days.lon
 	lon=np.roll(lon,len(lon)/2)
 
-	to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
+	to_plot=np.roll(state_days,len(lon)/2,axis=-1)
 	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap,transform=ccrs.PlateCarree());
-	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
+	ax.annotate(model, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-for state,row in zip(['dry','dry-warm','5mm','10mm'],range(4)):
+for model,row in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 	ax= axes[row,1]
 
-	ensemble=np.zeros([4,180,360])*np.nan
-	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-		hist_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA',state])]
-		fut_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['Plus20-Future','JJA',state])]
-		hist_days = hist_days / (91*1000) *100
-		fut_days = fut_days / (91*1000) *100
-		ensemble[i,:,:] = (fut_days - hist_days)
-
-	# ensemble=np.zeros([4,180,360])*np.nan
-	# for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-	# 	state_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['Plus20-Future',season,state])]
-	# 	ensemble[i,:,:] = np.abs(state_days / (91*1000)) *100
-	#
-
-	#aggree = np.roll(np.sum(np.sign(ensemble),axis=0),len(lon)/2,axis=-1)
-	aggree = np.sum(np.sign(ensemble),axis=0)
+	hist_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA','dry'])]
+	hist_days = np.abs(hist_days / (91*1000)) *100
+	fut_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['Plus20-Future','JJA','dry'])]
+	fut_days = np.abs(fut_days / (91*1000)) *100
 
 	lat,lon = state_days.lat,state_days.lon
-	#lon=np.roll(lon,len(lon)/2)
+	lon=np.roll(lon,len(lon)/2)
 
-	to_plot=np.nanmean(ensemble,axis=0)
-	#to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
-	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap,transform=ccrs.PlateCarree());
-	im__=ax.contourf(lon,lat,aggree , hatches=['/'*7],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
-	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
+	to_plot=np.roll(fut_days-hist_days,len(lon)/2,axis=-1)
+	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap_change,transform=ccrs.PlateCarree(), vmin=-10,vmax=10);
+	ax.annotate(model, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator
@@ -91,7 +75,7 @@ plt.annotate(s='state fraction in 2006-2015 [%]', xy=(0.5,0.5), xycoords='figure
 plt.annotate(s='differene in state fraction +2$^\circ$C vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=12,rotation='90')
 
 fig.tight_layout()
-plt.savefig('plots/paper/map_state_percentage.png',dpi=300)
+plt.savefig('plots/paper/map_state_percentage_check.png',dpi=300)
 
 
 #sdasd
