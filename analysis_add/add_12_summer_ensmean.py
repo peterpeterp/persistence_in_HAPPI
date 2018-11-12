@@ -73,7 +73,7 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 
 	for id,in_file in enumerate(all_files):
 		print(id)
-		if os.path.isfile(in_file):
+		if os.path.isfile(in_file) and id<100:
 			tmp = da.read_nc(in_file)
 			for var in ['hottest_day','hottest_day_shift','mean_temp']:
 				merged_[var][id,:,:,:] = tmp[var]
