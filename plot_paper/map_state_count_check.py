@@ -39,7 +39,7 @@ for model,row in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4))
 	ax= axes[row,0]
 
 	state_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA','dry'])]
-	state_days = np.abs(state_days / (91*1000)) *100
+	state_days *= 100
 
 	lat,lon = state_days.lat,state_days.lon
 	lon=np.roll(lon,len(lon)/2)

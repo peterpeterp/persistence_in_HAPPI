@@ -41,7 +41,7 @@ for state,row in zip(['dry','dry-warm','5mm','10mm'],range(4)):
 	ensemble=np.zeros([4,180,360])*np.nan
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 		state_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA',state])]
-		ensemble[i,:,:] = np.abs(state_days / (91*1000)) *100
+		ensemble[i,:,:] = state_days *100
 
 	lat,lon = state_days.lat,state_days.lon
 	lon=np.roll(lon,len(lon)/2)
@@ -61,9 +61,7 @@ for state,row in zip(['dry','dry-warm','5mm','10mm'],range(4)):
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 		hist_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['All-Hist','JJA',state])]
 		fut_days = da.read_nc('data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')['*'.join(['Plus20-Future','JJA',state])]
-		hist_days = hist_days / (91*1000) *100
-		fut_days = fut_days / (91*1000) *100
-		ensemble[i,:,:] = (fut_days - hist_days)
+		ensemble[i,:,:] = (fut_days - hist_days) / hist_days * 100
 
 	# ensemble=np.zeros([4,180,360])*np.nan
 	# for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
@@ -79,7 +77,7 @@ for state,row in zip(['dry','dry-warm','5mm','10mm'],range(4)):
 
 	to_plot=np.nanmean(ensemble,axis=0)
 	#to_plot=np.roll(np.nanmean(ensemble,axis=0),len(lon)/2,axis=-1)
-	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap,transform=ccrs.PlateCarree());
+	im=ax.pcolormesh(lon,lat,to_plot ,cmap=cmap_change,transform=ccrs.PlateCarree(), vmin=-25,vmax=25);
 	im__=ax.contourf(lon,lat,aggree , hatches=['/'*7],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
 	ax.annotate(state, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)

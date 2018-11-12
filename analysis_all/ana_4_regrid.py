@@ -85,7 +85,7 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	for state in ['warm','dry','dry-warm','5mm','10mm']:
 		for scenario in ['All-Hist','Plus20-Future','Plus15-Future']:
 			tmp = da.read_nc('data/'+model+'/state_stats/'+state_dict[state]+'_'+model+'_'+scenario+'_stateCount.nc')
-			ds['*'.join([scenario,season,state])] = tmp[state][season]
+			ds['*'.join([scenario,season,state])] = tmp[state][season] / np.array(tmp[state+'_possible_days'][season],np.float)
 
 	da.Dataset(ds).write_nc('data/'+model+'/state_stats/'+model+'_stateCount_regridReady.nc', mode='w')
 	os.system('cdo -O remapbil,data/grid1x1.cdo data/'+model+'/state_stats/'+model+'_stateCount_regridReady.nc data/'+model+'/state_stats/'+model+'_stateCount_1x1.nc')
