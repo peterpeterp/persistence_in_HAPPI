@@ -65,7 +65,7 @@ for style,info in style_dict.items():	#,'cpd','tas'
 			if 'stateCount' not in globals():
 				stateCount = da.Dataset({})
 				for state in states:
-					stateCount[state] = da.DimArray(np.zeros([len(nc.lat),len(nc.lon)]), axes=[seasons.keys(),nc.lat,nc.lon],dims=['season','lat','lon'])
+					stateCount[state] = da.DimArray(np.zeros([4,len(nc.lat),len(nc.lon)]), axes=[seasons.keys(),nc.lat,nc.lon],dims=['season','lat','lon'])
 
 			# number of states
 			for state in states:
