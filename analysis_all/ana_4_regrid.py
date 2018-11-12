@@ -23,6 +23,20 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	da.Dataset(ds).write_nc('data/'+model+'/'+model+'_SummaryMeanQu_regridReady.nc', mode='w')
 	os.system('cdo remapbil,data/grid1x1.cdo data/'+model+'/'+model+'_SummaryMeanQu_regridReady.nc data/'+model+'/'+model+'_SummaryMeanQu_1x1.nc')
 
+for model in ['ECHAM6-3-LR','MIROC5','NorESM1','CAM4-2degree']:
+	data=da.read_nc('data/'+model+'/'+model+'_EsceedanceProb_gridded.nc')
+	lon=data['lon']; lon.units="degrees_east"
+	lat=data['lat']; lat.units="degrees_north"
+	ds={'lon':lon,'lat':lat}
+	tmp=data['SummaryMeanQu']
+	for scenario in tmp.scenario:
+		for season in tmp.season:
+			for state in tmp.state:
+				for thresh in [3,4,5,6,7,10,14,21,28]:
+					ds['*'.join([scenario,season,state,str(thresh)])]=tmp[scenario,season,state,thresh]
+	da.Dataset(ds).write_nc('data/'+model+'/'+model+'_EsceedanceProb_gridded_regridReady.nc', mode='w')
+	os.system('cdo remapbil,data/grid1x1.cdo data/'+model+'/'+model+'_EsceedanceProb_gridded_regridReady.nc data/'+model+'/'+model+'_EsceedanceProb_gridded_1x1.nc')
+
 
 # for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 # 	KS=da.read_nc('data/'+model+'/'+model+'_SummaryKS.nc')['SummaryKS']

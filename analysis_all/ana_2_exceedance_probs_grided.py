@@ -61,8 +61,8 @@ for state,style in state_dict.items():
 	lat=big_dict[scenario]['lat']
 	lon=big_dict[scenario]['lon']
 
-	if 'SummaryMeanQu' not in globals():
-		SummaryMeanQu=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(state_dict.keys()),np.asarray(thresholds),lat,lon], dims=['scenario','season','state','period_length','lat','lon'])
+	if 'ExceedanceProb' not in globals():
+		ExceedanceProb=da.DimArray(axes=[np.asarray(scenarios),np.asarray(seasons),np.asarray(state_dict.keys()),np.asarray(thresholds),lat,lon], dims=['scenario','season','state','period_length','lat','lon'])
 
 	for scenario in scenarios:
 		distr_dict = big_dict[scenario]
@@ -81,8 +81,8 @@ for state,style in state_dict.items():
 					if len(counter)>3:
 						neg,pos=counter_to_list(counter)
 						for threshold in thresholds:
-							SummaryMeanQu[scenario,season,state,threshold,lat[iy],lon[ix]]= len(np.where(pos>7)[0])/float(len(pos))
+							ExceedanceProb[scenario,season,state,threshold,lat[iy],lon[ix]]= len(np.where(pos>threshold)[0])/float(len(pos))
 
 
-ds=da.Dataset({'SummaryMeanQu':SummaryMeanQu})
+ds=da.Dataset({'ExceedanceProb':ExceedanceProb})
 ds.write_nc('data/'+model+'/'+model+'_EsceedanceProb_gridded.nc', mode='w')

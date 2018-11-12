@@ -31,23 +31,23 @@ out_file={
 }
 
 masks = da.read_nc('masks/srex_mask_'+model_dict['MIROC5']['grid']+'.nc')
-regions = masks.keys()+['NHml']
+regions = masks.keys()+['mid-lat']
 out_file['exceed_prob'] = da.DimArray(axes=[models,scenarios,regions,styleStates,['7','14','21','28']],dims=['model','scenario','region','styleState','length'])
 
 for model in models:
 	print('**************'+model+'**************')
 
-	for style,state in zip(styles,states):
-		pkl_file=open('data/'+model+'/'+style+'_'+model+'_regional_distrs_srex.pkl', 'rb')
-		reg_dict = pickle.load(pkl_file);	pkl_file.close()
-		pkl_file=open('data/'+model+'/'+style+'_'+model+'_regional_distrs_mid-lat.pkl', 'rb')
-		reg_dict['NHml'] = pickle.load(pkl_file)['mid-lat'];	pkl_file.close()
+	pkl_file=open('data/'+model+'/'+model+'_regional_distrs_srex.pkl', 'rb')
+	reg_dict = pickle.load(pkl_file);	pkl_file.close()
+		# pkl_file=open('data/'+model+'/'+style+'_'+model+'_regional_distrs_mid-lat.pkl', 'rb')
+		# reg_dict['NHml'] = pickle.load(pkl_file)['mid-lat'];	pkl_file.close()
 
+	for style,state in zip(styles,states):
 
 		for scenario in scenarios:
 			for region in reg_dict.keys():
 				for per_len in [7,14,21,28]:
-					tmp = reg_dict[region][scenario]['JJA'][state]
+					tmp = reg_dict[region][scenario][state]['JJA']
 					out_file['exceed_prob'][model,scenario,region,style+'_'+state,str(per_len)] = np.sum(tmp['count'][per_len:])/float(np.sum(tmp['count'])) * 100
 
 out_file = da.Dataset(out_file)
