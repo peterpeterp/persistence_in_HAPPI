@@ -10,7 +10,7 @@ import seaborn as sns
 mpl.use('Agg')
 
 try:
-	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
+	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
 	os.chdir('/global/homes/p/pepflei/')
 
@@ -33,20 +33,71 @@ events = {
 for event_name,event in events.items():
 
 	lat_,lon_,year_ = event['lat'],event['lon'],min(event['years'])
+	if os.path.isdir(data_path+event_name) == False:
+		os.system('mkdir '+data_path+event_name)
+		for filename in glob.glob(data_path+'*merged*.nc'):
+			os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/'+event_name+'/'))
 
-	pkl_file=open('data/EOBS/snapshots/'+event_name+'.pkl', 'rb')
-	data = pickle.load(pkl_file);	pkl_file.close()
+	periods={}
+	nc_period=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_period_warm.nc')
+	periods['warm']={}
+	for name, value in nc_period.items():
+		periods['warm'][name]=value[:,lat_,lon_]
 
-	tas=data['tas']
-	tas_anom=data['tas_anom']
-	pr=data['pr']
-	tas_time_axis=data['tas_time_axis']
-	pr_time_axis=data['pr_time_axis']
-	months=data['months']
-	ticks=data['ticks']
-	periods=data['periods']
-	pr_time_id=data['pr_time_id']
-	tas_time_id=data['tas_time_id']
+	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_dry.nc')
+	periods['dry']={}
+	for name, value in nc_period.items():
+		periods['dry'][name]=value[:,lat_,lon_]
+
+	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_5mm.nc')
+	periods['5mm']={}
+	for name, value in nc_period.items():
+		periods['5mm'][name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
+	# periods['10mm']={}
+	# for name, value in nc_period.items():
+	# 	periods['10mm'][name]=value[:,lat_,lon_]
+
+	nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_period_dry-warm.nc')
+	periods['dry-warm']={}
+	for name, value in nc_period.items():
+		periods['dry-warm'][name]=value[:,lat_,lon_]
+
+	states={}
+	states['warm']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')['warm'][:,lat_,lon_]
+	states['cold']=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')['cold'][:,lat_,lon_]
+	states['dry']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['dry'][:,lat_,lon_]
+	states['5mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['5mm'][:,lat_,lon_]
+	states['10mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['10mm'][:,lat_,lon_]
+	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
+	gc.collect()
+
+
+	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged.nc')
+	tas=nc_tas['tg'][:,lat_,lon_]
+
+	nc_tas_anom=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_anom.nc')
+	tas_anom=nc_tas_anom['tg'][:,lat_,lon_]
+
+	nc_pr=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged.nc')
+	pr=nc_pr['rr'][:,lat_,lon_]
+
+	tas_time=nc_tas['time']
+	datevar=num2date(tas_time, units = tas_time.units)
+	tas_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
+	#tas_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
+
+	pr_time=nc_pr['time']
+	datevar=num2date(pr_time, units = pr_time.units)
+	pr_time_axis=np.array([dd.year + (dd.timetuple().tm_yday-1) / 365. for dd in datevar])
+
+	months={1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'Mai',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Okt',11:'Nov',12:'Dez'}
+	ticks=np.array([(dd.year,dd.month,yearfrc) for dd,yearfrc in zip(datevar,pr_time_axis) if dd.day == 15 and yearfrc>min(event['years']) and yearfrc<=max(event['years'])])
+
+	pr_time_id=np.where((pr_time_axis>min(event['years'])) & (pr_time_axis<=max(event['years'])))[0]
+	tas_time_id=np.where((tas_time_axis>min(event['years'])) & (tas_time_axis<=max(event['years'])))[0]
+
 
 	plt.close()
 	fig,axes = plt.subplots(nrows=3,ncols=1,gridspec_kw = {'height_ratios':[2,2,3]})
@@ -108,3 +159,8 @@ for event_name,event in events.items():
 	# plt.tight_layout()
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.pdf')
+
+	out = {'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id, 'states':states}
+
+	output = open('data/EOBS/snapshots/'+event_name+'.pkl', 'wb')
+	pickle.dump(out, output); output.close()
