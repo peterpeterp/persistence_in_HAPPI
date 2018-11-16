@@ -138,8 +138,8 @@ for event_name,event in events.items():
 	# axes[2].axis('off')
 	# axes[2].set_title('periods')
 
-	state_names = ['warm','dry','dry-warm','5mm','10mm']
-	colors = ['red','orange','darkmagenta','cyan','blue']
+	state_names = ['warm','dry','dry-warm','5mm']
+	colors = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
 	positions = [8,7,6,5,4]
 
 	for state,color,pos in zip(state_names,colors,positions):
@@ -154,7 +154,7 @@ for event_name,event in events.items():
 
 
 	axes[2].set_yticks(positions)
-	axes[2].set_yticklabels(state_names)
+	axes[2].set_yticklabels(['warm','dry','dry-warm','rainy'])
 	axes[2].set_xticks(ticks[:,2])
 	axes[2].set_xticklabels([months[mn] for mn in ticks[:,1]])
 
