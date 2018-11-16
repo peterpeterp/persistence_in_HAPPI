@@ -47,6 +47,7 @@ for event_name,event in events.items():
 	periods=data['periods']
 	pr_time_id=data['pr_time_id']
 	tas_time_id=data['tas_time_id']
+	states=data['states']
 
 	plt.close()
 	fig,axes = plt.subplots(nrows=3,ncols=1,gridspec_kw = {'height_ratios':[2,2,3]})
