@@ -105,10 +105,7 @@ for event_name,event in events.items():
 		#ax.set_xlim(time_stamps[0],time_stamps[-1])
 		ax.set_xticks([])
 
-	axes[0].plot(tas_time_axis[tas_time_id],tas.ix[tas_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
-	for tt,ttas,st in zip(tas_time_axis[tas_time_id],tas.ix[tas_time_id],states['warm'].ix[tas_time_id]):
-		if st:
-			axes[0].plot(tt,ttas,'.r')
+	axes[0].plot(tas_time_axis[tas_time_id],tas.ix[tas_time_id],marker='.',color='#C1CDCD',linestyle='-',linewidth=0.4)
 
 	axes[0].plot(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
 	for tt,ttas,st in zip(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],states['warm'].ix[tas_time_id]):
