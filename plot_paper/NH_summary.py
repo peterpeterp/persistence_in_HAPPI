@@ -58,31 +58,30 @@ all_regs=NH_regs.copy()
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
-colors=['black']+sns.color_palette("colorblind", 4)
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
 
 # ---------------------------- changes
 def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.axis('off')
 	legend_elements=[]
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+1.5$^\circ$C Ensemble Median'))
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+2.0$^\circ$CEnsemble Median'))
-	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='Model Spread'))
+	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+1.5$^\circ$C ensemble mean'))
+	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+2.0$^\circ$C ensemble mean'))
+	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='model spread'))
 	for style,state,color in zip(arg2,arg3,arg4):
 		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
 			legend_elements.append(Line2D([0], [0], color='k', linestyle='', label=' ', marker=marker))
 		legend_elements.append(Patch(facecolor=color,alpha=0.4, label=' '))
 
-	subax.legend(handles=legend_elements ,title='                                              '+'    '.join([aa+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
-
+	subax.legend(handles=legend_elements ,title='                                                 '+'    '.join([legend_dict[aa]+''.join([' ']*int(9/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
 def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.set_xlim((0.5,len(arg3)+0.5))
-	subax.set_ylim((-30,30))
+	subax.set_ylim((-10,30))
 	subax.set_xticks(range(1,len(arg3)+1))
-	subax.set_xticklabels([a3+'\n'+str(a2)+'-day periods' for a3,a2 in zip(arg3,arg2)])
+	subax.set_xticklabels([legend_dict[a3]+'\n'+str(a2)+'-day periods' for a3,a2 in zip(arg3,arg2)])
 	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=7,rotation=90)
-	subax.set_yticks([-20,-10,0,10,20])
+	subax.set_yticks([-10,0,10,20])
 	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=7)
 	subax.yaxis.get_label().set_backgroundcolor('w')
 	for tick in subax.yaxis.get_major_ticks()+subax.xaxis.get_major_ticks():
@@ -121,12 +120,17 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 		lb_color = all_regs[region]['edge']
 	if all_regs[region]['color'] != 'none':
 		lb_color = all_regs[region]['color']
-	subax.annotate(region, xy=(0.05, 0.05), xycoords='axes fraction', color='k', weight='bold', fontsize=10)
+	subax.annotate(region, xy=(0.05, 0.80), xycoords='axes fraction', color='k', weight='bold', fontsize=10)
+
+
+plt.rcParams["font.weight"] = "bold"
+plt.rcParams["axes.labelweight"] = "bold"
+
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 	arg1='summer',
-	arg2=[14,14,14,3,3],
-	arg3=['warm','dry','dry-warm','5mm','10mm'],
-	arg4=['#FF3030','#FF8C00','#8B3A62','cyan','blue'],
+	arg2=[14,14,14,7],
+	arg3=['warm','dry','dry-warm','5mm'],
+	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
 	title='rel. change in exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/NH_summary.png',dpi=600)

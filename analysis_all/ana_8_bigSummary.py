@@ -19,8 +19,8 @@ model_dict=__settings.model_dict
 
 models = ['CAM4-2degree','MIROC5','NorESM1','ECHAM6-3-LR']
 scenarios = ['All-Hist','Plus20-Future']
-styles = ['tas','pr','cpd']
-states = ['warm','dry','dry-warm']
+styles = ['tas','pr','cpd','pr']
+states = ['warm','dry','dry-warm','5mm']
 styleStates = [sty+'_'+sta for sty,sta in zip(styles,states)]
 
 out_file={

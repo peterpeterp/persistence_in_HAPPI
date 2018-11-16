@@ -18,7 +18,7 @@ data_path='data/EOBS/All-Hist/'
 
 events = {
 	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
-	# 'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
+	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
 	# 'BerlinFL2017':{'lon':13.25, 'lat':53.25, 'years':[2017.24,2017.75], 'name':'Berlin 2017'},
 	# # 'Berlin2017-2018':{'lon':13.25, 'lat':53.25, 'years':[2017,2018.8], 'name':'Berlin 2017-2018'},
 	# 'balkanFL2014':{'lon':19.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Valjevo 2014'},
@@ -53,11 +53,11 @@ for event_name,event in events.items():
 	periods['5mm']={}
 	for name, value in nc_period.items():
 		periods['5mm'][name]=value[:,lat_,lon_]
-
-	nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
-	periods['10mm']={}
-	for name, value in nc_period.items():
-		periods['10mm'][name]=value[:,lat_,lon_]
+	#
+	# nc_period=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_period_10mm.nc')
+	# periods['10mm']={}
+	# for name, value in nc_period.items():
+	# 	periods['10mm'][name]=value[:,lat_,lon_]
 
 	nc_period=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_period_dry-warm.nc')
 	periods['dry-warm']={}
@@ -73,8 +73,13 @@ for event_name,event in events.items():
 	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
 	gc.collect()
 
+
 	nc_tas=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged.nc')
-	tas_anom=nc_tas['tg'][:,lat_,lon_]
+	tas=nc_tas['tg'][:,lat_,lon_]
+
+	nc_tas_anom=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_anom.nc')
+	tas_anom=nc_tas_anom['tg'][:,lat_,lon_]
+
 	nc_pr=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged.nc')
 	pr=nc_pr['rr'][:,lat_,lon_]
 
@@ -100,6 +105,11 @@ for event_name,event in events.items():
 		#ax.set_xlim(time_stamps[0],time_stamps[-1])
 		ax.set_xticks([])
 
+	axes[0].plot(tas_time_axis[tas_time_id],tas.ix[tas_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
+	for tt,ttas,st in zip(tas_time_axis[tas_time_id],tas.ix[tas_time_id],states['warm'].ix[tas_time_id]):
+		if st:
+			axes[0].plot(tt,ttas,'.r')
+
 	axes[0].plot(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
 	for tt,ttas,st in zip(tas_time_axis[tas_time_id],tas_anom.ix[tas_time_id],states['warm'].ix[tas_time_id]):
 		if st:
@@ -111,9 +121,9 @@ for event_name,event in events.items():
 	for tt,ttas,st in zip(pr_time_axis[pr_time_id],pr.ix[pr_time_id],states['5mm'].ix[pr_time_id]):
 		if st:
 			axes[1].plot(tt,ttas,'.c')
-	for tt,ttas,st in zip(pr_time_axis[pr_time_id],pr.ix[pr_time_id],states['10mm'].ix[pr_time_id]):
-		if st:
-			axes[1].plot(tt,ttas,'.b')
+	# for tt,ttas,st in zip(pr_time_axis[pr_time_id],pr.ix[pr_time_id],states['10mm'].ix[pr_time_id]):
+	# 	if st:
+	# 		axes[1].plot(tt,ttas,'.b')
 	for tt,ttas,st in zip(pr_time_axis[pr_time_id],pr.ix[pr_time_id],states['dry'].ix[pr_time_id]):
 		if st:
 			axes[1].plot(tt,ttas,'.',color='orange')
