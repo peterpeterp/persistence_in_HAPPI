@@ -160,9 +160,7 @@ for event_name,event in events.items():
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.pdf')
 
-	out = {
-		'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id}
-	}
+	out = {'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id}
 
 	output = open('data/EOBS/snapshots/'+event_name+'.pkl', 'wb')
 	pickle.dump(out, output); output.close()
