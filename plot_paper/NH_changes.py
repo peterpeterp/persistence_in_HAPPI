@@ -117,6 +117,8 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 					tick.label.set_fontsize(8)
 					tick.label.set_fontweight('bold')
 				subax2.tick_params(axis='y', colors=color)
+				for pos in ['top', 'bottom', 'right', 'left']:
+					subax2.spines[pos].set_edgecolor(NH_regs[region]['edge'])
 				#
 
 	lb_color ='none'

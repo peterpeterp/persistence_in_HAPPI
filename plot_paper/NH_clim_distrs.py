@@ -88,6 +88,7 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 
 
 
+
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
@@ -102,24 +103,27 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
 		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4,edgecolor=color)
 
-		#if state=='warm':
+		if state=='warm':
 			#print(style,state)
-			#print(np.nanmean(ensemble[:,[7,14,21,28]],axis=0))
+			print('HAPPI',np.nanmean(ensemble[:,14],axis=0))
+			#print('HAPPI',np.nanargmin(abs(np.nanmean(ensemble[:,:],axis=0)-1)))
 
 	for style,state,color in zip(arg2,arg3,arg4):
 		if region in ['CEU','NEU','MED']:
 			tmp_h=big_dict['EOBS'][region]['All-Hist'][state][season]
 			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
 			subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='--')
-			#if state=='warm':
+			if state=='warm':
 				#print('EOBS',style,state)
-				#print(count_h[[7,14,21,28]])
+				print('EOBS',count_h[14])
+				#print('EOBS',np.nanargmin(abs(count_h-1)))
 
 	if 'warm' in arg3:
 		tmp_h=big_dict['HadGHCND'][region]['All-Hist']['warm'][season]
 		count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
 		subax.plot(range(1,len(count_h)+1),count_h,color=arg4[0])
-		print('HadGHCND',count_h[[7,14,21,28]])
+		print('HadGHCND',count_h[14])
+		#print('HadGHCND',np.nanargmin(abs(count_h-1)))
 
 	lb_color ='none'
 	if all_regs[region]['edge'] != 'none':
@@ -156,6 +160,7 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
 	title='exceedance probabilites of persistence in JJA')
 
+plt.annotate('d', xy=(0.03, 0.93), xycoords='figure fraction', fontsize=15,fontweight='bold', backgroundcolor='w')
 plt.savefig('plots/paper/NH_clim_distrs.png',dpi=600)
 #
 #

@@ -12,7 +12,8 @@ import cartopy
 
 cmap = {'warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","darksalmon","darkred"]),
 		'dry': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","yellow","saddlebrown"]),
-		'dry-warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","pink","darkmagenta"])}
+		'dry-warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","pink","darkmagenta"]),
+		'5mm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","cyan","darkcyan"])}
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
@@ -29,20 +30,23 @@ season='JJA'
 color_range={'warm':{'mean':(3.5,6.5),'qu_95':(7,17)},
 			'cold':{'mean':(3,7),'qu_95':(5,20)},
 			'dry':{'mean':(3,14),'qu_95':(5,20)},
-			'wet':{'mean':(1,4),'qu_95':(2,10)},
+			'5mm':{'mean':(1,2),'qu_95':(2,10)},
 			'dry-warm':{'mean':(1,4),'qu_95':(5,14)},
 			'wet-cold':{'mean':(1,4),'qu_95':(4,10)},
 			}
 
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
+
+
 # ------------------- other
 for stat,title in zip(['mean','qu_95'],['Mean','95th percentile of']):
 	plt.close('all')
-	fig,axes = plt.subplots(nrows=4,ncols=3,figsize=(7,3),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[1,10,10,10],'width_ratios':[6,2,7]})
+	fig,axes = plt.subplots(nrows=5,ncols=3,figsize=(7,4),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[1,10,10,10,10],'width_ratios':[6,2,7]})
 
 	for ax in list(axes[0,:].flatten()) :
 		ax.outline_patch.set_edgecolor('white')
 
-	for state,row in zip(['warm','dry','dry-warm'],range(1,4)):
+	for state,row in zip(['warm','dry','dry-warm','5mm'],range(1,5)):
 		im={}
 		for name,data,ax in zip(['HadGHCND','EOBS','HAPPI'],[big_summary['HadGHCND'],big_summary['EOBS'],models],axes[row,:]):
 			to_plot = None

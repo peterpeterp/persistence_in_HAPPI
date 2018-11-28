@@ -51,7 +51,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-1),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,40),'xlabel':'','ylabel':'rel. change in exceedence probability\nfor periods longer than 2 weeks [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,28),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
