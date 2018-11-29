@@ -92,11 +92,13 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
 	for scenario,color in zip(['Plus15-Future','Plus20-Future'],['orange','red']):
-		to_plot = (data['seasMean'][:,scenario,region] - data['seasMean'][:,'All-Hist',region])
-		plot_bar(subax,1,to_plot,color)
+		to_plot1 = (data['seasMean'][:,scenario,region] - data['seasMean'][:,'All-Hist',region])
+		plot_bar(subax,1,to_plot1,color)
 
-		to_plot = (data['mean_temp'][:,scenario,region,'14'] - data['mean_temp'][:,'All-Hist',region,'14'] )
-		plot_bar(subax,2,to_plot,color)
+		to_plot2 = (data['mean_temp'][:,scenario,region,'14'] - data['mean_temp'][:,'All-Hist',region,'14'] )
+		plot_bar(subax,2,to_plot2,color)
+
+		print(scenario,np.nanmean(to_plot1),np.nanmean(to_plot2))
 
 
 

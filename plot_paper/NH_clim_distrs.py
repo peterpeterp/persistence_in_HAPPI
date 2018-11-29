@@ -125,6 +125,13 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 		print('HadGHCND',count_h[14])
 		#print('HadGHCND',np.nanargmin(abs(count_h-1)))
 
+		if region == 'mid-lat' and False:
+			tau = -1/np.log(0.5)
+			per_prob = np.exp(-1/tau*np.array(range(30),dtype=np.float)) *100
+			per_count = per_prob / per_prob[-1]
+			exceed_prob=np.array([np.sum(per_count[ii:])/float(np.sum(per_count)) * 100 for ii in range(len(per_count))])
+			subax.plot(range(1,41),exceed_prob,'k--')
+
 	lb_color ='none'
 	if all_regs[region]['edge'] != 'none':
 		lb_color = all_regs[region]['edge']
