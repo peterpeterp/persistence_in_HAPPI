@@ -70,28 +70,28 @@ for scenario,selyears in zip(['Plus20-Future','Plus15-Future','All-Hist'],['2106
 	if scenario==chosen_scenario:
 		os.system('mkdir '+working_path+scenario)
 		run_list=model_dict[model]['runs'][scenario]
-		for run in run_list:
-			print(run)
-			tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
-			# check if run exists
-			if len(glob.glob(tmp_path+run+'/*'))>0:
-				raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-				tas_state_file=raw_file.replace('.nc','_state.nc')
-
-				# get daily temp
-				out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
-				command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
-				result=try_several_times(command,2,60)
-				result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
-				result=try_several_times('rm '+out_file_name_tmp)
-
-				# mask ocean
-				land_file=raw_file.replace('.nc','_land.nc')
-				result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
-
-				# get ydaymean
-				yday_clim=raw_file.replace('.nc','_clim.nc')
-				result=try_several_times('cdo -O ydaymean '+land_file+' '+yday_clim,1,120)
+		# for run in run_list:
+		# 	print(run)
+		# 	tmp_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/day/atmos/tas/'
+		# 	# check if run exists
+		# 	if len(glob.glob(tmp_path+run+'/*'))>0:
+		# 		raw_file=working_path+scenario+'/tas/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+		# 		tas_state_file=raw_file.replace('.nc','_state.nc')
+		#
+		# 		# get daily temp
+		# 		out_file_name_tmp=working_path+scenario+'/'+glob.glob(tmp_path+run+'/*')[0].split('/')[-1].split(run)[0]+run+'_tmp.nc'
+		# 		command='cdo -O mergetime '+tmp_path+run+'/* '+out_file_name_tmp
+		# 		result=try_several_times(command,2,60)
+		# 		result=try_several_times('cdo -O -selyear,'+selyears+' '+out_file_name_tmp+' '+raw_file,2,60)
+		# 		result=try_several_times('rm '+out_file_name_tmp)
+		#
+		# 		# mask ocean
+		# 		land_file=raw_file.replace('.nc','_land.nc')
+		# 		result=try_several_times('cdo -O mul '+raw_file+' '+land_mask_file+' '+land_file)
+		#
+		# 		# get ydaymean
+		# 		yday_clim=raw_file.replace('.nc','_clim.nc')
+		# 		result=try_several_times('cdo -O ydaymean '+land_file+' '+yday_clim,1,120)
 
 		climatology_file = 'data/'+model+'/'+'tas'+'_'+model+'_'+scenario+'_dayClim.nc'
 		result=try_several_times('cdo -O ensmean '+working_path+scenario+'/tas/tas_Aday*'+model+'*'+scenario+'*_clim.nc '+climatology_file,1,600)
