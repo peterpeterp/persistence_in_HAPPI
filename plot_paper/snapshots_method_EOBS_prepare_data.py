@@ -74,7 +74,7 @@ for event_name,event in events.items():
 	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
 
 	thresholds = {}
-	nc_ = da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')
+	nc_ = da.read_nc(data_path+'/'+'tg_0.50deg_reg_merged_state.nc')
 	for season in ['MAM','JJA','SON','DJF']:
 		thresholds[season] = nc_['threshold_'+season][lat_,lon_]
 	gc.collect()
