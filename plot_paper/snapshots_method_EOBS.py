@@ -25,7 +25,7 @@ events = {
 	# 'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'Cacak2014':{'lon':20.25, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Serbia 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
-	'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f']},
+	# 'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f']},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'years':[2003.24,2003.75],'name': 'Paris 2003'},
 	}
@@ -63,6 +63,7 @@ for event_name,event in events.items():
 		if st:
 			axes[0].plot(tt,ttas,'.r')
 
+	axes[0].axhline(0,linestyle='--',color='k')
 	axes[0].set_ylabel('temp anom [K]')
 
 	axes[1].plot(pr_time_axis[pr_time_id],pr.ix[pr_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
@@ -77,8 +78,10 @@ for event_name,event in events.items():
 			axes[1].plot(tt,ttas,'.',color='orange')
 
 	axes[1].set_ylabel('precip [mm]')
-	axes[1].set_yscale('log')
-	axes[1].set_ylim(1,100)
+	# axes[1].set_yscale('log')
+	axes[1].axhline(1,linestyle='--',color='k')
+	axes[1].axhline(5,linestyle='--',color='k')
+	axes[1].set_ylim(0.1,100)
 
 	for ax in axes:
 		ax.set_xlim(min(event['years']),max(event['years']))
@@ -101,7 +104,7 @@ for event_name,event in events.items():
 		length=periods[state]['period_length'].ix[periods_] / 365.
 		for ll,mm in zip(length,mid[periods_]):
 			axes[2].fill_between([mm-np.abs(ll)/2.,mm+np.abs(ll)/2.],[pos-0.4,pos-0.4],[pos+0.4,pos+0.4],color=color,alpha=0.6,edgecolor='w',linewidth=0.0)
-			if ll*365>=14:
+			if ll*365>=7:
 				print(ll*365,mm)
 
 
@@ -115,5 +118,5 @@ for event_name,event in events.items():
 
 	plt.suptitle(event['name']+' ('+str(lat_)+'N, '+str(lon_)+'E)')
 	plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
-	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.pdf')
+	plt.savefig('plots/paper/snapshots/snapshot_method_EOBS_'+event_name+'.png')
+	plt.savefig('plots/paper/snapshots/snapshot_method_EOBS_'+event_name+'.pdf')

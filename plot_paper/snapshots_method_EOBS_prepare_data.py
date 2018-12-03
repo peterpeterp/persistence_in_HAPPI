@@ -72,6 +72,11 @@ for event_name,event in events.items():
 	states['5mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['5mm'][:,lat_,lon_]
 	states['10mm']=da.read_nc(data_path+event_name+'/'+'rr_0.50deg_reg_merged_state.nc')['10mm'][:,lat_,lon_]
 	states['dry-warm']=da.read_nc(data_path+event_name+'/'+'cpd_0.50deg_reg_merged_state.nc')['dry-warm'][:,lat_,lon_]
+
+	thresholds = {}
+	nc_ = da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_state.nc')
+	for season in ['MAM','JJA','SON','DJF']:
+		thresholds[season] = nc_['threshold_'+season][lat_,lon_]
 	gc.collect()
 
 
@@ -161,7 +166,7 @@ for event_name,event in events.items():
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.png')
 	plt.savefig('plots/paper/snapshot_method_EOBS_'+event_name+'.pdf')
 
-	out = {'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id, 'states':states, 'pr_time':pr_time, 'tas_time':tas_time}
+	out = {'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id, 'states':states, 'pr_time':pr_time, 'tas_time':tas_time, 'thresholds':thresholds}
 
 	output = open('data/EOBS/snapshots/'+event_name+'.pkl', 'wb')
 	pickle.dump(out, output); output.close()
