@@ -25,14 +25,14 @@ events = {
 	# 'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'Cacak2014':{'lon':20.25, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Serbia 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
-	# 'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f']},
+	'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f']},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'years':[2003.24,2003.75],'name': 'Paris 2003'},
 	}
 
 for event_name,event in events.items():
 
-	lat_,lon_,year_ = event['lat'],event['lon'],min(event['years'])
+	lat_,lon_,year_ = event['lat'],event['lon'],int(min(event['years']))
 
 	pkl_file=open('data/EOBS/snapshots/'+event_name+'.pkl', 'rb')
 	data = pickle.load(pkl_file);	pkl_file.close()
@@ -49,6 +49,8 @@ for event_name,event in events.items():
 	tas_time_id=data['tas_time_id']
 	states=data['states']
 	pr_time=data['pr_time']
+	thresholds=data['thresholds']
+
 
 	plt.close()
 	fig,axes = plt.subplots(nrows=3,ncols=1,gridspec_kw = {'height_ratios':[2,2,3]})
@@ -63,7 +65,9 @@ for event_name,event in events.items():
 		if st:
 			axes[0].plot(tt,ttas,'.r')
 
-	axes[0].axhline(0,linestyle='--',color='k')
+	axes[0].plot([year_+60./365.,year_+152./365.],[thresholds['MAM']]*2,'k-',zorder=0)
+	axes[0].plot([year_+152./365.,year_+244./365.],[thresholds['JJA']]*2,'k-',zorder=0)
+	axes[0].plot([year_+244./365.,year_+335./365.],[thresholds['SON']]*2,'k-',zorder=0)
 	axes[0].set_ylabel('temp anom [K]')
 
 	axes[1].plot(pr_time_axis[pr_time_id],pr.ix[pr_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
@@ -79,14 +83,15 @@ for event_name,event in events.items():
 
 	axes[1].set_ylabel('precip [mm]')
 	# axes[1].set_yscale('log')
-	axes[1].axhline(1,linestyle='--',color='k')
-	axes[1].axhline(5,linestyle='--',color='k')
-	axes[1].set_ylim(0.1,100)
+	axes[1].axhline(1,linestyle='-',color='k',zorder=0)
+	axes[1].axhline(5,linestyle='-',color='k',zorder=0)
+	# axes[1].set_ylim(0.1,100)
 
 	for ax in axes:
 		ax.set_xlim(min(event['years']),max(event['years']))
 		ax.yaxis.tick_right()
 		ax.yaxis.set_label_position("right")
+		ax.grid(False)
 
 	# axes[2].axis('off')
 	# axes[2].set_title('periods')

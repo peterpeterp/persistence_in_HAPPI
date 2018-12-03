@@ -97,8 +97,8 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 			ensemble[i,:nmax]=tmp
 
 		if state != '5mm':
-			subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
-			subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3)
+			subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle='-')
+			subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3,edgecolor=color)
 
 		if state == '5mm':
 			global subax2
@@ -106,8 +106,8 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 			subax2.set_ylim((-75,100))
 			subax2.grid(False)
 			subax2.tick_params(axis='y',which='both',left=True,right=True,labelright=False,labelsize=8)
-			subax2.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
-			subax2.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3)
+			subax2.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle='-')
+			subax2.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3,edgecolor=color)
 			if region == 'mid-lat':
 				subax2.yaxis.tick_right()
 				subax2.tick_params(axis='y',which='both',left=True,right=True,labelright=True,labelsize=8)

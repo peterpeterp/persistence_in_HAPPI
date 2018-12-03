@@ -58,7 +58,7 @@ for state,row in zip(['warm','dry','dry-warm','5mm'],range(5)):
 	im=ax.pcolormesh(lon,lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap,transform=ccrs.PlateCarree());
 
 	aggree = np.sum(np.sign(ensemble),axis=0)
-	im__=ax.contourf(np.roll(lon,180,axis=-1),lat,aggree , hatches=['.'*5],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
+	im__=ax.contourf(np.roll(lon,180,axis=-1),lat,aggree , hatches=['/'*5],levels=[-2,2],colors=['none'], transform=ccrs.PlateCarree());
 
 	ax.annotate(legend_dict[state]+'\n'+str(stat)+'-day', xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 	cb=fig.colorbar(im,orientation='vertical',label='',ax=ax)

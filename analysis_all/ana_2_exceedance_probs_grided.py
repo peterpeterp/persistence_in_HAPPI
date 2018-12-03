@@ -39,7 +39,7 @@ def quantile_from_cdf(x,qu):
 model=sys.argv[1]
 print model
 
-scenarios=['All-Hist']#,'Plus15-Future','Plus20-Future']
+scenarios=['All-Hist','Plus15-Future','Plus20-Future']
 seasons=['MAM','JJA','SON','DJF','year']
 thresholds=range(1,31)
 
