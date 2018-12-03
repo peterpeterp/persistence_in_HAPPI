@@ -40,15 +40,15 @@ import __settings
 model_dict=__settings.model_dict
 
 style_dict = {
-	'pr':{'states':['dry','5mm','10mm'],'days':3650},
-	'tas':{'states':['warm'],'days':3650},
+	'pr':{'states':['dry','5mm'],'days':3650},
+	# 'tas':{'states':['warm'],'days':3650},
 	'cpd':{'states':['dry-warm'],'days':3650},
 }
 
 seasons={'MAM':[3,4,5],'JJA':[6,7,8],'SON':[9,10,11],'DJF':[12,1,2]}
 
 for style,info in style_dict.items():	#,'cpd','tas'
-	for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
+	for scenario in ['All-Hist']:	#'Plus20-Future','Plus15-Future',
 		state_files = sorted(glob.glob(working_path+scenario+'/'+style+'/'+style+'_*_state.nc'))
 		for state_file in state_files:
 			print(state_file)
