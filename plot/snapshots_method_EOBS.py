@@ -8,7 +8,6 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 mpl.use('Agg')
-plt.style.use('classic')
 
 try:
 	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
@@ -26,7 +25,7 @@ events = {
 	# 'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'Cacak2014':{'lon':20.25, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Serbia 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
-	'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f'], 'bar':[152./365.]},
+	'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016', 'labels':['d','e','f']},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'years':[2003.24,2003.75],'name': 'Paris 2003'},
 	}
@@ -69,7 +68,7 @@ for event_name,event in events.items():
 	axes[0].plot([year_+60./365.,year_+152./365.],[thresholds['MAM']]*2,'k-',zorder=0)
 	axes[0].plot([year_+152./365.,year_+244./365.],[thresholds['JJA']]*2,'k-',zorder=0)
 	axes[0].plot([year_+244./365.,year_+335./365.],[thresholds['SON']]*2,'k-',zorder=0)
-	axes[0].set_ylabel('Temperature\nanomaly [K]')
+	axes[0].set_ylabel('temperature\nanomaly [K]')
 
 	axes[1].plot(pr_time_axis[pr_time_id],pr.ix[pr_time_id],marker='.',color='gray',linestyle='-',linewidth=0.4)
 	for tt,ttas,st in zip(pr_time_axis[pr_time_id],pr.ix[pr_time_id],states['5mm'].ix[pr_time_id]):
@@ -82,7 +81,7 @@ for event_name,event in events.items():
 		if st:
 			axes[1].plot(tt,ttas,'.',color='orange')
 
-	axes[1].set_ylabel('Precipitation\n[mm]')
+	axes[1].set_ylabel('precipitation\n[mm]')
 	axes[1].set_yscale('log')
 	axes[1].axhline(1,linestyle='-',color='k',zorder=0)
 	axes[1].axhline(5,linestyle='-',color='k',zorder=0)
@@ -116,19 +115,14 @@ for event_name,event in events.items():
 
 
 	axes[2].set_yticks(positions)
-	axes[2].set_yticklabels(['warm','dry','dry-warm','rain'])
+	axes[2].set_yticklabels(['warm','dry','dry-warm','rainy'])
 	axes[2].set_xticks(ticks[:,2])
 	axes[2].set_xticklabels([months[mn] for mn in ticks[:,1]])
-
-	if 'bar' in event.keys():
-		for ax in axes:
-			ax.axvline(x=2016+154./365.,ymin=-1.2,ymax=1,c="blue",linewidth=1,zorder=0, clip_on=False)
-		ax.annotate('Seine\nflooding',xy=(2016+154./365.,3.2),color='blue', annotation_clip=False, fontsize=9, rotation=90, ha='center')
 
 	for ax,lab in zip(axes,event['labels']):
 		ax.annotate(lab, xy=(0.00, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=12, horizontalalignment='left', backgroundcolor='w')
 
 	plt.suptitle(event['name']+' ('+str(lat_)+'N, '+str(lon_)+'E)')
 	plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-	plt.savefig('plots/paper/snapshots/snapshot_method_EOBS_'+event_name+'.png',dpi=300)
+	plt.savefig('plots/paper/snapshots/snapshot_method_EOBS_'+event_name+'.png')
 	plt.savefig('plots/paper/snapshots/snapshot_method_EOBS_'+event_name+'.pdf')

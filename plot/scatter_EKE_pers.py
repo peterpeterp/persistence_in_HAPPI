@@ -50,7 +50,7 @@ for region,color in zip(regions,colors):
 		y = np.array([np.nanmean( (pers[:,'Plus20-Future',region,styleState,length]-pers[:,'All-Hist',region,styleState,length] ) / pers[:,'All-Hist',region,styleState,length])]) * 100
 		z = (47 - np.abs(srex[region]['av_lat'] - 47.5 ) ) /5.
 
-		ax.scatter(x,y, marker = marker, c = color, edgecolor='k')#, markersize=z)
+		ax.plot(x,y, marker = marker, c = color)#, markersize=z)
 
 ax.set_ylim((-20,50))
 ax.set_xlim((-6,3))
@@ -58,17 +58,17 @@ ax.axvline(x=0,c='k')
 ax.axhline(y=0,c='k')
 # ax.plot([-50,50],[50,-50],'k--')
 
-ax.set_ylabel('Relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
-ax.set_xlabel('Change in EKE [%]')
+ax.set_ylabel('relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
+ax.set_xlabel('change in EKE [%]')
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
 
 legend_elements=[]
 for style,state,marker,length in zip(['tas','pr','cpd','pr'],['warm','dry','dry-warm','5mm'],['*','^','s','v'],['14','14','14','7']):
 	legend_elements.append(Line2D([0], [0], color='k', linestyle='',marker=marker, label=length+'-day '+legend_dict[state]))
 legend_elements.append(Line2D([0], [0], color='w', linestyle='',marker=marker, label=''))
 for region,color in zip(regions[::-1],colors[::-1]):
-	legend_elements.append(Line2D([0], [0],  linestyle='',marker='o', label=region, markerfacecolor=color, markeredgecolor='k'))#, markersize = (47 - np.abs(srex[region]['av_lat'] - 47.5 ) ) /5.))
+	legend_elements.append(Line2D([0], [0], color=color, linestyle='',marker='o', label=region))#, markersize = (47 - np.abs(srex[region]['av_lat'] - 47.5 ) ) /5.))
 
 axes[1].axis('off')
 axes[1].legend(loc='upper right', handles=legend_elements, fontsize=6, ncol=1, frameon=True, facecolor='w', framealpha=1)

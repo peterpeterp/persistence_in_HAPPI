@@ -10,7 +10,7 @@ sns.set()
 import cartopy.crs as ccrs
 import cartopy
 
-cmap = {'warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","darksalmon","darkred"]),
+cmap = {'warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","yellow","darkred"]),
 		'dry': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","yellow","saddlebrown"]),
 		'dry-warm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","pink","darkmagenta"]),
 		'5mm': matplotlib.colors.LinearSegmentedColormap.from_list("", ["white","cyan","darkcyan"])}
@@ -81,7 +81,7 @@ for state,row in zip(['warm'],range(1)):
 	cbar_ax=fig.add_axes([0.75,0.1,0.2,0.8])
 	cbar_ax.axis('off')
 	cb=fig.colorbar(im[stat],orientation='vertical',ax=cbar_ax) #95th percentile\n persistence [days]
-	cb.set_label(label='mean warm\npersistence [days]', fontsize=7)
+	cb.set_label(label='Mean warm\npersistence [days]', fontsize=7)
 	cb.ax.tick_params(labelsize=7)
 	tick_locator = matplotlib.ticker.MaxNLocator(nbins=5)
 	cb.locator = tick_locator

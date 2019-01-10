@@ -30,7 +30,7 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 if 'big_dict' not in globals():
 	big_dict={}
-	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree','EOBS','HadGHCND']:
+	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
 		pkl_file=open(infile, 'rb')
 		big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
@@ -51,20 +51,21 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-1),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,42),'xlabel':'Period length [days]','ylabel':'Exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,42),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
 
 # ---------------------------- changes
-def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.axis('off')
 	legend_elements=[]
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='1.5$^\circ$C ensemble mean'))
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='2.0$^\circ$C ensemble mean'))
+	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+1.5$^\circ$C ensemble mean'))
+	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='+2.0$^\circ$C ensemble mean'))
 	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='model spread'))
 	for style,state,color in zip(arg2,arg3,arg4):
 		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
@@ -74,7 +75,7 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.legend(handles=legend_elements ,title='                                                 '+'    '.join([legend_dict[aa]+''.join([' ']*int(9/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
-def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.set_xlim((0.5,len(arg3)+0.5))
 	subax.set_ylim((-10,30))
 	subax.set_xticks(range(1,len(arg3)+1))
@@ -97,7 +98,7 @@ def plot_bar(ax,x,to_plot,color,hatch=None, alpha=0.4, marker='+'):
 
 
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
 	for state,per_length,color,pos in zip(arg3,arg2,arg4,range(1,1+len(arg3))):
@@ -125,12 +126,11 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 plt.rcParams["font.weight"] = "bold"
 plt.rcParams["axes.labelweight"] = "bold"
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 	arg1='summer',
 	arg2=[14,14,14,7],
 	arg3=['warm','dry','dry-warm','5mm'],
 	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	title=None)
+	title='rel. change in exceedance probabilites of persistence in JJA')
 plt.savefig('plots/paper/NH_summary.png',dpi=600)

@@ -55,7 +55,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-148,35),'xlabel':'Period length [days]','ylabel':'Exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,35),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
@@ -63,9 +63,10 @@ polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
 #colors=['black']+sns.color_palette("colorblind", 4)
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
 
 # ---------------------------- changes
-def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.axis('off')
 	legend_elements=[]
 	# legend_elements.append(Line2D([0], [0], color='w', label=' '))
@@ -75,30 +76,29 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	for style,state,color in zip(arg2,arg3,arg4):
 		# legend_elements.append(Line2D([0], [0], color='w', label=state))
 		#legend_elements.append(Line2D([0], [0], color=color, label=' '))
-		legend_elements.append(Line2D([0], [0], color=color, linestyle='-', label=' '))
+		legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
 		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
 
 
 	subax.legend(handles=legend_elements ,title='                                       '+'      '.join([legend_dict[aa]+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 	season=all_regs[region][arg1]
-	for style,state,color,hatch in zip(arg2[::-1],arg3[::-1],arg4[::-1],arg5[::-1]):
+	for style,state,color in zip(arg2,arg3,arg4):
 		ensemble=np.zeros([4,35])*np.nan
 		nmax=35
 		for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 			tmp_20=big_dict[dataset][region]['Plus20-Future'][state][season]
 			tmp_h=big_dict[dataset][region]['All-Hist'][state][season]
-			count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_20['count'])) for ii in range(len(tmp_20['count']))])
-			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_h['count']))])
+			count_20=np.array([np.sum(tmp_20['count'][ii:])/float(100*10.) for ii in range(len(tmp_20['count']))])
+			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(100*10.) for ii in range(len(tmp_h['count']))])
 			nmax=min(len(count_20),len(count_h),nmax)
 			tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
 			ensemble[i,:nmax]=tmp
 
 		if state != '5mm':
 			subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle='-')
-			# subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor="none", hatch=hatch, edgecolor=color,alpha=0.5)
-			subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color, edgecolor=color,alpha=0.3)
+			subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3,edgecolor=color)
 
 		if state == '5mm':
 			global subax2
@@ -110,7 +110,6 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 			subax2.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3,edgecolor=color)
 			if region == 'mid-lat':
 				subax2.yaxis.tick_right()
-				subax2.set_ylabel('Exceedence probability [%]',fontsize=8,backgroundcolor='w')
 				subax2.tick_params(axis='y',which='both',left=True,right=True,labelright=True,labelsize=8)
 				subax2.locator_params(axis = 'y', nbins = 5)
 				for tick in subax2.yaxis.get_major_ticks():
@@ -129,7 +128,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		lb_color = all_regs[region]['color']
 	subax.annotate(region, xy=(0.05, 0.05), xycoords='axes fraction', color='black', weight='bold', fontsize=10)
 
-def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 	subax.set_xlim((0,35))
 	subax.set_ylim((-15,20))
 	subax.plot([0,35],[0,0],'k')
@@ -151,18 +150,15 @@ def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5
 plt.rcParams["font.weight"] = "bold"
 plt.rcParams["axes.labelweight"] = "bold"
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
-
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 	arg1='summer',
 	arg2=['tas','pr','cpd','pr'],
 	arg3=['warm','dry','dry-warm','5mm'],
 	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	arg5=['/'*3,'\ '*3,'|'*3,'-'*3],
-	title=None)
-plt.savefig('plots/paper/NH_changes.png',dpi=600)
+	title='exceedance probabilites of persistence in JJA')
+plt.savefig('plots/paper/NH_changes_alt.png',dpi=600)
 #
-# def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+# def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 # 	subax.set_xlim((0,22))
 # 	subax.set_ylim((-100,100))
 # 	subax.plot([0,35],[0,0],'k')

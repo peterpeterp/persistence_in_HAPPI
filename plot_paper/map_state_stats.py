@@ -17,7 +17,7 @@ os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
 season='JJA'
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
 # ------------------- cold-warm mean
 plt.close('all')
@@ -35,8 +35,9 @@ color_range={'warm':(0,100),
 			'10mm':(0,50),
 			}
 
-for state,row in zip(['dry','dry-warm','5mm'],range(3)):
+for state,row,letter in zip(['dry','dry-warm','5mm'],range(3),['a','b','c']):
 	ax= axes[row]
+	ax.annotate(letter, xy=(0.00, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=12, horizontalalignment='left', backgroundcolor='w')
 
 	ensemble=np.zeros([4,180,360])*np.nan
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
@@ -55,7 +56,7 @@ for state,row in zip(['dry','dry-warm','5mm'],range(3)):
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-plt.annotate(s='state fraction in 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
+plt.annotate(s='Relative amount of days in 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
 fig.tight_layout()
 plt.savefig('plots/paper/map_state_percentage.png',dpi=300)
 
@@ -73,8 +74,9 @@ color_range={'warm':(0,100),
 			'10mm':(0,50),
 			}
 
-for state,row in zip(['dry','dry-warm','5mm'],range(3)):
+for state,row,letter in zip(['dry','dry-warm','5mm'],range(3),['a','b','c']):
 	ax= axes[row]
+	ax.annotate(letter, xy=(0.00, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=12, horizontalalignment='left', backgroundcolor='w')
 
 	ensemble=np.zeros([4,180,360])*np.nan
 	for model,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
@@ -99,7 +101,7 @@ for state,row in zip(['dry','dry-warm','5mm'],range(3)):
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-plt.annotate(s='differene in state fraction \n+2$^\circ$C vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
+plt.annotate(s='Differene in state fraction \n+2$^\circ$C vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
 
 fig.tight_layout()
 plt.savefig('plots/paper/map_state_stats_change.png',dpi=300)

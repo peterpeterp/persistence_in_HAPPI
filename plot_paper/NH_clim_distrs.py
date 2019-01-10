@@ -45,7 +45,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 		'CNA':{'color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
 		'ENA':{'color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
 		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-		'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
+		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 
 		'NEU':{'color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
 		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
@@ -56,7 +56,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,28),'xlabel':'period length [days]','ylabel':'exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,35),'xlabel':'Period length [days]','ylabel':'Exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
 
@@ -66,19 +66,21 @@ polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 #colors=['black']+sns.color_palette("colorblind", 4)
 
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rainy'}
 
 
 # ---------------------------- changes
-def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
+def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.axis('off')
 	legend_elements=[]
 	legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
 	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='EOBS'))
-	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='model spread'))
+	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='HAPPI models'))
 	for style,state,color in zip(arg2,arg3,arg4):
 		# legend_elements.append(Line2D([0], [0], color='w', label=state))
-		legend_elements.append(Line2D([0], [0], color=color, label=' '))
+		if state == 'warm':
+			legend_elements.append(Line2D([0], [0], color=color, label=' '))
+		else:
+			legend_elements.append(Line2D([0], [0], color='w', label=' '))
 		legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
 		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
 
@@ -89,7 +91,7 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None):
 
 
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
+def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
 	for style,state,color in zip(arg2,arg3,arg4):
@@ -139,7 +141,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None):
 		lb_color = all_regs[region]['color']
 	subax.annotate(region, xy=(0.95, 0.80), xycoords='axes fraction', color='black', weight='bold', fontsize=10, horizontalalignment='right')
 
-def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
+def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.set_yscale('log')
 	subax.set_xlim((0,35))
 	subax.set_ylim((0.01,100))
@@ -160,18 +162,20 @@ def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
 plt.rcParams["font.weight"] = "bold"
 plt.rcParams["axes.labelweight"] = "bold"
 
+legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
+
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 	arg1='summer',
 	arg2=['tas','pr','cpd','pr'],
 	arg3=['warm','dry','dry-warm','5mm'],
 	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	title='exceedance probabilites of persistence in JJA')
+	title=None)
 
 plt.annotate('d', xy=(0.03, 0.93), xycoords='figure fraction', fontsize=15,fontweight='bold', backgroundcolor='w')
 plt.savefig('plots/paper/NH_clim_distrs.png',dpi=600)
 #
 #
-# def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None):
+# def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 # 	subax.set_yscale('log')
 # 	subax.set_xlim((0,21))
 # 	subax.set_ylim((0.01,100))
