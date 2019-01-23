@@ -105,10 +105,10 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
 		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4,edgecolor=color)
 
-		if state=='warm':
-			#print(style,state)
-			print('HAPPI',np.nanmean(ensemble[:,14],axis=0))
-			#print('HAPPI',np.nanargmin(abs(np.nanmean(ensemble[:,:],axis=0)-1)))
+		# if state=='warm':
+		# 	#print(style,state)
+		# 	print('HAPPI',np.nanmean(ensemble[:,21],axis=0))
+		# 	#print('HAPPI',np.nanargmin(abs(np.nanmean(ensemble[:,:],axis=0)-1)))
 
 	for style,state,color in zip(arg2,arg3,arg4):
 		if region in ['CEU','NEU','MED']:
@@ -117,14 +117,14 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 			subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='--')
 			if state=='warm':
 				#print('EOBS',style,state)
-				print('EOBS',count_h[14])
+				print('EOBS',count_h[21])
 				#print('EOBS',np.nanargmin(abs(count_h-1)))
 
 	if 'warm' in arg3:
 		tmp_h=big_dict['HadGHCND'][region]['All-Hist']['warm'][season]
 		count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
 		subax.plot(range(1,len(count_h)+1),count_h,color=arg4[0])
-		print('HadGHCND',count_h[14])
+		print('HadGHCND',count_h[[7,14,21]])
 		#print('HadGHCND',np.nanargmin(abs(count_h-1)))
 
 		if region == 'mid-lat' and False:

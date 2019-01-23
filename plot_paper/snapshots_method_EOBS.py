@@ -117,13 +117,13 @@ for event_name,event in events.items():
 
 	axes[2].set_yticks(positions)
 	axes[2].set_yticklabels(['warm','dry','dry-warm','rain'])
-	axes[2].set_xticks(ticks[:,2])
+	axes[2].set_xticks(ticks[:,2]-15/365.)
 	axes[2].set_xticklabels([months[mn] for mn in ticks[:,1]])
 
 	if 'bar' in event.keys():
 		for ax in axes:
 			ax.axvline(x=2016+154./365.,ymin=-1.2,ymax=1,c="blue",linewidth=1,zorder=0, clip_on=False)
-		ax.annotate('Seine\nflooding',xy=(2016+154./365.,3.2),color='blue', annotation_clip=False, fontsize=9, rotation=90, ha='center')
+		ax.annotate('Seine\nflooding',xy=(2016+154./365.,3.2),color='blue', annotation_clip=False, fontsize=9, rotation=90, ha='left', va='center')
 
 	for ax,lab in zip(axes,event['labels']):
 		ax.annotate(lab, xy=(0.00, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=12, horizontalalignment='left', backgroundcolor='w')

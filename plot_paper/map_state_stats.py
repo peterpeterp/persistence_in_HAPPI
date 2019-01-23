@@ -101,7 +101,7 @@ for state,row,letter in zip(['dry','dry-warm','5mm'],range(3),['a','b','c']):
 	cb.locator = tick_locator
 	cb.update_ticks()
 
-plt.annotate(s='Differene in state fraction \n+2$^\circ$C vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
+plt.annotate(s='Differene in state fraction \n2$^\circ$C world vs 2006-2015 [%]', xy=(0.97,0.5), xycoords='figure fraction',va='center', ha='center',fontsize=8,rotation='90')
 
 fig.tight_layout()
 plt.savefig('plots/paper/map_state_stats_change.png',dpi=300)

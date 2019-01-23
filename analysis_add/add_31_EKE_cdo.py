@@ -5,21 +5,6 @@ import random as random
 import dimarray as da
 import subprocess as sub
 
-import os,sys
-from scipy.signal import butter, lfilter
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.signal import freqz
-import dimarray as da
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='bandpass')
-    return b, a
-
-
 def wait_timeout(proc, seconds):
 	"""Wait for a process to finish, or raise exception after timeout"""
 	start = time.time()
@@ -44,7 +29,6 @@ def try_several_times(command,trials=1,seconds=60):
 			break
 	return(result)
 
-overwrite = True
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
@@ -105,10 +89,10 @@ for scenario in scenarios:
 	if os.path.isdir(working_path+scenario+'/tmp')==False: os.system('mkdir tmp')
 	model_path=in_path+scenario+'/*/'+model_dict[model]['version'][scenario]+'/'
 	version=model_dict[model]['version'][scenario]
-	run_list=model_dict[model]['runs'][scenario]
+	run_list=sorted([path.split('/')[-1] for path in glob.glob(model_path+'day/atmos/tas/*')])[0:100]
 	print(run_list)
 	for run in run_list:
-		if len(glob.glob('monEKE*'+run+'*'))==0 or overwrite:
+		if len(glob.glob('monEKE*'+run+'*'))==0:
 			out=os.system('rm tmp/*'+run+'*')
 			os.chdir('tmp')
 			for var in ['ua','va']:
@@ -119,42 +103,28 @@ for scenario in scenarios:
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file=glob.glob(var+'*'+run+'*')[0]
-					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
-					result=try_several_times('cdo -O -sellevel,85000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file.replace('.nc','_sel.nc'),5,60)
-					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'))
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_sel.nc'),5,60)
+					result=try_several_times('cdo -O -splityear '+orig_file.replace('.nc','_sel.nc')+' '+'_'.join([var,model,scenario,run])+'_',5,60)
+					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_sel.nc'))
 
-				orig_file = orig_file.replace('.nc','_sel.nc')
-			    nc = da.read_nc(orig_file)
-			    x = nc[var_name].squeeze()
 
-			    # Sample rate and desired cutoff frequencies (in Hz).
-			    fs = 1.
-			    lowcut = 1./6.
-			    highcut = 1./2.5
-
-			    b, a = butter_bandpass(lowcut, highcut, fs, order=10)
-			    x_bp = x.copy()
-			    # print('filtering '+var+'\n10------50-------100')
-			    for yy,progress in zip(x.latitude,np.array([['-']+['']*(len(x.latitude)/20+1)]*20).flatten()[0:len(x.latitude)]):
-			        # sys.stdout.write(progress); sys.stdout.flush()
-			        for xx in x.longitude:
-			            x_bp[:,yy,xx] = lfilter(b, a, x[:,yy,xx].values)
-
-			    x2syn = x_bp**2
-			    da.Dataset({var+'2syn':x2syn}).write_nc(orig_file.replace('.nc','_2syn.nc'))
-
-			uv_file = orig_file.replace('va','uv2syn')
-			result=try_several_times('cdo -O -merge '+orig_file+' '+orig_file.replace('va','ua')+' '+uv_file,5,60)
-			result=try_several_times('cdo -O -expr,EKE="(ua2syn+va2syn)*0.5" '+uv_file+' '+uv_file.replace('uv2syn','eke'),5,60)
-			result=try_several_times('cdo -O -monmean '+uv_file.replace('uv2syn','eke')+' '+uv_file.replace('uv2syn','eke').replace('tmp/',''),5,60)
+				for tmp_file in glob.glob(var+'*'+run+'*'):
+					tmp_file=tmp_file.split('/')[-1]
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+tmp_file+' 0_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 0_'+tmp_file+' 1_'+tmp_file,5,60)
+					result=try_several_times('cdo -O -setmisstoc,0 1_'+tmp_file+' 2_'+tmp_file,5,60)
+					result=try_several_times('cdo -O bandpass,36,180 2_'+tmp_file+' 3_'+tmp_file,5,600)
 
 			os.chdir('../')
+			for tmp_file in glob.glob('tmp/3_ua*'+run+'*'):
+				result=try_several_times('cdo -O -merge '+tmp_file+' '+tmp_file.replace('3_ua','3_va')+' '+tmp_file.replace('3_ua','UV'),5,60)
+				result=try_several_times('cdo -O -expr,EKE="(ua^2+va^2)/2" -sellevel,85000 '+tmp_file.replace('3_ua','UV')+' '+tmp_file.replace('3_ua','EKE'),5,60)
+				result=try_several_times('cdo -O -monmean '+tmp_file.replace('3_ua','EKE')+' '+tmp_file.replace('3_ua','monEKE').replace('tmp/',''),5,60)
 			out=os.system('rm tmp/*'+run+'*')
 
-		asdasd
-		# result=try_several_times('cdo -O mergetime monEKE_*'+model+'*'+scenario+'*'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
-		# if result!='failed':
-		# 	os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
+		result=try_several_times('cdo -O mergetime monEKE_*'+model+'*'+scenario+'*'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
+		if result!='failed':
+			os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
 
 	os.chdir('../')
 	result=try_several_times('cdo -ymonmean -ensmean -cat "'+scenario+'/*EKE*" /global/homes/p/pepflei/data/EKE/EKE_'+scenario+'_'+model+'_monClim.nc',5,60)
