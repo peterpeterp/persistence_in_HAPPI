@@ -125,7 +125,7 @@ for scenario in scenarios:
 
 				orig_file = orig_file.replace('.nc','_sel.nc')
 				nc = da.read_nc(orig_file)
-				x = nc[var_name].squeeze()
+				x = nc[var].squeeze()
 
 				# Sample rate and desired cutoff frequencies (in Hz).
 				fs = 1.
