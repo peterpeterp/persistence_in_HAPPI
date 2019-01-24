@@ -13,11 +13,11 @@ from scipy.signal import freqz
 import dimarray as da
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='bandpass')
-    return b, a
+	nyq = 0.5 * fs
+	low = lowcut / nyq
+	high = highcut / nyq
+	b, a = butter(order, [low, high], btype='bandpass')
+	return b, a
 
 
 def wait_timeout(proc, seconds):
@@ -124,31 +124,31 @@ for scenario in scenarios:
 					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'))
 
 				orig_file = orig_file.replace('.nc','_sel.nc')
-			    nc = da.read_nc(orig_file)
-			    x = nc[var_name].squeeze()
+				nc = da.read_nc(orig_file)
+				x = nc[var_name].squeeze()
 
-			    # Sample rate and desired cutoff frequencies (in Hz).
-			    fs = 1.
-			    lowcut = 1./6.
-			    highcut = 1./2.5
+				# Sample rate and desired cutoff frequencies (in Hz).
+				fs = 1.
+				lowcut = 1./6.
+				highcut = 1./2.5
 
-			    b, a = butter_bandpass(lowcut, highcut, fs, order=10)
-			    x_bp = x.copy()
-			    # print('filtering '+var+'\n10------50-------100')
-			    for yy,progress in zip(x.latitude,np.array([['-']+['']*(len(x.latitude)/20+1)]*20).flatten()[0:len(x.latitude)]):
-			        # sys.stdout.write(progress); sys.stdout.flush()
-			        for xx in x.longitude:
-			            x_bp[:,yy,xx] = lfilter(b, a, x[:,yy,xx].values)
+				b, a = butter_bandpass(lowcut, highcut, fs, order=10)
+				x_bp = x.copy()
+				# print('filtering '+var+'\n10------50-------100')
+				for yy,progress in zip(x.latitude,np.array([['-']+['']*(len(x.latitude)/20+1)]*20).flatten()[0:len(x.latitude)]):
+					# sys.stdout.write(progress); sys.stdout.flush()
+					for xx in x.longitude:
+						x_bp[:,yy,xx] = lfilter(b, a, x[:,yy,xx].values)
 
-			    x2syn = x_bp**2
-			    da.Dataset({var+'2syn':x2syn}).write_nc(orig_file.replace('.nc','_2syn.nc'))
+				globals()[var+'2syn'] = x_bp**2
 
-			uv_file = orig_file.replace('va','uv2syn')
-			result=try_several_times('cdo -O -merge '+orig_file+' '+orig_file.replace('va','ua')+' '+uv_file,5,60)
-			result=try_several_times('cdo -O -expr,EKE="(ua2syn+va2syn)*0.5" '+uv_file+' '+uv_file.replace('uv2syn','eke'),5,60)
-			result=try_several_times('cdo -O -monmean '+uv_file.replace('uv2syn','eke')+' '+uv_file.replace('uv2syn','eke').replace('tmp/',''),5,60)
+
+			da.Dataset({'eke':0.5 * (ua2syn + va2syn)}).write_nc(orig_file.replace('va','eke'))
+			result=try_several_times('cdo -O -monmean '+orig_file.replace('va','eke')+' '+orig_file.replace('va','eke').replace('tmp/',''),5,60)
 
 			os.chdir('../')
+
+			asdasd
 			out=os.system('rm tmp/*'+run+'*')
 
 		asdasd
