@@ -58,7 +58,7 @@ ax.axvline(x=0,c='k')
 ax.axhline(y=0,c='k')
 # ax.plot([-50,50],[50,-50],'k--')
 
-ax.set_ylabel('Relative change in the probability of \ndry-warm periods exceeding 14 days [%]')
+ax.set_ylabel('Relative change in the probability of \npersistent periods exceeding 14 days [%]')
 ax.set_xlabel('Change in EKE [%]')
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}

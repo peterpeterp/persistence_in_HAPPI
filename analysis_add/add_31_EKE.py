@@ -121,14 +121,14 @@ for scenario in scenarios:
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
 					result=try_several_times('cdo -O -selyear,'+selyears+' '+glob.glob(var+'*'+run+'*')[0]+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
-					result=try_several_times('cdo -O -sellevel,50000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
 					out=os.system('rm '+' '.join([orig_file.replace('.nc','_merged.nc'),orig_file.replace('.nc','_selyear.nc')]))
 
 				elif len(glob.glob(var+'*'+run+'*'))>1:
 					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
 					result=try_several_times('cdo -O -mergetime '+var+'*'+run+'* '+orig_file.replace('.nc','_merged.nc'),5,60)
 					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file.replace('.nc','_merged.nc')+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
-					result=try_several_times('cdo -O -sellevel,50000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
+					result=try_several_times('cdo -O -sellevel,85000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
 					out=os.system('rm '+' '.join([orig_file.replace('.nc','_merged.nc'),orig_file.replace('.nc','_selyear.nc')]))
 
 				nc = da.read_nc(orig_file)
