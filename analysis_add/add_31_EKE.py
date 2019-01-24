@@ -110,6 +110,7 @@ for scenario in scenarios:
 		if len(glob.glob('monEKE*'+run+'*'))==0 or overwrite:
 			out=os.system('rm tmp/*'+run+'*')
 			os.chdir('tmp')
+			print(glob.glob('*'))
 			for var in ['ua','va']:
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
 					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
