@@ -144,14 +144,12 @@ for scenario in scenarios:
 
 
 			da.Dataset({'eke':0.5 * (ua2syn + va2syn)}).write_nc(orig_file.replace('va','eke'))
-			result=try_several_times('cdo -O -monmean '+orig_file.replace('va','eke')+' '+orig_file.replace('va','eke').replace('tmp/',''),5,60)
+			result=try_several_times('cdo -O -monmean '+orig_file.replace('va','eke')+' ../'+orig_file.replace('va','eke').replace('_sel',''),5,60)
 
 			os.chdir('../')
 
-			asdasd
 			out=os.system('rm tmp/*'+run+'*')
 
-		asdasd
 		# result=try_several_times('cdo -O mergetime monEKE_*'+model+'*'+scenario+'*'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		# if result!='failed':
 		# 	os.system('rm monEKE_'+model+'_'+scenario+'_'+run+'_*')
