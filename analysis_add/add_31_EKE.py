@@ -149,7 +149,7 @@ for scenario in scenarios:
 				globals()[var+'2syn'] = x_bp**2
 
 
-			da.Dataset({'eke':0.5 * (ua2syn + va2syn)}).write_nc(orig_file.replace('va','eke'))
+			da.Dataset({'eke':0.5 * (ua2syn + va2syn)}).write_nc(orig_file.replace('va','monEKE'))
 			result=try_several_times('cdo -O -monmean '+orig_file.replace('va','eke')+' ../'+orig_file.replace('va','eke').replace('_sel',''),5,60)
 
 			os.chdir('../')
