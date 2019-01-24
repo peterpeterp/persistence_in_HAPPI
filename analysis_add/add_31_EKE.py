@@ -8,7 +8,6 @@ import subprocess as sub
 import os,sys
 from scipy.signal import butter, lfilter
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.signal import freqz
 import dimarray as da
 
@@ -117,10 +116,17 @@ for scenario in scenarios:
 				if tape_dict[model][scenario].split('.')[-1]=='nc':
 					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
 
+
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file.replace('.nc','_merged.nc')+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
+					result=try_several_times('cdo -O -sellevel,50000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
+					out=os.system('rm '+' '.join([orig_file.replace('.nc','_merged.nc'),orig_file.replace('.nc','_selyear.nc')]))
+
+				elif len(glob.glob(var+'*'+run+'*'))>1:
+					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
 					result=try_several_times('cdo -O -mergetime '+var+'*'+run+'* '+orig_file.replace('.nc','_merged.nc'),5,60)
-					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
+					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file.replace('.nc','_merged.nc')+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
 					result=try_several_times('cdo -O -sellevel,50000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
 					out=os.system('rm '+' '.join([orig_file.replace('.nc','_merged.nc'),orig_file.replace('.nc','_selyear.nc')]))
 
