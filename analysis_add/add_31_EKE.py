@@ -135,9 +135,9 @@ for scenario in scenarios:
 				b, a = butter_bandpass(lowcut, highcut, fs, order=10)
 				x_bp = x.copy()
 				# print('filtering '+var+'\n10------50-------100')
-				for yy,progress in zip(x.latitude,np.array([['-']+['']*(len(x.latitude)/20+1)]*20).flatten()[0:len(x.latitude)]):
+				for yy,progress in zip(x.lat,np.array([['-']+['']*(len(x.lat)/20+1)]*20).flatten()[0:len(x.lat)]):
 					# sys.stdout.write(progress); sys.stdout.flush()
-					for xx in x.longitude:
+					for xx in x.lon:
 						x_bp[:,yy,xx] = lfilter(b, a, x[:,yy,xx].values)
 
 				globals()[var+'2syn'] = x_bp**2
