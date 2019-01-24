@@ -118,12 +118,12 @@ for scenario in scenarios:
 					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
-					orig_file=glob.glob(var+'*'+run+'*')[0]
+					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
+					result=try_several_times('cdo -O -mergetime '+var+'*'+run+'* '+orig_file.replace('.nc','_merged.nc'),5,60)
 					result=try_several_times('cdo -O -selyear,'+selyears+' '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'),5,60)
-					result=try_several_times('cdo -O -sellevel,85000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file.replace('.nc','_sel.nc'),5,60)
-					out=os.system('rm '+orig_file+' '+orig_file.replace('.nc','_selyear.nc'))
+					result=try_several_times('cdo -O -sellevel,50000 '+orig_file.replace('.nc','_selyear.nc')+' '+orig_file,5,60)
+					out=os.system('rm '+' '.join([orig_file.replace('.nc','_merged.nc'),orig_file.replace('.nc','_selyear.nc')]))
 
-				orig_file = orig_file.replace('.nc','_sel.nc')
 				nc = da.read_nc(orig_file)
 				x = nc[var].squeeze()
 
