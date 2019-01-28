@@ -43,7 +43,7 @@ def try_several_times(command,trials=1,seconds=60):
 			break
 	return(result)
 
-overwrite = True
+overwrite = False
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 import __settings
@@ -175,4 +175,5 @@ for scenario in scenarios:
 
 
 
-#
+#	for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_add/add_31_EKE.py $model All-Hist > out/${model}+eke+hist & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+#	for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do nohup python analysis_add/add_31_EKE.py $model Plus20-Future > out/${model}+eke+20 & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
