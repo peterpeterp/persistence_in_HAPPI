@@ -110,13 +110,11 @@ for scenario in scenarios:
 		if len(glob.glob('monEKE*'+run+'*'))==0 or overwrite:
 			os.chdir('tmp')
 			out=os.system('rm *'+run+'*')
-			print(glob.glob('*'))
 			for var in ['ua','va']:
 				if tape_dict[model][scenario].split('.')[-1]=='tar':
 					result=try_several_times('htar -xvf '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run),5,600)
 				if tape_dict[model][scenario].split('.')[-1]=='nc':
 					result=try_several_times('hsi -q "get '+tape_dict[model][scenario].replace('***var***',var).replace('***version***',version).replace('***run***',run)+'; quit"',5,600)
-
 
 				if len(glob.glob(var+'*'+run+'*'))==1:
 					orig_file='_'.join(glob.glob(var+'*'+run+'*')[0].split('_')[:-1])+'.nc'
@@ -149,6 +147,9 @@ for scenario in scenarios:
 
 				globals()[var+'2syn'] = x_bp**2
 
+				del nc,x,x_bp
+				gc.collect()
+
 
 			da.Dataset({'eke':0.5 * (ua2syn + va2syn)}).write_nc(orig_file.replace('va','eke'))
 			result=try_several_times('cdo -O -monmean '+orig_file.replace('va','eke')+' ../'+orig_file.replace('va','monEKE'),5,60)
@@ -156,6 +157,8 @@ for scenario in scenarios:
 			os.chdir('../')
 
 			out=os.system('rm tmp/*'+run+'*')
+			del ua2syn,va2syn
+			gc.collect()
 
 		# result=try_several_times('cdo -O mergetime monEKE_*'+model+'*'+scenario+'*'+run+'* monEKE_'+model+'_'+scenario+'_'+run+'.nc')
 		# if result!='failed':
