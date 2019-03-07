@@ -42,7 +42,7 @@ for model in models:
 		masks[name].lon = np.round(masks[name].lon,03)
 
 	for scenario in scenarios:
-		EKE = da.read_nc('data/EKE/*'+scenario+'*'+model+'*_monClim.nc')['EKE'].squeeze()
+		EKE = da.read_nc('data/EKE/*'+scenario+'*'+model+'*_monClim.nc')['eke'].squeeze()
 
 		for region in masks.keys():
 			out_file['EKE'][model,scenario,region] = np.nanmean(np.nanmean(EKE.values[6:9,:,:],axis=0) * masks[region].values)
