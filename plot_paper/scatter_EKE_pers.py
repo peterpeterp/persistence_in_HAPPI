@@ -76,4 +76,4 @@ axes[1].legend(loc='upper right', handles=legend_elements, fontsize=6, ncol=1, f
 
 
 fig.tight_layout()
-plt.savefig('plots/paper/scatter_EKE_pers_single.png',dpi=300)
+plt.savefig('plots/paper/scatter_EKE_pers_single__.png',dpi=300)

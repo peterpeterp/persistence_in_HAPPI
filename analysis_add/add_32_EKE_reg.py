@@ -47,7 +47,7 @@ for model in models:
 		for region in masks.keys():
 			out_file['EKE'][model,scenario,region] = np.nanmean(np.nanmean(EKE.values[6:9,:,:],axis=0) * masks[region].values)
 			print(region, np.nanmean(np.nanmean(EKE.values[6:9,:,:]) * masks[region].values))
-		out_file['EKE'][model,scenario,'NHml'] = np.nanmean(EKE[:,35:60,:].values[5:8,:,:])
+		out_file['EKE'][model,scenario,'NHml'] = np.nanmean(EKE[:,35:60,:].values[6:9,:,:])
 
 out_file = da.Dataset(out_file)
 out_file.write_nc('data/EKE_summerMean_srex.nc','w')
