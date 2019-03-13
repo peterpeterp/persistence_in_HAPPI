@@ -49,7 +49,7 @@ overwrite=True
 os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
-for scenario in scenarios:
+for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
 	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
@@ -71,8 +71,43 @@ for scenario in scenarios:
 			else:
 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
+for scenario in scenarios:
+	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
+	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
+	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
+	version=model_dict[model]['version'][scenario]
+	model_path=in_path+scenario+'/*/'+version+'/'
+	run_list=model_dict[model]['runs'][scenario]
+	for run in run_list:
+		# precipitation monthly
+		if scenario == 'All-Hist':
+			pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
 
-			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI.r '+pr_file_name+' pr 3 '+selyears.split('/')[0]+' '+selyears.split('/')[0]+' '+selyears.split('/')[1]+' '+working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI.r '+\
+				pr_file_name+\
+				' pr'+\
+				' 3 '+\
+				selyears.split('/')[0]+' '+\
+				selyears.split('/')[0]+' '+\
+				selyears.split('/')[1]+' '+\
+				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+
+		if scenario != 'All-Hist':
+			pr_file_name_fut = working_path+scenario+'/' +glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			pr_file_name_hist = pr_file_name_fut.replace(scenario,'All-Hist')
+
+			pr_file_name = pr_file_name_fut.replace('.nc','_merged.nc')
+			result=try_several_times('cdo mergetime '+' '.join([pr_file_name_hist,pr_file_name_fut,pr_file_name]),1,1000)
+
+			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI.r '+\
+				pr_file_name+\
+				' pr'+\
+				' 3 '+\
+				selyears.split('/')[0]+' '+\
+				' 2006 '+\
+				' 2015 '+\
+				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+
 
 
 '''
