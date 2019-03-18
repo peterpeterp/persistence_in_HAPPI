@@ -23,6 +23,6 @@ os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
 for run in model_dict[model]['runs'][scenario]:
-    print("downloading: tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v1-0_"+run+"_21060101-21160630.nc")
-    urlretrieve("http://portal.nersc.gov/cascade/data/rtrack.php?source=NERSCDisk&filename=NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v1-0/day/atmos/tas/"+run+"/tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v1-0_"+run+"_21060101-21160630.nc","tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v1-0_"+run+"_21060101-21160630.nc", hook)
+    print("downloading: tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc")
+    urlretrieve("http://portal.nersc.gov/cascade/data/rtrack.php?source=NERSCDisk&filename=NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/tas/"+run+"/tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc","tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc", hook)
     print('\n')
