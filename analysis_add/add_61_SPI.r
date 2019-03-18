@@ -18,6 +18,8 @@ pr<-ncvar_get(nc,args[2])
 lon<-ncvar_get(nc,'lon')
 lat<-ncvar_get(nc,'lat')
 time<-ncvar_get(nc,'time')
+'''
+this is weird
 
 spi=pr*NA
 for (x in 1:length(lon)){
@@ -41,3 +43,4 @@ for (x in 1:length(lon)){
 	nc_close(nc_out)
 
 }
+'''
