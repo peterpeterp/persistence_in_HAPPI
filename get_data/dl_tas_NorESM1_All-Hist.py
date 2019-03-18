@@ -1,9 +1,10 @@
 import sys
+from __future__ import print_function
 if (sys.version_info > (3, 0)):
   from urllib.request import urlretrieve
 else:
   from urllib import urlretrieve
-def hook(a,b,c): print(a*b,"/",c, "\r", end='')
+def hook(a,b,c): print(a*b,"/",c, "\r", end="")
 
 import os,sys,glob,time,collections,signal,gc
 
@@ -17,8 +18,8 @@ model = 'NorESM1'
 scenario = 'All-Hist'
 var = 'tas'
 
-os.system('mkdir -P raw_data/'+model+'/'+sceanrio+'/'+var)
-os.chdir('raw_data/'+model+'/'+sceanrio+'/'+var)
+os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
+os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
 for run in model_dict[model]['runs'][scenario]:
     filename = "tas_Aday_NorESM1-HAPPI_All-Hist_est1_v1-0_run121_20060101-20160630.nc"
