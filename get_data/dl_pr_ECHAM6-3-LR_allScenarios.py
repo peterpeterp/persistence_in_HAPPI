@@ -11,7 +11,7 @@ import os,sys,glob,time,collections,signal,gc
 
 os.chdir('/p/tmp/pepflei/HAPPI')
 
-sys.path.append('persistence_in_HAPPI/')
+sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 import __settings
 model_dict=__settings.model_dict
 
