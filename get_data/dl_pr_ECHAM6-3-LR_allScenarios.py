@@ -9,7 +9,7 @@ def hook(a,b,c): print(a*b,"/",c, "\r", end="")
 
 import os,sys,glob,time,collections,signal,gc
 
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI')
 
 sys.path.append('persistence_in_HAPPI/')
 import __settings
@@ -28,7 +28,7 @@ for run in model_dict[model]['runs'][scenario]:
     print('\n')
 
 scenario = 'Plus15-Future'
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI')
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
@@ -38,7 +38,7 @@ for run in model_dict[model]['runs'][scenario]:
     print('\n')
 
 scenario = 'Plus20-Future'
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI')
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
