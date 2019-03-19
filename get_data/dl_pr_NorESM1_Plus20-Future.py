@@ -17,12 +17,12 @@ model_dict=__settings.model_dict
 
 model = 'NorESM1'
 scenario = 'Plus20-Future'
-var = 'tas'
+var = 'pr'
 
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
 for run in model_dict[model]['runs'][scenario]:
-    print("downloading: tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc")
-    urlretrieve("https://portal.nersc.gov/c20c/data/NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/tas/"+run+"/tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc","tas_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc", hook)
+    print("downloading: pr_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc")
+    urlretrieve("https://portal.nersc.gov/c20c/data/NCC/NorESM1-HAPPI/Plus20-Future/CMIP5-MMM-est1/v2-0/day/atmos/pr/"+run+"/pr_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc","pr_Aday_NorESM1-HAPPI_Plus20-Future_CMIP5-MMM-est1_v2-0_"+run+"_21060101-21160630.nc", hook)
     print('\n')
