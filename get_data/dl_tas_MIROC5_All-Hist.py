@@ -9,9 +9,9 @@ def hook(a,b,c): print(a*b,"/",c, "\r", end="")
 
 import os,sys,glob,time,collections,signal,gc
 
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI/')
 
-sys.path.append('persistence_in_HAPPI/')
+sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 import __settings
 model_dict=__settings.model_dict
 
@@ -63,4 +63,5 @@ for run in model_dict[model]['runs'][scenario]:
         print('\n')
 
         os.system("cdo mergetime tmp/* tas_Aday_MIROC5_All-Hist_CMIP5-MMM-est1_v2-0_"+run+"_20060101-20161231.nc")
+        asdasd
         os.system("rm tmp/*")
