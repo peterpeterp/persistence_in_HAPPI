@@ -9,9 +9,9 @@ def hook(a,b,c): print(a*b,"/",c, "\r", end="")
 
 import os,sys,glob,time,collections,signal,gc
 
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI/')
 
-sys.path.append('persistence_in_HAPPI/')
+sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 import __settings
 model_dict=__settings.model_dict
 
