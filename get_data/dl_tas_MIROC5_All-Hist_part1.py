@@ -22,7 +22,7 @@ var = 'tas'
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var+'/tmp')
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
-for run in model_dict[model]['runs'][scenario]:
+for run in ['run'+str(i).zfill(3) for i in range(1,51)]:
     if os.path.isfile("tas_Aday_MIROC5_All-Hist_CMIP5-MMM-est1_v2-0_"+run+"_20060101-20161231.nc") == False:
 
         print("downloading: tas_Aday_MIROC5_All-Hist_est1_v2-0_"+run+"_20060101-20061231.nc")
@@ -63,5 +63,4 @@ for run in model_dict[model]['runs'][scenario]:
         print('\n')
 
         os.system("cdo mergetime tmp/* tas_Aday_MIROC5_All-Hist_CMIP5-MMM-est1_v2-0_"+run+"_20060101-20161231.nc")
-        asdasd
         os.system("rm tmp/*")
