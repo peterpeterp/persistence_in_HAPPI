@@ -104,7 +104,7 @@ for iy,y in enumerate(lat):
 			da.Dataset({'pr':da.DimArray(tmp, axes=[constructed_time_axis], dims=['time_index'])}).write_nc(grid_file_name)
 
 			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI_single.r '+\
-				grid_file_name+\
+				grid_file_name+' '+\
 				grid_file_name.replace('.nc','_SPI3.nc'),1,1000)
 
 
