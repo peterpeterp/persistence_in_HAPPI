@@ -41,7 +41,7 @@ try:
 	else:
 		scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 except:
-	model = 'NorESM1'
+	model = 'CAM4-2degree'
 	scenarios = ['Plus20-Future']
 
 
@@ -77,67 +77,35 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
 all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
-all_files_fut=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
+all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
 
-nc = da.read_nc(all_files_hist[0])
-lat,lon = nc['lat'],nc['lon']
+big_merge_hist = da.read_nc(all_files_hist[0])['pr'].squeeze()
+big_merge_fut = da.read_nc(all_files_fut[0])['pr'].squeeze()
+land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
 
-distr_dict={}
-for y in lat:
-	for x in lon:
-		distr_dict[str(y)+'_'+str(x)] = np.array([])
-
-for file_hist,file_fut in zip(all_files_hist,all_files_fut):
+for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	print(file_hist,file_fut)
 	if file_hist.split('_')[-1] == file_fut.split('_')[-1]:
-		for y in lat:
-			for x in lon:
-				distr_dict[str(y)+'_'+str(x)] = np.append(distr_dict[str(y)+'_'+str(x)], da.read_nc(file)['pr'][:,y,x])
+		big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()))
+		big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()))
 	else:
 		asdasd
 
+os.system('mkdir '+working_path+'grid_level/')
 
+lat,lon = da.read_nc(file_hist)['pr'].lat,da.read_nc(file_hist)['pr'].lon
+constructed_time_axis = np.append(np.arange(-120*100,0), np.arange(120*100))
+for iy,y in enumerate(lat):
+	for ix,x in enumerate(lon):
+		if land_mask[y,x] != 1:
+			print(y,x)
+			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'.nc'
+			tmp = np.append(big_merge_hist[:,iy,ix],big_merge_fut[:,iy,ix])
+			da.Dataset({'pr':da.DimArray(tmp, axes=[constructed_time_axis], dims=['time_index'])}).write_nc(grid_file_name)
 
-
-asdasd
-
-for scenario in scenarios:
-	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
-	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
-	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
-	version=model_dict[model]['version'][scenario]
-	model_path=in_path+scenario+'/*/'+version+'/'
-	run_list=model_dict[model]['runs'][scenario]
-	for run in run_list:
-		# precipitation monthly
-		if scenario == 'All-Hist':
-			pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-
-			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI.r '+\
-				pr_file_name+\
-				' pr'+\
-				' 3 '+\
-				selyears.split('/')[0]+' '+\
-				selyears.split('/')[0]+' '+\
-				selyears.split('/')[1]+' '+\
-				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
-
-		if scenario != 'All-Hist':
-			pr_file_name_fut = working_path+scenario+'/' +glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-			pr_file_name_hist = glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+run+'.nc')[0]
-
-			pr_file_name = pr_file_name_fut.replace('.nc','_merged.nc')
-			result=try_several_times('cdo mergetime '+' '.join([pr_file_name_hist,pr_file_name_fut,pr_file_name]),1,1000)
-
-			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI.r '+\
-				pr_file_name+\
-				' pr'+\
-				' 3 '+\
-				' 2006 '+\
-				' 2006 '+\
-				' 2015 '+\
-				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'_merged.nc',1,1000)
-
+			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI_single.r '+\
+				grid_file_name+\
+				grid_file_name.replace('.nc','_SPI3.nc'),1,1000)
 
 
 '''
