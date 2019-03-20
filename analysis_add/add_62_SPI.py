@@ -106,7 +106,7 @@ for scenario in scenarios:
 				' 2006 '+\
 				' 2006 '+\
 				' 2015 '+\
-				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
+				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'_merged.nc',1,1000)
 
 
 
