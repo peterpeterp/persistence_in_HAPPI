@@ -1,4 +1,4 @@
-import os,sys,glob,time,collections
+import os,sys,glob,time,collections,gc
 import numpy as np
 from netCDF4 import Dataset,num2date
 import dimarray as da
@@ -101,16 +101,8 @@ constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
 oneBig = np.concatenate((big_merge_hist,big_merge_fut))
 da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
 
+del big_merge_hist, big_merge_fut, oneBig
+gc.collect()
+
+
 try_several_times('Rscript analysis_add/add_61_SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
-
-
-'''
-for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do nohup python analysis_add/add_62_SPI_merged.py $model > out/$model+spi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
-
-for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in Plus20-Future; do nohup python analysis_add/add_62_SPI.py $model $scenario > out/$model+add+$scenario & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;
-
-
-for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in All-Hist Plus20-Future; do nohup cdo -ymonmean -ensmean -cat "/global/cscratch1/sd/pepflei/SPI/${model}/${scenario}/SPI*" /global/homes/p/pepflei/data/SPI/SPI_${model}_${scenario}_monClim.nc > out/$model+add & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;
-
-
-'''
