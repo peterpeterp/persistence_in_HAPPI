@@ -59,7 +59,7 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 	for run in run_list:
 		# precipitation monthly
 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-		if os.path.isfile(pr_file_name)==False or overwrite:
+		if os.path.isfile(pr_file_name)==False:
 			run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
 			if len(run_files)>1:
 				command='cdo -O mergetime '
