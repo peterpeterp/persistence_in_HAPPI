@@ -24,7 +24,6 @@ for (x in 1:length(lon)){ # length(lon)
 	for (y in 1:length(lat)){
 		if (sum(is.finite(pr[x,y,]))>100){
 			spi[x,y,]<-spi(ts(pr[x,y,], freq=12, start=c(as.numeric(args[4]),1)), as.numeric(args[3]), ref.start=c(as.numeric(args[5]),1), ref.end=c(as.numeric(args[6]),12), na.rm = TRUE)$fitted
-			print(spi[x,y,])
 		}
 	}
 }
