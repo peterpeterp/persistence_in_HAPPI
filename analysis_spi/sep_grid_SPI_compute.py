@@ -103,7 +103,7 @@ lat,lon = da.read_nc(file_hist)['pr'].lat,da.read_nc(file_hist)['pr'].lon
 constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
 for iy,y in enumerate(lat):
 	for ix,x in enumerate(lon):
-		if land_mask[y,x] != 1 and y>=0:
+		if land_mask[y,x] == 1 and y>=0:
 			print(y,x)
 			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'.txt'
 			if os.path.isfile(grid_file_name.replace('.txt','_SPI3.txt')) == False:
@@ -123,6 +123,8 @@ for iy,y in enumerate(lat):
 
 
 '''
+for model in MIROC5 NorESM1; do nohup python analysis_spi/sep_grid_SPI_compute.py $model > out/$model+spi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
+
 for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do nohup python analysis_spi/sep_grid_SPI_compute.py $model > out/$model+spi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
 
 for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in Plus20-Future; do nohup python analysis_add/add_62_SPI.py $model $scenario > out/$model+add+$scenario & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;

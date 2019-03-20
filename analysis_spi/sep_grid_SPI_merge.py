@@ -61,11 +61,10 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 	out_hist = dummy.copy()*np.nan
 	out_fut = dummy.copy()*np.nan
 	print(file_hist+' - '+file_fut+'\n10------50-------100')
-	for y,iy,progress in zip(lat,range(len(lat)), np.array([['-']+['']*(len(lat)/20+1)]*20).flatten()[0:len(lat)]):
-		sys.stdout.write(progress); sys.stdout.flush()
+	for iy,y in enumerate(y):
 		for ix,x in enumerate(lon):
 			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'_SPI3.txt'
-			if land_mask[y,x] != 1 and y>=0 and os.path.isfile(grid_file_name):
+			if land_mask[y,x] == 1 and y>=0 and os.path.isfile(grid_file_name):
 				csv = open(grid_file_name,'r').read()
 				tmp_spi = np.array([])
 				for dd in csv.split(';'):
