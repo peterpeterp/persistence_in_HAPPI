@@ -79,14 +79,18 @@ for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
 all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
 
-big_merge_hist = da.read_nc(all_files_hist[0])['pr'].squeeze()
-big_merge_fut = da.read_nc(all_files_fut[0])['pr'].squeeze()
+dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+
+big_merge_hist = dummy
+big_merge_fut = dummy
 land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
 
-
-empty_year = da.read_nc(all_files_hist[0])['pr'].squeeze().values[:12,:,:].copy() * np.nan
+empty_year = dummy.values[:12,:,:].copy() * np.nan
 big_merge_hist = np.concatenate((big_merge_hist, empty_year))
 big_merge_fut = np.concatenate((big_merge_fut, empty_year))
+
+empti_spi = da.Dataset({'SPI3':dummy.copy() * np.nan})
+
 for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	print(file_hist,file_fut)
 	if file_hist.split('_')[-1] == file_fut.split('_')[-1]:
@@ -97,7 +101,7 @@ for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	else:
 		asdasd
 
-if big_merge_hist.shape[0] != 13200 or big_merge_fur.shape[0] != 13200:
+if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 	asdas
 
 os.system('mkdir '+working_path+'grid_level/')
@@ -106,17 +110,44 @@ lat,lon = da.read_nc(file_hist)['pr'].lat,da.read_nc(file_hist)['pr'].lon
 constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
 for iy,y in enumerate(lat):
 	for ix,x in enumerate(lon):
-		if land_mask[y,x] != 1:
+		if land_mask[y,x] != 1 and y>=0:
 			print(y,x)
-			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'.nc'
+			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'.txt'
 			tmp = np.append(big_merge_hist[:,iy,ix],big_merge_fut[:,iy,ix])
-			da.Dataset({'pr':da.DimArray(tmp, axes=[constructed_time_axis], dims=['time_index'])}).write_nc(grid_file_name)
+			csv = open(grid_file_name,'w')
+			csv.write(';'.join([str(i) for i in tmp]))
+			csv.close()
 
 			result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI_single.r '+\
 				grid_file_name+' '+\
-				grid_file_name.replace('.nc','_SPI3.nc'),1,1000)
+				grid_file_name.replace('.txt','_SPI3.txt'),1,1000)
 
-			asdasd
+print('----------- saving stuff')
+for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
+	out_hist = dummy.copy()*np.nan
+	out_fut = dummy.copy()*np.nan
+	for iy,y in enumerate(lat):
+		for ix,x in enumerate(lon):
+			if land_mask[y,x] != 1 and y>=0:
+				csv = open(working_path+'grid_level/'+str(y)+'_'+str(x)+'_SPI3.txt','r').read()
+
+				csv = open(working_path+'grid_level/0.94736844_5.0_SPI3.txt','r').read()
+
+
+				tmp_spi = np.array([])
+				for dd in csv.split(';'):
+					if dd == 'NA':
+						tmp_spi = np.append(tmp_spi,np.nan)
+					else:
+						tmp_spi = np.append(tmp_spi,np.float(dd.replace('"','')))
+
+				indices = np.arange(fi*11*12 ,(fi+1)*11*12 -12)
+				out_hist.ix[:,iy,ix] = tmp_spi[indices]
+				out_fut.ix[:,iy,ix] = tmp_spi[indices + 13200]
+
+	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
+	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
+
 
 
 '''
