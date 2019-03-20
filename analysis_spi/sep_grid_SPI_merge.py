@@ -61,7 +61,6 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 	out_hist = dummy.copy()*np.nan
 	out_fut = dummy.copy()*np.nan
 	print(file_hist+' - '+file_fut+'\n10------50-------100')
-	for iy,y in enumerate(lat):
 	for y,iy,progress in zip(lat,range(len(lat)), np.array([['-']+['']*(len(lat)/20+1)]*20).flatten()[0:len(lat)]):
 		sys.stdout.write(progress); sys.stdout.flush()
 		for ix,x in enumerate(lon):
