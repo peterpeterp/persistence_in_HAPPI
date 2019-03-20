@@ -51,7 +51,7 @@ os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
 # in_path=model_dict[model]['in_path']
-# grid=model_dict[model]['grid']
+grid=model_dict[model]['grid']
 # for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
 # 	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
 # 	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
