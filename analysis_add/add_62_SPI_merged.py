@@ -83,8 +83,10 @@ big_merge_hist = da.read_nc(all_files_hist[0])['pr'].squeeze()
 big_merge_fut = da.read_nc(all_files_fut[0])['pr'].squeeze()
 land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
 
-empty_year = da.read_nc(all_files_hist[0])['pr'].squeeze().values[:12,:,:].copy() * np.nan
 
+empty_year = da.read_nc(all_files_hist[0])['pr'].squeeze().values[:12,:,:].copy() * np.nan
+big_merge_hist = np.concatenate((big_merge_hist, empty_year))
+big_merge_fut = np.concatenate((big_merge_fut, empty_year))
 for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	print(file_hist,file_fut)
 	if file_hist.split('_')[-1] == file_fut.split('_')[-1]:
@@ -94,6 +96,9 @@ for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 		big_merge_fut = np.concatenate((big_merge_fut, empty_year))
 	else:
 		asdasd
+
+if big_merge_hist.shape[0] != 13200 or big_merge_fur.shape[0] != 13200:
+	asdas
 
 os.system('mkdir '+working_path+'grid_level/')
 
