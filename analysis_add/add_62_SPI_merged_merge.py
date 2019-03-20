@@ -46,7 +46,12 @@ grid=model_dict[model]['grid']
 
 overwrite=True
 
+all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
+all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
+
 dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+
+land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
 
 print('----------- saving stuff')
 for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
