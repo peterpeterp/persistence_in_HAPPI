@@ -103,7 +103,7 @@ for scenario in scenarios:
 				pr_file_name+\
 				' pr'+\
 				' 3 '+\
-				selyears.split('/')[0]+' '+\
+				' 2106 '+\
 				' 2006 '+\
 				' 2015 '+\
 				working_path+scenario+'/SPI_'+model+'_'+scenario+'_'+run+'.nc',1,1000)
