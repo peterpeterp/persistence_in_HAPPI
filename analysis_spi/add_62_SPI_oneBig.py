@@ -104,5 +104,4 @@ da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy
 del big_merge_hist, big_merge_fut, oneBig
 gc.collect()
 
-
-try_several_times('Rscript analysis_add/add_61_SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
+try_several_times('Rscript analysis_spi/add_61_SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
