@@ -103,7 +103,7 @@ if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 	asdas
 
 constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
-oneBig = np.concatenate((big_merge_hist,big_merge_fut)) * land_mask
+oneBig = np.concatenate((big_merge_hist,big_merge_fut)) * land_mask.values
 da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
 
 del big_merge_hist, big_merge_fut, oneBig
