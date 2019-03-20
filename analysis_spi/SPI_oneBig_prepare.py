@@ -53,29 +53,7 @@ overwrite=True
 os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
-# in_path=model_dict[model]['in_path']
 grid=model_dict[model]['grid']
-# for scenario in ['Plus20-Future','Plus15-Future','All-Hist']:
-# 	selyears={'Plus20-Future':'2106/2115','Plus15-Future':'2106/2115','All-Hist':'2006/2015'}[scenario]
-# 	est_thingi={'Plus20-Future':'CMIP5-MMM-est1','Plus15-Future':'CMIP5-MMM-est1','All-Hist':'est1'}[scenario]
-# 	if os.path.isdir(working_path+scenario)==False: os.system('mkdir '+working_path+scenario)
-# 	version=model_dict[model]['version'][scenario]
-# 	model_path=in_path+scenario+'/*/'+version+'/'
-# 	run_list=model_dict[model]['runs'][scenario]
-# 	for run in run_list:
-# 		# precipitation monthly
-# 		pr_file_name=working_path+scenario+'/'+glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
-# 		if os.path.isfile(pr_file_name)==False:
-# 			run_files=glob.glob(model_path+'mon/atmos/pr/'+run+'/*')
-# 			if len(run_files)>1:
-# 				command='cdo -O mergetime '
-# 				for subfile in run_files:
-# 					command+=subfile+' '
-# 				result=try_several_times(command+' '+pr_file_name.replace('.nc','_tmp.nc'))
-# 				result=try_several_times('cdo -selyear,'+selyears+' '+pr_file_name.replace('.nc','_tmp.nc')+' '+pr_file_name)
-# 				os.system('rm '+pr_file_name.replace('.nc','_tmp.nc'))
-# 			else:
-# 				result=try_several_times('cdo -O selyear,'+selyears+' '+run_files[0]+' '+pr_file_name)
 
 all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
 all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
