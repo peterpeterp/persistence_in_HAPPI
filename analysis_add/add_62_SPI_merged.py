@@ -146,7 +146,7 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 
 
 '''
-for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in All-Hist; do nohup python analysis_add/add_62_SPI.py $model $scenario > out/$model+add+$scenario & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;
+for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do nohup python analysis_add/add_62_SPI_merged.py $model > out/$model+spi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
 
 for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do for scenario in Plus20-Future; do nohup python analysis_add/add_62_SPI.py $model $scenario > out/$model+add+$scenario & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done; done;
 
