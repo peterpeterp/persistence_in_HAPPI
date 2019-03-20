@@ -40,9 +40,14 @@ try:
 except:
 	model = 'CAM4-2degree'
 
-
-working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
-working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+try:
+	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
+	working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+	home_path = '/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/'
+except:
+	os.chdir('/global/homes/p/pepflei/')
+	working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
+	home_path = '/global/homes/p/pepflei/persistence_in_models/'
 
 
 overwrite=True
@@ -50,4 +55,4 @@ overwrite=True
 os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
-try_several_times('Rscript analysis_spi/SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
+try_several_times('Rscript '+home_path+'analysis_spi/SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
