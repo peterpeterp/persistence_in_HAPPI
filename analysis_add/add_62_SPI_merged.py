@@ -135,9 +135,9 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 					else:
 						tmp_spi = np.append(tmp_spi,np.float(dd.replace('"','')))
 
-				indices = np.arange(fi*11*12 ,(fi+1)*11*12 -12)
-				out_hist.ix[:,iy,ix] = tmp_spi[indices]
-				out_fut.ix[:,iy,ix] = tmp_spi[indices + 13200]
+				indices = np.arange(fi*11*12+2 ,(fi+1)*11*12 -12)
+				out_hist.ix[2:,iy,ix] = tmp_spi[indices]
+				out_fut.ix[2:,iy,ix] = tmp_spi[indices + 13200]
 
 	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
 	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
