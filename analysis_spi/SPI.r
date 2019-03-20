@@ -19,7 +19,7 @@ lat<-ncvar_get(nc,'lat')
 time<-ncvar_get(nc,'time')
 
 spi=pr*NA
-for (x in 1:10){ # length(lon)
+for (x in 1:length(lon)){ # length(lon)
 	cat(paste("--",x,proc.time()[3][[1]]))
 	for (y in 1:length(lat)){
 		if (sum(is.finite(pr[x,y,]))>100){

@@ -60,11 +60,11 @@ grid=model_dict[model]['grid']
 all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
 all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
 
-dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()[:,0:,:]
 
 big_merge_hist = dummy
 big_merge_fut = dummy
-land_mask=da.read_nc('masks/landmask_'+grid+'_NA-1.nc')['landmask']
+land_mask=da.read_nc('masks/landmask_'+grid+'_NA-1.nc')['landmask'][0:,:]
 
 empty_year = dummy.values[:12,:,:].copy() * np.nan
 big_merge_hist = np.concatenate((big_merge_hist, empty_year))
@@ -74,9 +74,9 @@ empti_spi = da.Dataset({'SPI3':dummy.copy() * np.nan})
 
 for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	print(file_hist,file_fut)
-	big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()))
+	big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()[:,0:,:]))
 	big_merge_hist = np.concatenate((big_merge_hist, empty_year))
-	big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()))
+	big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()[:,0:,:]))
 	big_merge_fut = np.concatenate((big_merge_fut, empty_year))
 
 if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
