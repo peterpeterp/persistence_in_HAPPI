@@ -55,38 +55,21 @@ overwrite=True
 os.system('cdo -V')
 os.system('export SKIP_SAME_TIME=1')
 
-grid=model_dict[model]['grid']
 
 all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'+'*'+'.nc'))
 all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
 
-dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()[:,0:,:]
+bigOne = da.read_nc(working_path+'pr_big_merge_SPI3.nc')['SPI']
 
-big_merge_hist = dummy
-big_merge_fut = dummy
-land_mask=da.read_nc('masks/landmask_'+grid+'_NA-1.nc')['landmask'][0:,:]
+dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
+	print(file_hist)
+	out_hist = dummy.copy()*np.nan
+	out_fut = dummy.copy()*np.nan
 
-empty_year = dummy.values[:12,:,:].copy() * np.nan
-big_merge_hist = np.concatenate((big_merge_hist, empty_year))
-big_merge_fut = np.concatenate((big_merge_fut, empty_year))
+	indices = np.arange(fi*11*12+2 ,(fi+1)*11*12 -12)
+	out_hist[:,0:,:].ix[2:,:,:] = bigOne.ix[indices,:,:]
+	out_fut[:,0:,:].ix[2:,:,:] = bigOne.ix[indices + 13200,:,:]
 
-empti_spi = da.Dataset({'SPI3':dummy.copy() * np.nan})
-
-for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
-	print(file_hist,file_fut)
-	big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()[:,0:,:]))
-	big_merge_hist = np.concatenate((big_merge_hist, empty_year))
-	big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()[:,0:,:]))
-	big_merge_fut = np.concatenate((big_merge_fut, empty_year))
-
-if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
-	asdas
-
-constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
-oneBig = np.concatenate((big_merge_hist,big_merge_fut)) * land_mask.values
-da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
-
-del big_merge_hist, big_merge_fut, oneBig
-gc.collect()
-
-print('Rscript '+home_path+'analysis_spi/SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc')
+	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
+	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
