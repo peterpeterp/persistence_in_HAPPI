@@ -35,7 +35,7 @@ model_dict=__settings.model_dict
 
 try:
 	model=sys.argv[1]
-	print model
+	print(model)
 
 except:
 	model = 'CAM4-2degree'
