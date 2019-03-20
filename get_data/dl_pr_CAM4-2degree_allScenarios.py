@@ -28,7 +28,7 @@ for run in model_dict[model]['runs'][scenario]:
         urlretrieve("http://portal.nersc.gov/cascade/data/rtrack.php?source=NERSCDisk&filename=ETH/CAM4-2degree/All-Hist/est1/v1-0/day/atmos/pr/"+run+"/pr_Aday_CAM4-2degree_All-Hist_est1_v1-0_"+run+"_20060101-20151231.nc","pr_Aday_CAM4-2degree_All-Hist_est1_v1-0_"+run+"_20060101-20151231.nc", hook)
         print('\n')
 
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI')
 scenario = 'Plus20-Future'
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
@@ -41,7 +41,7 @@ for run in model_dict[model]['runs'][scenario]:
         print('\n')
 
 
-os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+os.chdir('/p/tmp/pepflei/HAPPI')
 scenario = 'Plus15-Future'
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var)
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
