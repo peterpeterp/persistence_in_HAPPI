@@ -99,8 +99,9 @@ if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 
 constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
 oneBig = np.concatenate((big_merge_hist,big_merge_fut))
-da.Dataset({'pt':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
+da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
 
+try_several_times('Rscript analysis_add/add_61_SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
 
 
 '''
