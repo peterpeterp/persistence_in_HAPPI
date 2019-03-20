@@ -10,7 +10,7 @@ nc<-nc_open(args[1])
 pr<-ncvar_get(nc,'pr')
 time_index<-ncvar_get(nc,'time_index')
 
-spi<-spi(ts(pr, freq=12, start=c(-12000,1)), 3, ref.start=c(-12000,1), ref.end=c(-1,12), na.rm = TRUE)$fitted
+spi<-spi(ts(pr, freq=12, start=c(-13200,1)), 3, ref.start=c(-13200,1), ref.end=c(-1,12), na.rm = TRUE)$fitted
 
 timedim <- ncdim_def(name="time",units="months since 1970-1-1 00:00:00",vals=time,unlim=FALSE)
 
