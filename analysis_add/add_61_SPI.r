@@ -23,7 +23,10 @@ for (x in 1:length(lon)){ # length(lon)
 	cat(paste("--",x,proc.time()[3][[1]]))
 	for (y in 1:length(lat)){
 		if (sum(is.finite(pr[x,y,]))>100){
-			spi[x,y,]<-spi(ts(pr[x,y,], freq=12, start=c(as.numeric(args[4]),1)), as.numeric(args[3]), ref.start=c(as.numeric(args[5]),1), ref.end=c(as.numeric(args[6]),12), na.rm = TRUE)$fitted
+			result<-spi(ts(pr[x,y,], freq=12, start=c(as.numeric(args[4]),1)), as.numeric(args[3]), ref.start=c(as.numeric(args[5]),1), ref.end=c(as.numeric(args[6]),12), na.rm = TRUE)
+			spi[x,y,] <- result$fitted
+
+			asdasd
 		}
 	}
 }
@@ -32,7 +35,7 @@ for (x in 1:length(lon)){ # length(lon)
 londim <- ncdim_def(name="lon",units="deg east",vals=lon)
 latdim <- ncdim_def(name="lat",units="deg north",vals=lat)
 # adapt time stamp
-timedim <- ncdim_def(name="time",units="days since 1850-1-1 00:00:00",vals=time,unlim=FALSE)
+timedim <- ncdim_def(name="time",units="days since 2005-1-1 00:00:00",vals=time,unlim=FALSE)
 
 spivar <- ncvar_def(name="SPI",units="-",dim=list(londim,latdim,timedim),missval=-99999.9,longname=paste('SPI ',args[3],'months'))
 
