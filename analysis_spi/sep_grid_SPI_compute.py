@@ -43,9 +43,11 @@ except:
 try:
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 	working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+	home_path = '/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/'
 except:
 	os.chdir('/global/homes/p/pepflei/')
 	working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
+	home_path = '/global/homes/p/pepflei/persistence_in_models/'
 
 
 overwrite=True
@@ -97,7 +99,7 @@ for iy,y in enumerate(lat):
 
 				print(time.time() -start)
 
-				result=try_several_times('Rscript /global/homes/p/pepflei/persistence_in_models/analysis_add/add_61_SPI_single.r '+\
+				result=try_several_times('Rscript '+home_path+'/analysis_add/add_61_SPI_single.r '+\
 					grid_file_name+' '+\
 					grid_file_name.replace('.txt','_SPI3.txt'),1,4000)
 
