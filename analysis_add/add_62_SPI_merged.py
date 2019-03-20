@@ -36,13 +36,8 @@ try:
 	model=sys.argv[1]
 	print model
 
-	if sys.argv[2] is not None:
-		scenarios=[sys.argv[2]]
-	else:
-		scenarios=['Plus20-Future','Plus15-Future','All-Hist']
 except:
 	model = 'CAM4-2degree'
-	scenarios = ['Plus20-Future']
 
 
 working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
