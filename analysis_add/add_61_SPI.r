@@ -23,12 +23,7 @@ for (x in 1:length(lon)){ # length(lon)
 	cat(paste("--",x,proc.time()[3][[1]]))
 	for (y in 1:length(lat)){
 		if (sum(is.finite(pr[x,y,]))>100){
-
-			asdas
-			result<-spi(ts(pr[x,y,], freq=12, start=c(as.numeric(args[4]),1)), as.numeric(args[3]), ref.start=c(as.numeric(args[5]),1), ref.end=c(as.numeric(args[6]),12), na.rm = TRUE)
-			spi[x,y,] <- result$fitted
-
-			asdasd
+			spi[x,y,] <- spi(ts(pr[x,y,], freq=12, start=c(as.numeric(args[4]),1)), as.numeric(args[3]), ref.start=c(as.numeric(args[5]),1), ref.end=c(as.numeric(args[6]),12), na.rm = TRUE)$fitted
 		}
 	}
 }
