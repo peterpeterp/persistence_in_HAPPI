@@ -93,7 +93,6 @@ for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()[:,0:,:]))
 	big_merge_fut = np.concatenate((big_merge_fut, empty_year))
 
-
 if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 	asdas
 
@@ -103,5 +102,3 @@ da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy
 
 del big_merge_hist, big_merge_fut, oneBig
 gc.collect()
-
-try_several_times('Rscript analysis_spi/add_61_SPI.r '+working_path+'pr_big_merge.nc pr 3 -13200 -13200 -1 '+working_path+'pr_big_merge_SPI3.nc',1,900000)
