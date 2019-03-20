@@ -27,10 +27,10 @@ except:
 
 state_dict = {
 	'warm':'tas',
-	'dry':'pr',
-	'5mm':'pr',
-	'10mm':'pr',
-	'dry-warm':'cpd',
+	# 'dry':'pr',
+	# '5mm':'pr',
+	# '10mm':'pr',
+	# 'dry-warm':'cpd',
 	}
 
 for state,style in state_dict.items():
@@ -43,6 +43,7 @@ for state,style in state_dict.items():
 	big_merge['run_id'].values = 0
 
 	for i_run,file_name in enumerate(all_files[1:]):
+		print(file_name)
 		for key in ['period_length','period_midpoints','period_season','period_monthly_index']:
 			big_merge[key] = da.concatenate((big_merge[key], da.read_nc(file_name)[key][:,0:,:]))
 		big_merge['run_id'] = da.read_nc(all_files[key])['period_season'][:,0:,:].copy()
