@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os,sys,glob,time,collections
 import numpy as np
 from netCDF4 import Dataset,num2date
@@ -56,9 +57,11 @@ land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')[
 
 print('----------- saving stuff')
 for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
+	print(file)
 	out_hist = dummy.copy()*np.nan
 	out_fut = dummy.copy()*np.nan
 	for iy,y in enumerate(lat):
+		print(iy,"/",len(lat), "\r", end="")
 		for ix,x in enumerate(lon):
 			grid_file_name = working_path+'grid_level/'+str(y)+'_'+str(x)+'_SPI3.txt'
 			if land_mask[y,x] != 1 and y>=0 and os.path.isfile(grid_file_name):
@@ -76,7 +79,6 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 
 	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
 	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
-
 
 
 '''
