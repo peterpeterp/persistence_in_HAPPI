@@ -67,9 +67,11 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 	out_hist = dummy.copy()*np.nan
 	out_fut = dummy.copy()*np.nan
 
-	indices = np.arange(fi*11*12+2 ,(fi+1)*11*12 -12)
-	out_hist[:,0:,:].ix[2:,:,:] = bigOne.ix[indices,:,:]
-	out_fut[:,0:,:].ix[2:,:,:] = bigOne.ix[indices + 13200,:,:]
+	indices = np.arange(fi*11*12 ,(fi+1)*11*12 -12)
+	out_hist[:,0:,:] = bigOne.ix[indices,:,:]
+	out_hist.ix[:2,:,:] = np.nan
+	out_fut[:,0:,:] = bigOne.ix[indices + 13200,:,:]
+	out_fut.ix[:2,:,:] = np.nan
 
 	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
 	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
