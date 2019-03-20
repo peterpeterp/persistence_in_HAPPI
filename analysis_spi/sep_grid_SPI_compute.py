@@ -120,29 +120,6 @@ for iy,y in enumerate(lat):
 
 			print(time.time() -start)
 
-print('----------- saving stuff')
-for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
-	out_hist = dummy.copy()*np.nan
-	out_fut = dummy.copy()*np.nan
-	for iy,y in enumerate(lat):
-		for ix,x in enumerate(lon):
-			if land_mask[y,x] != 1 and y>=0:
-				csv = open(working_path+'grid_level/'+str(y)+'_'+str(x)+'_SPI3.txt','r').read()
-				tmp_spi = np.array([])
-				for dd in csv.split(';'):
-					if dd == 'NA':
-						tmp_spi = np.append(tmp_spi,np.nan)
-					else:
-						tmp_spi = np.append(tmp_spi,np.float(dd.replace('"','')))
-
-				indices = np.arange(fi*11*12+2 ,(fi+1)*11*12 -12)
-				out_hist.ix[2:,iy,ix] = tmp_spi[indices]
-				out_fut.ix[2:,iy,ix] = tmp_spi[indices + 13200]
-
-	da.Dataset({'SPI3':out_hist}).write_nc(file_hist.replace('pr','SPI3'))
-	da.Dataset({'SPI3':out_fut}).write_nc(file_fut.replace('pr','SPI3'))
-
-
 
 '''
 for model in CAM4-2degree ECHAM6-3-LR MIROC5 NorESM1; do nohup python analysis_add/add_62_SPI_merged.py $model > out/$model+spi & expect "nohup: ignoring input and redirecting stderr to stdout" { send "\r" }; done;
