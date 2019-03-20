@@ -61,11 +61,12 @@ all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus2
 
 bigOne = da.read_nc(working_path+'pr_big_merge_SPI3.nc')['SPI']
 
-dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+dummy_hist = da.read_nc(all_files_hist[0])['pr'].squeeze()
+dummy_fut = da.read_nc(all_files_fut[0])['pr'].squeeze()
 for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_files_hist))):
 	print(file_hist)
-	out_hist = dummy.copy()*np.nan
-	out_fut = dummy.copy()*np.nan
+	out_hist = dummy_hist.copy()*np.nan
+	out_fut = dummy_fut.copy()*np.nan
 
 	indices = np.arange(fi*11*12 ,(fi+1)*11*12 -12)
 	out_hist[:,0:,:] = bigOne.ix[indices,:,:]
