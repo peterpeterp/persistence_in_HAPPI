@@ -40,9 +40,12 @@ try:
 except:
 	model = 'CAM4-2degree'
 
-
-working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
-working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+try:
+	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
+	working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+except:
+	os.chdir('/global/homes/p/pepflei/')
+	working_path='/global/cscratch1/sd/pepflei/SPI/'+model+'/'
 
 
 overwrite=True
@@ -81,7 +84,7 @@ dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()[:,0:,:]
 
 big_merge_hist = dummy
 big_merge_fut = dummy
-land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask'][0:,:]
+land_mask=da.read_nc('masks/landmask_'+grid+'_NA-1.nc')['landmask'][0:,:]
 
 empty_year = dummy.values[:12,:,:].copy() * np.nan
 big_merge_hist = np.concatenate((big_merge_hist, empty_year))
