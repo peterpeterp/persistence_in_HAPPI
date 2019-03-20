@@ -88,13 +88,11 @@ empti_spi = da.Dataset({'SPI3':dummy.copy() * np.nan})
 
 for file_hist,file_fut in zip(all_files_hist[1:],all_files_fut[1:]):
 	print(file_hist,file_fut)
-	if file_hist.split('_')[-1] == file_fut.split('_')[-1]:
-		big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()))
-		big_merge_hist = np.concatenate((big_merge_hist, empty_year))
-		big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()))
-		big_merge_fut = np.concatenate((big_merge_fut, empty_year))
-	else:
-		asdasd
+	big_merge_hist = np.concatenate((big_merge_hist, da.read_nc(file_hist)['pr'].squeeze()))
+	big_merge_hist = np.concatenate((big_merge_hist, empty_year))
+	big_merge_fut = np.concatenate((big_merge_fut, da.read_nc(file_fut)['pr'].squeeze()))
+	big_merge_fut = np.concatenate((big_merge_fut, empty_year))
+
 
 if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 	asdas
@@ -125,10 +123,6 @@ for file_hist,file_fut,fi in zip(all_files_hist,all_files_fut,range(len(all_file
 		for ix,x in enumerate(lon):
 			if land_mask[y,x] != 1 and y>=0:
 				csv = open(working_path+'grid_level/'+str(y)+'_'+str(x)+'_SPI3.txt','r').read()
-
-				csv = open(working_path+'grid_level/0.94736844_5.0_SPI3.txt','r').read()
-
-
 				tmp_spi = np.array([])
 				for dd in csv.split(';'):
 					if dd == 'NA':
