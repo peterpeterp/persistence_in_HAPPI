@@ -94,6 +94,7 @@ for scenario in scenarios:
 
 		if scenario != 'All-Hist':
 			pr_file_name_fut = working_path+scenario+'/' +glob.glob(model_path+'mon/atmos/pr/'+run+'/*')[0].split('/')[-1].split(run)[0]+run+'.nc'
+			print(working_path+scenario+'/pr_Amon_'+model+'_'+scenario+'*'+run+'.nc')
 			pr_file_name_hist = glob.glob(working_path+scenario+'/pr_Amon_'+model+'_'+scenario+'*'+run+'.nc')[0]
 
 			pr_file_name = pr_file_name_fut.replace('.nc','_merged.nc')
