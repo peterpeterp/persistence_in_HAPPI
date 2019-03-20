@@ -11,7 +11,7 @@ pr<-ncvar_get(nc,'pr')
 
 spi<-spi(ts(pr, freq=12, start=c(-12000,1)), 3, ref.start=c(-12000,1), ref.end=c(-1,12), na.rm = TRUE)$fitted
 
-timedim <- ncdim_def(name="time",units="months since 0-1-1 00:00:00",vals=time,unlim=FALSE)
+timedim <- ncdim_def(name="time",units="months since 1970-1-1 00:00:00",vals=time,unlim=FALSE)
 
 spivar <- ncvar_def(name="SPI",units="-",dim=list(timedim),missval=-99999.9,longname=paste('SPI ',args[3],'months'))
 
