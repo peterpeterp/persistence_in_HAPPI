@@ -81,7 +81,7 @@ dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()[:,0:,:]
 
 big_merge_hist = dummy
 big_merge_fut = dummy
-land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
+land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask'][0:,:]
 
 empty_year = dummy.values[:12,:,:].copy() * np.nan
 big_merge_hist = np.concatenate((big_merge_hist, empty_year))
@@ -100,7 +100,7 @@ if big_merge_hist.shape[0] != 13200 or big_merge_fut.shape[0] != 13200:
 	asdas
 
 constructed_time_axis = np.append(np.arange(-132*100,0), np.arange(132*100))
-oneBig = np.concatenate((big_merge_hist,big_merge_fut))
+oneBig = np.concatenate((big_merge_hist,big_merge_fut)) * land_mask
 da.Dataset({'pr':da.DimArray(oneBig, axes=[constructed_time_axis,dummy.lat,dummy.lon], dims=['time','lat','lon'])}).write_nc(working_path+'pr_big_merge.nc')
 
 del big_merge_hist, big_merge_fut, oneBig
