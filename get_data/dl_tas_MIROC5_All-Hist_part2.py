@@ -19,6 +19,8 @@ model = 'MIROC5'
 scenario = 'All-Hist'
 var = 'tas'
 
+print('hey')
+
 os.system('mkdir -p raw_data/'+model+'/'+scenario+'/'+var+'/tmp')
 os.chdir('raw_data/'+model+'/'+scenario+'/'+var)
 
