@@ -50,6 +50,7 @@ all_files_hist=sorted(glob.glob(working_path+'All-Hist'+'/pr_Amon_*_'+'All-Hist'
 all_files_fut=sorted(glob.glob(working_path+'Plus20-Future'+'/pr_Amon_*_'+'Plus20-Future'+'*'+'.nc'))
 
 dummy = da.read_nc(all_files_hist[0])['pr'].squeeze()
+lat,lon = dummy.lat,dummy.lon
 
 land_mask=da.read_nc('/global/homes/p/pepflei/masks/landmask_'+grid+'_NA-1.nc')['landmask']
 
