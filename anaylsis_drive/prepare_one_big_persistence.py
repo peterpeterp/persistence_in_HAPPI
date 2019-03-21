@@ -27,10 +27,10 @@ except:
 
 state_dict = {
 	'warm':'tas',
-	'dry':'pr',
+	# 'dry':'pr',
 	'5mm':'pr',
 	# '10mm':'pr',
-	# 'dry-warm':'cpd',
+	'dry-warm':'cpd',
 	}
 
 
