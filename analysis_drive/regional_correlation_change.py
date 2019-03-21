@@ -60,6 +60,8 @@ for scenario in ['All-Hist','Plus20-Future']:
 		corWith_full = da.read_nc(details['file'])[details['varname']]
 		corWith_run = da.read_nc(details['file'])['run_id']
 
+		print(np.nanpercentile(corWith_full,range(101)))
+
 		for state,style in state_dict.items():
 			print('----------------------------'+state)
 			data = da.read_nc(working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
@@ -77,6 +79,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 			for y in data.lat:
 				for x in data.lon:
 					pers_loc=data['period_length'][:,y,x].values
+					print(np.nanpercentile(pers_loc,range(101)))
 					if pers_loc.sum() != 0:
 						run_loc = data['run_id'][:,y,x].values
 						valid_runs = run_loc < 100
