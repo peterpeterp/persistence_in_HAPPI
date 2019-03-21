@@ -32,17 +32,17 @@ model_dict=__settings.model_dict
 masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 
 
-all_files=sorted(glob.glob(working_path+scenario+'/EKE*_'+scenario+'*.nc'))
+all_files=sorted(glob.glob(working_path+scenario+'/monEKE*_'+scenario+'*.nc'))
 
 big_merge = {}
-big_merge['EKE'] = da.read_nc(all_files[0])['EKE'][:,0:,:]
-big_merge['run_id'] = da.read_nc(all_files[0])['EKE'][:,0:,:].copy()
+big_merge['eke'] = da.read_nc(all_files[0])['eke'][:,0:,:]
+big_merge['run_id'] = da.read_nc(all_files[0])['eke'][:,0:,:].copy()
 big_merge['run_id'].values = 0
 
 for i_run,file_name in enumerate(all_files[1:]):
 	print(file_name)
-	big_merge['EKE'] = da.concatenate((big_merge['EKE'], da.read_nc(file_name)['EKE'][:,0:,:]))
-	big_merge['run_id'] = da.read_nc(file_name)['EKE'][:,0:,:].copy()
+	big_merge['eke'] = da.concatenate((big_merge['eke'], da.read_nc(file_name)['eke'][:,0:,:]))
+	big_merge['run_id'] = da.read_nc(file_name)['eke'][:,0:,:].copy()
 	big_merge['run_id'].values = i_run+1
 
 for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU','CGI','ALA']:
@@ -50,9 +50,9 @@ for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU'
 	lats = np.where(np.nanmax(mask,axis=1)!=0)[0]
 	lons = np.where(np.nanmax(mask,axis=0)!=0)[0]
 
-	da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc')
+	da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join(['eke',model,scenario,'bigMerge',region])+'.nc')
 
-da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join(['EKE',model,scenario,'bigMerge','NHml'])+'.nc')
+da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join(['eke',model,scenario,'bigMerge','NHml'])+'.nc')
 
 del big_merge
 gc.collect()
