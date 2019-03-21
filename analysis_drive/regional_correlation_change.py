@@ -114,9 +114,13 @@ for scenario in ['All-Hist','Plus20-Future']:
 								################
 								# mean
 								################
-								cor['mean_per_length'][season_name,y,x] = np.nanmean(pers_loc_sea)
+								cor['mean_'+state][season_name,y,x] = np.nanmean(pers_loc_sea)
 								for qu in [10,25,33,50,66,75,90,100]:
-									cor[str(qu)][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
+									cor[str(qu)+'_'+state][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
+
+								cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_loc_sea)
+								for qu in [10,25,33,50,66,75,90,100]:
+									cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_loc_sea,qu)
 
 								################
 								# detrend
