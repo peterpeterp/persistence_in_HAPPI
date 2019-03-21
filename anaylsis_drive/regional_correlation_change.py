@@ -93,6 +93,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 						run_loc=run_loc[mask]
 
 						if pers_loc.shape[0]>10:
+							print(y,x)
 							# detrend
 							slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc,pers_loc)
 							pers_loc_detrend=pers_loc-(intercept+slope*time_loc)+np.nanmean(pers_loc)
@@ -123,9 +124,9 @@ for scenario in ['All-Hist','Plus20-Future']:
 								cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers[sea_==season_id],corWith[sea_==season_id])
 
 
-		cor['corrcoef'].persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
-		cor['corrcoef'].correlated_with = details['file']
-		da.Dataset(cor).write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
+		cor['corrcoef_all'].persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
+		cor['corrcoef_all'].correlated_with = details['file']
+		da.Dataset(cor).write_nc(working_path.replace('reg_merge/'+model,'reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
 
 '''
