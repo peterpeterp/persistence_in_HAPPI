@@ -52,8 +52,9 @@ for state,style in state_dict.items():
 		print(file_name)
 		for key in ['period_length','period_midpoints','period_season','period_monthly_index']:
 			big_merge[key] = da.concatenate((big_merge[key], da.read_nc(file_name)[key][:,0:,:]))
-		big_merge['run_id'] = da.read_nc(file_name)['period_season'][:,0:,:].copy()
-		big_merge['run_id'].values = i_run+1
+		tmp = da.read_nc(file_name)[key][:,0:,:].copy()
+		tmp.values = i_run+1
+		big_merge['run_id'] = da.concatenate((big_merge['run_id'], tmp))
 
 	for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU','CGI','ALA']:
 		mask = masks[region][0:,:]
