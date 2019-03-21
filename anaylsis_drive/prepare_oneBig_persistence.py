@@ -63,7 +63,7 @@ for state,style in state_dict.items():
 
 		da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(out_path+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
 
-	da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join([style,model,scenario,'bigMerge','NHml',state])+'.nc')
+	da.Dataset({key:val[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join([style,model,scenario,'bigMerge','NHml',state])+'.nc')
 
 	del big_merge
 	gc.collect()

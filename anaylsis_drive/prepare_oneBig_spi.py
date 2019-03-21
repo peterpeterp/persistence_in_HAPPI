@@ -55,7 +55,7 @@ for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU'
 
 	da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(out_path+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc')
 
-da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join(['SPI',model,scenario,'bigMerge','NHml'])+'.nc')
+da.Dataset({key:val[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join(['SPI',model,scenario,'bigMerge','NHml'])+'.nc')
 
 del big_merge
 gc.collect()
