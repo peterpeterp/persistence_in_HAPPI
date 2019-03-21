@@ -13,7 +13,7 @@ try:
 
 except:
 	model = 'CAM4-2degree'
-	region = 'CAS'
+	region = 'WNA'
 
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
@@ -117,13 +117,12 @@ for scenario in ['All-Hist','Plus20-Future']:
 						sea_loc=data['period_season'][:,y,x].values[valid_runs][mask]
 						run_loc=run_loc[mask]
 
-						if pers_loc.shape[0]>10:
-							print(y,x)
-
-							for season_name,season_id in seasons.items():
-								valid_season = sea_loc==season_id
+						for season_name,season_id in seasons.items():
+							valid_season = sea_loc==season_id
+							pers_loc_sea = pers_loc[valid_season]
+							if pers_loc_sea.shape[0]>10:
+								print(y,x)
 								time_loc_sea = time_loc[valid_season]
-								pers_loc_sea = pers_loc[valid_season]
 								monIndex_loc_sea = monIndex_loc[valid_season]
 								run_loc_sea = run_loc[valid_season]
 								corWith_loc_sea = corWith_loc[valid_season]
