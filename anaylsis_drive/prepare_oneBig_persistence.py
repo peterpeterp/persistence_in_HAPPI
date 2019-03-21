@@ -17,7 +17,8 @@ except:
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
-	working_path='/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'
+	in_path='/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'
+	out_path='/p/tmp/pepflei/HAPPI/raw_data/reg_merge/'+model+'/'
 	home_path = '/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/'
 except:
 	sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
@@ -39,7 +40,7 @@ model_dict=__settings.model_dict
 masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
 
 for state,style in state_dict.items():
-	all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/*_'+scenario+'*'+state+'.nc'))
+	all_files=sorted(glob.glob(in_path+scenario+'/'+style+'/*_'+scenario+'*'+state+'.nc'))
 
 	big_merge = {}
 	for key in ['period_length','period_midpoints','period_season','period_monthly_index']:
@@ -59,9 +60,9 @@ for state,style in state_dict.items():
 		lats = np.where(np.nanmax(mask,axis=1)!=0)[0]
 		lons = np.where(np.nanmax(mask,axis=0)!=0)[0]
 
-		da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
+		da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(out_path+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
 
-	da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join([style,model,scenario,'bigMerge','NHml',state])+'.nc')
+	da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join([style,model,scenario,'bigMerge','NHml',state])+'.nc')
 
 	del big_merge
 	gc.collect()
