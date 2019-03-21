@@ -42,7 +42,7 @@ seasons={'MAM':0, 'JJA':1, 'SON':2, 'DJF':3}
 ##############
 
 for scenario in ['All-Hist','Plus20-Future']:
-	print('_____________',scenario)
+	print('__________'+scenario)
 
 	corWith_dict = {
 		'SPI3':{
@@ -56,12 +56,12 @@ for scenario in ['All-Hist','Plus20-Future']:
 	}
 
 	for corWith_name,details in corWith_dict.items():
-		print('*************',corWith_name)
+		print('*******************'+corWith_name)
 		corWith_full = da.read_nc(details['file'])[details['varname']]
 		corWith_run = da.read_nc(details['file'])['run_id']
 
 		for state,style in state_dict.items():
-			print('*************',state)
+			print('----------------------------'+state)
 			data = da.read_nc(working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
 
 			cor = {}
