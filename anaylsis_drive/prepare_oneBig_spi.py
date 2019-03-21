@@ -7,10 +7,12 @@ import subprocess as sub
 
 try:
 	model=sys.argv[1]
+	scenario=sys.argv[2]
 	print model,scenario
 
 except:
 	model = 'CAM4-2degree'
+	scenario = 'All-Hist'
 
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
