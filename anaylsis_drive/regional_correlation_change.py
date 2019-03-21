@@ -146,13 +146,12 @@ for scenario in ['All-Hist','Plus20-Future']:
 
 								pers_loc_sea_detrend, corWith_loc_sea_detrend = np.array([]), np.array([])
 								for run in range(100):
-									sea_,pers_,corWith_,time_ = np.array([]),np.array([]),np.array([]),np.array([])
+									pers_,corWith_,time_ = np.array([]),np.array([]),np.array([])
 									tmp_index = monIndex_loc_sea[run_loc_sea==run]
 									for ind in sorted(set(tmp_index)):
 										indices_of_mon = np.where(tmp_index==ind)[0]
 										corWith_ = np.append(corWith_,corWith_loc_sea[indices_of_mon][0])
 										pers_ = np.append(pers_,pers_loc_sea[indices_of_mon].max())
-										sea_ = np.append(sea_,sea_loc_sea[indices_of_mon][0])
 										time_ = np.append(time_,time_loc_sea[indices_of_mon][np.argmax(pers_loc_sea[indices_of_mon])])
 
 									slope, intercept, r_value, p_value, std_err = stats.linregress(time_,pers_)
