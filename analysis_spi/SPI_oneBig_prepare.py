@@ -42,7 +42,7 @@ except:
 
 try:
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
-	working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/'+model+'/'
+	working_path='/p/tmp/pepflei/HAPPI/raw_data/SPI/'+model+'/'
 	home_path = '/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/'
 except:
 	os.chdir('/global/homes/p/pepflei/')
