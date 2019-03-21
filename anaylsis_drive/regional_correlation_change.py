@@ -12,7 +12,7 @@ try:
 	print model,region
 
 except:
-	model = 'CAM4-2degree'
+	model = 'NorESM1'
 	region = 'CEU'
 
 try:
@@ -50,7 +50,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 		},
 		'EKE':{
 			'file':working_path+'/'+'_'.join(['eke',model,scenario,'bigMerge',region])+'.nc',
-			'varname':'eke'
+			'varname':'EKE'
 		}
 	}
 
@@ -124,9 +124,9 @@ for scenario in ['All-Hist','Plus20-Future']:
 								cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers[sea_==season_id],corWith[sea_==season_id])
 
 
-		cor['corrcoef_all'].persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
-		cor['corrcoef_all'].correlated_with = details['file']
-		da.Dataset(cor).write_nc(working_path.replace('reg_merge/'+model,'reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
+				cor['corrcoef_all'].persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
+				cor['corrcoef_all'].correlated_with = details['file']
+				da.Dataset(cor).write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
 
 '''
