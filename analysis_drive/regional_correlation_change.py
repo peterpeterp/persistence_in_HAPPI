@@ -35,7 +35,12 @@ state_dict = {
 	}
 
 seasons={'MAM':0, 'JJA':1, 'SON':2, 'DJF':3}
-
+season_indices_monthly = {}
+for season_name,months in {'MAM':[2,3,4], 'JJA':[5,6,7], 'SON':[8,9,10], 'DJF':[11,0,1]}.items():
+	tmp = np.zeros([120],np.bool)
+	for mon in months:
+		tmp[mon::12] = 1
+	season_indices_monthly[season_name] = tmp
 
 ##############
 # correaltions
@@ -51,7 +56,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 		},
 		'EKE':{
 			'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
-			'varname':'EKE'
+			'varname':'eke'
 		}
 	}
 
@@ -85,9 +90,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 						################
 						# mean of corwith
 						################
-						cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_run[:,y,x].values)
-						for qu in [10,25,33,50,66,75,90,100]:
-							cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_run[:,y,x].values,qu)
+						for season_name,indices in season_indices_monthly.items():
+							cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_run[indices,y,x].values)
+							for qu in [10,25,33,50,66,75,90,100]:
+								cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_run[indices,y,x].values,qu)
 
 						run_loc = data['run_id'][:,y,x].values
 						valid_runs = run_loc < 100
@@ -170,8 +176,8 @@ for scenario in ['All-Hist','Plus20-Future']:
 									tmp_index = monIndex_loc_sea[run_loc_sea==run]
 									for ind in sorted(set(tmp_index)):
 										indices_of_mon = np.where(tmp_index==ind)[0]
-										corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea_[indices_of_mon][0])
-										pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea_[indices_of_mon].max())
+										corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea[indices_of_mon][0])
+										pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea[indices_of_mon].max())
 										time_ = np.append(time_,time_loc_sea[indices_of_mon][np.argmax(pers_loc_sea[indices_of_mon])])
 
 									'''
