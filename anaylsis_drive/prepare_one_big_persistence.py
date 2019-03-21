@@ -27,14 +27,19 @@ except:
 
 state_dict = {
 	'warm':'tas',
-	# 'dry':'pr',
-	# '5mm':'pr',
+	'dry':'pr',
+	'5mm':'pr',
 	# '10mm':'pr',
 	# 'dry-warm':'cpd',
 	}
 
+
+import __settings
+model_dict=__settings.model_dict
+masks = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')
+
 for state,style in state_dict.items():
-	all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/_*_'+scenario+'*'+state+'.nc'))
+	all_files=sorted(glob.glob(working_path+scenario+'/'+style+'/*_'+scenario+'*'+state+'.nc'))
 
 	big_merge = {}
 	for key in ['period_length','period_midpoints','period_season','period_monthly_index']:
@@ -46,17 +51,25 @@ for state,style in state_dict.items():
 		print(file_name)
 		for key in ['period_length','period_midpoints','period_season','period_monthly_index']:
 			big_merge[key] = da.concatenate((big_merge[key], da.read_nc(file_name)[key][:,0:,:]))
-		big_merge['run_id'] = da.read_nc(all_files[key])['period_season'][:,0:,:].copy()
+		big_merge['run_id'] = da.read_nc(file_name)['period_season'][:,0:,:].copy()
 		big_merge['run_id'].values = i_run+1
 
-	da.Dataset(big_merge).write_nc(working_path+scenario+'/'+'_'.join(style,model,scenario,'bigMerge',state)+'.nc')
+	asdasd
+
+	for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU','CGI','ALA']:
+		mask = masks[region][0:,:]
+		lats = np.where(np.nanmax(mask,axis=1)!=0)[0]
+		lons = np.where(np.nanmax(mask,axis=0)!=0)[0]
+
+		da.Dataset({key:val.ix[:,lats,lons] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
+
+	da.Dataset({key:val.ix[:,35:60,:] for key,val in big_merge.items()}).write_nc(working_path+scenario+'/'+'_'.join([style,model,scenario,'bigMerge','NHml',state])+'.nc')
 
 	del big_merge
 	gc.collect()
 
 
 	'''
-
 	for model in NorESM1 MIROC5 ECHAM6-3-LR CAM4-2degree; do sbatch job_Rscript.sh /p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/analysis_spi/SPI.r /p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/${model}/pr_big_merge.nc pr 3 -13200 -13200 -1 /p/tmp/pepflei/HAPPI/raw_data/SPI_stuff/${model}/pr_big_merge_SPI3.nc; done;
 
 	'''
