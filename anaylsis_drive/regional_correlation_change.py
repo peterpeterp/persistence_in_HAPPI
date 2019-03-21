@@ -45,7 +45,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 
 	corWith_dict = {
 		'SPI3':{
-			'file':working_path+'/'+'_'.join(['SPI3',model,scenario,'bigMerge',region])+'.nc',
+			'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
 			'varname':'SPI3'
 		},
 		'EKE':{
@@ -61,67 +61,66 @@ for scenario in ['All-Hist','Plus20-Future']:
 		for state,style in state_dict.items():
 			data = da.read_nc(working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
 
-			cor,cor_longest={},{}
-			for stat in ['corrcoef','p_value']:
-				cor[stat]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
-				cor_longest[stat]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+			cor = {}
+			for style in ['all','longest']:
+				for stat in ['corrcoef','p-value']:
+					cor[stat+'_'+style]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 
 			for y in data.lat:
 				for x in data.lon:
 					pers_loc=data['period_length'][:,y,x].values
 					if pers_loc.sum() != 0:
-						pers_loc=data['period_length'][:,y,x].values
-						time_loc=data['period_midpoints'][:,y,x].values
-
+						run_loc = data['run_id'][:,y,x].values
+						run_loc = run_loc[run_loc<100]
+						pers_loc = data['period_length'][:,y,x].values[run_loc<100]
+						time_loc = data['period_midpoints'][:,y,x].values[run_loc<100]
+						monIndex_loc = data['period_monthly_index'][:,y,x].values[run_loc<100]
 
 						corWith_loc = np.array([])
 						for run in range(100):
-							tmp_index_loc_run = data['period_monthly_index'][:,y,x][data['run_id'][:,y,x]==run]
-							tmp_corWith_loc_run = corWith_full[:,y,x][corWith_run[:,y,x]==run]
-							corWith_loc = np.append(corWith_loc, tmp_corWith_loc_run.ix[tmp_index_loc_run,:,:])
-
-							asdas
+							tmp_index_loc_run = monIndex_loc[run_loc==run]
+							tmp_corWith_loc_run = corWith_full[:,y,x][corWith_run[:,y,x].values==run]
+							corWith_loc = np.append(corWith_loc, tmp_corWith_loc_run.ix[tmp_index_loc_run])
 
 						# mask all
-						mask = ~np.isnan(tmp_time) & ~np.isnan(tmp_pers) & ~np.isnan(tmp_corWith)
-						tmp_time=tmp_time[mask]
-						tmp_index = tmp_index[mask]
-						tmp_pers=tmp_pers[mask]
-						tmp_corWith=tmp_corWith[mask]
-						tmp_sea=data['period_season'][avail_indices,y,x].values[mask]
+						mask = ~np.isnan(pers_loc) & ~np.isnan(time_loc) & ~np.isnan(corWith_loc)
+						time_loc=time_loc[mask]
+						pers_loc=pers_loc[mask]
+						monIndex_loc=monIndex_loc[mask]
+						corWith_loc=corWith_loc[mask]
+						sea_loc=data['period_season'][:,y,x].values[run_loc<100][mask]
+						run_loc=run_loc[mask]
 
-						if tmp_pers.shape[0]>10:
-							# detrend
-							slope, intercept, r_value, p_value, std_err = stats.linregress(tmp_time,tmp_pers)
-							pers=tmp_pers-(intercept+slope*tmp_time)+np.nanmean(tmp_pers)
-							slope, intercept, r_value, p_value, std_err = stats.linregress(tmp_time,tmp_corWith)
-							corWith=tmp_corWith-(intercept+slope*tmp_time)+np.nanmean(tmp_corWith)
+						# detrend
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc,pers_loc)
+						pers_loc_detrend=pers_loc-(intercept+slope*time_loc)+np.nanmean(pers_loc)
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc,corWith_loc)
+						corWith_loc_detrend=corWith_loc-(intercept+slope*time_loc)+np.nanmean(corWith_loc)
 
-							for season_name,season_id in seasons.items():
-								cor['corrcoef'][season_name,y,x],cor['p_value'][season_name,y,x]=stats.pearsonr(pers[tmp_sea==season_id],corWith[tmp_sea==season_id])
+						for season_name,season_id in seasons.items():
+							cor['corrcoef_all'][season_name,y,x],cor['p-value_all'][season_name,y,x]=stats.pearsonr(pers_loc_detrend[sea_loc==season_id],corWith_loc_detrend[sea_loc==season_id])
 
-							# longest period in month correlation
-							sea_,pers_,corWith_,time_ = np.array([]),np.array([]),np.array([]),np.array([])
+						# longest period in month correlation
+						sea_,pers_,corWith_,time_ = np.array([]),np.array([]),np.array([]),np.array([])
+						for run in range(100):
+							tmp_index = monIndex_loc[run_loc==run]
 							for ind in sorted(set(tmp_index)):
 								indices_of_mon = np.where(tmp_index==ind)[0]
-								corWith_ = np.append(corWith_,tmp_corWith[indices_of_mon][0])
-								pers_ = np.append(pers_,tmp_pers[indices_of_mon].max())
-								sea_ = np.append(sea_,tmp_sea[indices_of_mon][0])
-								time_ = np.append(time_,tmp_time[indices_of_mon][np.argmax(tmp_pers[indices_of_mon])])
+								corWith_ = np.append(corWith_,corWith_loc[indices_of_mon][0])
+								pers_ = np.append(pers_,pers_loc[indices_of_mon].max())
+								sea_ = np.append(sea_,sea_loc[indices_of_mon][0])
+								time_ = np.append(time_,time_loc[indices_of_mon][np.argmax(pers_loc[indices_of_mon])])
 
-							# detrend
-							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,pers_)
-							pers=pers_-(intercept+slope*time_)+np.nanmean(pers_)
-							slope, intercept, r_value, p_value, std_err = stats.linregress(time_,corWith_)
-							corWith=corWith_-(intercept+slope*time_)+np.nanmean(corWith_)
+						# detrend
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,pers_)
+						pers=pers_-(intercept+slope*time_)+np.nanmean(pers_)
+						slope, intercept, r_value, p_value, std_err = stats.linregress(time_,corWith_)
+						corWith=corWith_-(intercept+slope*time_)+np.nanmean(corWith_)
 
-							for season_name,season_id in seasons.items():
-								cor_longest['corrcoef'][season_name,y,x],cor_longest['p_value'][season_name,y,x]=stats.pearsonr(pers[sea_==season_id],corWith[sea_==season_id])
+						for season_name,season_id in seasons.items():
+							cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers[sea_==season_id],corWith[sea_==season_id])
 
 
-		cor['corrcoef'].persistence = pers_file
-		cor['corrcoef'].correlated_with = corWith_file
-		da.Dataset(cor).write_nc(working_path+scenario+'/cor_'+corWith_name+'_'+'_'.join([model,scenario])+'_'+pers_name+'.nc')
-		cor_longest['corrcoef'].persistence = pers_file
-		cor_longest['corrcoef'].correlated_with = corWith_file
-		da.Dataset(cor_longest).write_nc(working_path+scenario+'/corLongest_'+corWith_name+'_'+'_'.join([model,scenario])+'_'+pers_name+'.nc')
+		cor['corrcoef'].persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
+		cor['corrcoef'].correlated_with = details['file']
+		da.Dataset(cor).write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
