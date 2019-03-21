@@ -12,8 +12,8 @@ try:
 	print model,region
 
 except:
-	model = 'NorESM1'
-	region = 'CEU'
+	model = 'CAM4-2degree'
+	region = 'CAS'
 
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
@@ -81,6 +81,14 @@ for scenario in ['All-Hist','Plus20-Future']:
 					pers_loc=data['period_length'][:,y,x].values
 					print(np.nanpercentile(pers_loc,range(101)))
 					if pers_loc.sum() != 0:
+
+						################
+						# mean of corwith
+						################
+						cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_run[:,y,x].values)
+						for qu in [10,25,33,50,66,75,90,100]:
+							cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_run[:,y,x].values,qu)
+
 						run_loc = data['run_id'][:,y,x].values
 						valid_runs = run_loc < 100
 						run_loc = run_loc[valid_runs]
@@ -121,34 +129,33 @@ for scenario in ['All-Hist','Plus20-Future']:
 								for qu in [10,25,33,50,66,75,90,100]:
 									cor[str(qu)+'_'+state][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
 
-								cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_loc_sea)
-								for qu in [10,25,33,50,66,75,90,100]:
-									cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_loc_sea,qu)
-
-								################
-								# detrend
-								################
-
+								'''
 								pers_loc_sea_detrend, corWith_loc_sea_detrend = np.array([]), np.array([])
 								for run in range(100):
 									this_run = run_loc_sea == run
 
-									slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc_sea[this_run],pers_loc_sea[this_run])
-									pers_loc_sea_detrend = np.append(pers_loc_sea_detrend, pers_loc_sea[this_run]-(intercept+slope*time_loc_sea[this_run])+np.nanmean(pers_loc_sea[this_run]))
-									slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc_sea[this_run],corWith_loc_sea[this_run])
-									corWith_loc_sea_detrend = np.append(corWith_loc_sea_detrend, corWith_loc_sea[this_run]-(intercept+slope*time_loc_sea[this_run])+np.nanmean(corWith_loc_sea[this_run]))
+									if np.sum(this_run) != 0:
+
+
+										we could detrend each run but this seems weird with 10 years
+
+										slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc_sea[this_run],pers_loc_sea[this_run])
+										pers_loc_sea_detrend = np.append(pers_loc_sea_detrend, pers_loc_sea[this_run]-(intercept+slope*time_loc_sea[this_run])+np.nanmean(pers_loc_sea[this_run]))
+										slope, intercept, r_value, p_value, std_err = stats.linregress(time_loc_sea[this_run],corWith_loc_sea[this_run])
+										corWith_loc_sea_detrend = np.append(corWith_loc_sea_detrend, corWith_loc_sea[this_run]-(intercept+slope*time_loc_sea[this_run])+np.nanmean(corWith_loc_sea[this_run]))
+								'''
 
 								################
 								# correlation
 								################
 
-								cor['corrcoef_all'][season_name,y,x],cor['p-value_all'][season_name,y,x] = stats.pearsonr(pers_loc_sea_detrend,corWith_loc_sea_detrend)
+								cor['corrcoef_all'][season_name,y,x],cor['p-value_all'][season_name,y,x] = stats.pearsonr(pers_loc_sea,corWith_loc_sea)
 
 								################
 								# regression
 								################
 
-								slope, intercept, r_value, p_value, std_err = stats.linregress(pers_loc_sea_detrend,corWith_loc_sea_detrend)
+								slope, intercept, r_value, p_value, std_err = stats.linregress(pers_loc_sea,corWith_loc_sea)
 								cor['lr_slope'][season_name,y,x] = slope
 								cor['lr_intercept'][season_name,y,x] = intercept
 								cor['lr_pvalue'][season_name,y,x] = p_value
@@ -157,26 +164,28 @@ for scenario in ['All-Hist','Plus20-Future']:
 								# detrend longest in month
 								################
 
-								pers_loc_sea_detrend, corWith_loc_sea_detrend = np.array([]), np.array([])
+								pers_loc_sea_, corWith_loc_sea_ = np.array([]), np.array([])
 								for run in range(100):
 									pers_,corWith_,time_ = np.array([]),np.array([]),np.array([])
 									tmp_index = monIndex_loc_sea[run_loc_sea==run]
 									for ind in sorted(set(tmp_index)):
 										indices_of_mon = np.where(tmp_index==ind)[0]
-										corWith_ = np.append(corWith_,corWith_loc_sea[indices_of_mon][0])
-										pers_ = np.append(pers_,pers_loc_sea[indices_of_mon].max())
+										corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea_[indices_of_mon][0])
+										pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea_[indices_of_mon].max())
 										time_ = np.append(time_,time_loc_sea[indices_of_mon][np.argmax(pers_loc_sea[indices_of_mon])])
 
+									'''
 									slope, intercept, r_value, p_value, std_err = stats.linregress(time_,pers_)
 									pers_loc_sea_detrend = np.append(pers_loc_sea_detrend, pers_-(intercept+slope*time_)+np.nanmean(pers_))
 									slope, intercept, r_value, p_value, std_err = stats.linregress(time_,corWith_)
 									corWith_loc_sea_detrend = np.append(corWith_loc_sea_detrend, corWith_-(intercept+slope*time_)+np.nanmean(corWith_))
+									'''
 
 								################
 								# correlation longest
 								################
 
-								cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers_loc_sea_detrend,corWith_loc_sea_detrend)
+								cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
 
 
 
