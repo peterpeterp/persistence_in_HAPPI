@@ -63,8 +63,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 
 			cor = {}
 			for style in ['all','longest']:
-				for stat in ['corrcoef','p-value','mean_per_length','10','25','33','50','66','75','90','100','lr_slope','lr_intercept','lr_pvalue']:
+				for stat in ['corrcoef','p-value']:
 					cor[stat+'_'+style]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+			for stat in ['mean_per_length','10','25','33','50','66','75','90','100','lr_slope','lr_intercept','lr_pvalue']:
+				cor[stat]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 
 			for y in data.lat:
 				for x in data.lon:
