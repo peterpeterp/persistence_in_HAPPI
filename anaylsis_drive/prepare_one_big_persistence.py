@@ -54,8 +54,6 @@ for state,style in state_dict.items():
 		big_merge['run_id'] = da.read_nc(file_name)['period_season'][:,0:,:].copy()
 		big_merge['run_id'].values = i_run+1
 
-	asdasd
-
 	for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU','CGI','ALA']:
 		mask = masks[region][0:,:]
 		lats = np.where(np.nanmax(mask,axis=1)!=0)[0]
