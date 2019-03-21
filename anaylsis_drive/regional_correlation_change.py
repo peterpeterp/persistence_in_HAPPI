@@ -71,10 +71,11 @@ for scenario in ['All-Hist','Plus20-Future']:
 					pers_loc=data['period_length'][:,y,x].values
 					if pers_loc.sum() != 0:
 						run_loc = data['run_id'][:,y,x].values
-						run_loc = run_loc[run_loc<100]
-						pers_loc = data['period_length'][:,y,x].values[run_loc<100]
-						time_loc = data['period_midpoints'][:,y,x].values[run_loc<100]
-						monIndex_loc = data['period_monthly_index'][:,y,x].values[run_loc<100]
+						valid_runs = run_loc < 100
+						run_loc = run_loc[valid_runs]
+						pers_loc = data['period_length'][:,y,x].values[valid_runs]
+						time_loc = data['period_midpoints'][:,y,x].values[valid_runs]
+						monIndex_loc = data['period_monthly_index'][:,y,x].values[valid_runs]
 
 						corWith_loc = np.array([])
 						for run in range(100):
@@ -88,7 +89,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 						pers_loc=pers_loc[mask]
 						monIndex_loc=monIndex_loc[mask]
 						corWith_loc=corWith_loc[mask]
-						sea_loc=data['period_season'][:,y,x].values[run_loc<100][mask]
+						sea_loc=data['period_season'][:,y,x].values[valid_runs][mask]
 						run_loc=run_loc[mask]
 
 						if pers_loc.shape[0]>10:
