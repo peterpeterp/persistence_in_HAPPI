@@ -12,8 +12,8 @@ try:
 	print model,region
 
 except:
-	model = 'CAM4-2degree'
-	region = 'WNA'
+	model = 'ECHAM6-3-LR'
+	region = 'NHml'
 
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
@@ -62,14 +62,19 @@ for scenario in ['All-Hist','Plus20-Future']:
 
 	for corWith_name,details in corWith_dict.items():
 		print('*******************'+corWith_name)
-		corWith_full = da.read_nc(details['file'])[details['varname']]
-		corWith_run = da.read_nc(details['file'])['run_id']
+		nc_corWith = da.read_nc(details['file'])
+		nc_corWith.lat = np.round(nc_corWith.lat,04)
+		nc_corWith.lon = np.round(nc_corWith.lon,04)
+		corWith_full = nc_corWith[details['varname']]
+		corWith_run = nc_corWith['run_id']
 
 		# print(np.nanpercentile(corWith_full,range(101)))
 
 		for state,style in state_dict.items():
 			print('----------------------------'+state)
 			data = da.read_nc(working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
+			data.lat = np.round(data.lat,04)
+			data.lon = np.round(data.lon,04)
 
 			cor = {}
 			for style in ['all','longest']:
