@@ -108,6 +108,7 @@ for scenario in scenarios:
 	print(run_list)
 	for run in run_list:
 		if len(glob.glob('monEKE*'+run+'*'))==0:
+			print(run)
 			os.chdir('tmp')
 			out=os.system('rm *'+run+'*')
 			for var in ['ua','va']:
