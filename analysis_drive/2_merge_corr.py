@@ -62,7 +62,7 @@ regions = {'EAS':1,
 }
 
 
-for model in ['MIROC5','CAM4-2degree','ECHAM6-3-LR','NorESM1']:
+for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 	tmp_1 = {}
 	for state,style in state_dict.items():
 		tmp_2 = {}
@@ -82,6 +82,16 @@ for model in ['MIROC5','CAM4-2degree','ECHAM6-3-LR','NorESM1']:
 
 	# data = da.stack(tmp_1, axis='state', align=True)
 	da.Dataset(tmp_1).write_nc(working_path+'/cor_Summary_'+model+'.nc')
+
+	tmp = da.stack(tmp_1, axis='state', align=True)
+	summary = {}
+	summary['mean'] = tmp.ix[:,:,:,:,:,:,0,0].copy() *np.nan
+	summary['mean'].values = np.nanmean(tmp,axis=(-2,-1))
+
+
+
+
+	asdas
 
 
 
