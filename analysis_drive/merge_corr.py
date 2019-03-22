@@ -61,30 +61,27 @@ regions = {'EAS':1,
 			'ALA':13,
 }
 
-x = 0
-for state,style in state_dict.items():
-	for corWith_name in ['EKE','SPI']:
-		x+=1
-		patches, colors = [], []
-		for region,y in regions.items():
-			for model in ['MIROC5','ECHAM6-3-LR','CAM4-2degree','NorESM1']:
 
-				data = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist',region,state])+'.nc')
+for model in ['MIROC5','CAM4-2degree','ECHAM6-3-LR','NorESM1']:
+	tmp_1 = {}
+	for state,style in state_dict.items():
+		tmp_2 = {}
+		for corWith_name in ['EKE','SPI3']:
 
-				x_shi,y_shi = model_shifts[model]
-				polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
-				patches.append(polygon)
-				colors.append(np.nanmean(data['corrcoef_all']['JJA']))
+			hist = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc', align=True, axis='region')
+			hist.region = [dd.split('_')[-2] for dd in hist.region]
+			hist = da.stack(hist, axis='statistic', align=True )
 
-				asdas
+			fut = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'Plus20-Future','*',state])+'.nc', align=True, axis='region')
+			fut.region = [dd.split('_')[-2] for dd in fut.region]
+			fut = da.stack(fut, axis='statistic', align=True )
 
+			tmp_2[corWith_name] = da.stack((hist,fut), axis='scenario', keys=['All-Hist','Plus20-Future'])
 
+		tmp_1[state] = da.stack(tmp_2, axis='corWith', align=True)
 
-
-				data = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc', align=True, axis='region')
-				data.region = [dd.split('_')[-2] for dd in data.region]
-
-
+	# data = da.stack(tmp_1, axis='state', align=True)
+	da.Dataset(tmp_1).write_nc(working_path+'/cor_Summary_'+model+'.nc')
 
 
 
