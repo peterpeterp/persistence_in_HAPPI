@@ -54,10 +54,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 			'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
 			'varname':'SPI3'
 		},
-		# 'EKE':{
-		# 	'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
-		# 	'varname':'eke'
-		# }
+		'EKE':{
+			'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
+			'varname':'eke'
+		}
 	}
 
 	for corWith_name,details in corWith_dict.items():
