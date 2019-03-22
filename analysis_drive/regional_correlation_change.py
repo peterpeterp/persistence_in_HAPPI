@@ -50,10 +50,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 	print('__________'+scenario)
 
 	corWith_dict = {
-		'SPI3':{
-			'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
-			'varname':'SPI3'
-		},
+		# 'SPI3':{
+		# 	'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
+		# 	'varname':'SPI3'
+		# },
 		'EKE':{
 			'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
 			'varname':'eke'
