@@ -12,8 +12,8 @@ try:
 	print model,region
 
 except:
-	model = 'ECHAM6-3-LR'
-	region = 'NHml'
+	model = 'NorESM1'
+	region = 'CEU'
 
 try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')

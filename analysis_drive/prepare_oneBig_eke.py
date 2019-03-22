@@ -11,7 +11,7 @@ try:
 	print model,scenario
 
 except:
-	model = 'CAM4-2degree'
+	model = 'NorESM1'
 	scenario = 'All-Hist'
 
 try:
@@ -57,5 +57,13 @@ for region in ['EAS','TIB','CAS','WAS','MED','CEU','ENA','CNA','WNA','NAS','NEU'
 
 da.Dataset({key:val[:,35:60,:] for key,val in big_merge.items()}).write_nc(out_path+'_'.join(['EKE',model,scenario,'bigMerge','NHml'])+'.nc')
 
-del big_merge
-gc.collect()
+
+
+
+
+
+
+
+
+# del big_merge
+# gc.collect()

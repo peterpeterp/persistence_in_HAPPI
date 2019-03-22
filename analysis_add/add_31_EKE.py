@@ -107,7 +107,7 @@ for scenario in scenarios:
 	run_list=model_dict[model]['runs'][scenario]
 	print(run_list)
 	for run in run_list:
-		if len(glob.glob('monEKE*'+run+'*'))==0 or overwrite:
+		if len(glob.glob('monEKE*'+run+'*'))==0:
 			os.chdir('tmp')
 			out=os.system('rm *'+run+'*')
 			for var in ['ua','va']:
