@@ -6,22 +6,21 @@ import dimarray as da
 import subprocess as sub
 import scipy.stats as stats
 
-sys.path.append('/Users/peterpfleiderer/Projects/Persistence/persistence_in_models/')
-import __settings
-model_dict=__settings.model_dict
-
-
 model='EOBS'
 scenario='All-Hist'
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
+try:
+	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
+	corWith_file = '../data/ERA-Interim/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc'
+except:
+	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
+	corWith_file = 'data/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc'
+
 working_path='data/'+model+'/'
 
-for pers_name,pers_file in zip(['5mm','dry'], [working_path+scenario+'/rr_0.50deg_reg_merged_period_5mm.nc',working_path+scenario+'/rr_0.50deg_reg_merged_period_dry.nc']):
-	corWith_file = '../data/ERA-Interim/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc'
-	# corWith_file = '../data/observations/EOBS/rr_0p5_1950-2018_mon_SPI3.nc'
+for pers_name,pers_file in zip(['dry-warm','warm'], ['cpd_0.50deg_reg_merged_period_dry-warm.nc','tg_0.50deg_reg_merged_period_warm.nc']):
 
-	data =da.read_nc(pers_file)
+	data =da.read_nc(working_path+scenario+'/'+pers_file)
 	corWith_full = da.read_nc(corWith_file)['eke']
 	corWith_name = 'eke'
 
