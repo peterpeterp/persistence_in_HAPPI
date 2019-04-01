@@ -119,7 +119,7 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 						summary['agree-signi'][state,corWith,scenario,region,'corrcoef_all',season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
 
 						vals = tmp[state,corWith,scenario,region,'corrcoef_longest',season,:,:]
-						signi = tmp[state,corWith,scenario,',regionp-value_longest',season,:,:]
+						signi = tmp[state,corWith,scenario,region,'p-value_longest',season,:,:]
 						signi = signi[np.isfinite(vals)].values
 						vals = vals[np.isfinite(vals)].values
 
