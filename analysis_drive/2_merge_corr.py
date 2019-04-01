@@ -86,7 +86,7 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 				fut[region].lon = np.round(fut[region].lon,02)
 			fut = da.stack(fut, align=True, axis='region')
 
-			tmp_2[corWith_name] = da.stack((hist,fut), axis='scenario', keys=['All-Hist','Plus20-Future'])
+			tmp_2[corWith_name] = da.stack((hist,fut), axis='scenario', keys=['All-Hist','Plus20-Future'], align=True)
 
 
 		tmp_1[state] = da.stack(tmp_2, axis='corWith', align=True)
@@ -110,7 +110,7 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 				for region in tmp.region:
 					for season in tmp.season:
 						vals = tmp[state,corWith,scenario,region,'corrcoef_all',season,:,:]
-						signi = tmp[state,corWith,scenario,',regionp-value_all',season,:,:]
+						signi = tmp[state,corWith,scenario,region,'p-value_all',season,:,:]
 						signi = signi[np.isfinite(vals)].values
 						vals = vals[np.isfinite(vals)].values
 
