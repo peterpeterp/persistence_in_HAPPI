@@ -68,15 +68,20 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 		tmp_2 = {}
 		for corWith_name in ['EKE','SPI3']:
 
-			hist = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc', align=True, axis='region')
-			hist.region = [dd.split('_')[-2] for dd in hist.region]
-			hist = da.stack(hist, axis='statistic', align=True )
+			hist_files = glob.glob(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc')
+			hist = {}
+			for hist_file in hist_files:
+				hist[hist_file.split('_')[-2]] = da.stack(da.read_nc(hist_file),axis='statistic',align=True)
+			hist = da.stack(hist, align=True, axis='region')
 
-			fut = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'Plus20-Future','*',state])+'.nc', align=True, axis='region')
-			fut.region = [dd.split('_')[-2] for dd in fut.region]
-			fut = da.stack(fut, axis='statistic', align=True )
+			fut_files = glob.glob(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'Plus20-Future','*',state])+'.nc')
+			fut = {}
+			for fut_file in fut_files:
+				fut[fut_file.split('_')[-2]] = da.stack(da.read_nc(fut_file),axis='statistic',align=True)
+			fut = da.stack(fut, align=True, axis='region')
 
 			tmp_2[corWith_name] = da.stack((hist,fut), axis='scenario', keys=['All-Hist','Plus20-Future'])
+
 
 		tmp_1[state] = da.stack(tmp_2, axis='corWith', align=True)
 
