@@ -62,7 +62,7 @@ regions = {'EAS':1,
 }
 
 
-for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
+for model in ['NorESM1','CAM4-2degree','MIROC5','ECHAM6-3-LR']:
 	tmp_1 = {}
 	for state,style in state_dict.items():
 		tmp_2 = {}
