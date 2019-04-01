@@ -16,6 +16,8 @@ except:
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
 	corWith_file = 'data/rr_0p5_1950-2018_mon_SPI3.nc'
 
+working_path='data/'+model+'/'
+
 for pers_name,pers_file in zip(['dry-warm','warm'], ['cpd_0.50deg_reg_merged_period_dry-warm.nc','tg_0.50deg_reg_merged_period_warm.nc']):
 
 	data =da.read_nc(working_path+scenario+'/'+pers_file)
