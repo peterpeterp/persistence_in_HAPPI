@@ -28,64 +28,23 @@ os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 
 working_path='/p/tmp/pepflei/HAPPI/raw_data/reg_cor/'
 
-model_shifts = {
-	'CAM4-2degree':(-0.25,-0.25),
-	'ECHAM6-3-LR':(+0.25,-0.25),
-	'MIROC5':(+0.25,+0.25),
-	'NorESM1':(-0.25,+0.25),
-}
-
-x_wi = 0.25
-y_wi = 0.25
-
 state_dict = {
 	'warm':'tas',
-	# 'dry':'pr',
+	'dry':'pr',
 	'5mm':'pr',
-	# '10mm':'pr',
 	'dry-warm':'cpd',
 	}
 
-regions = {'EAS':1,
-			'TIB':2,
-			'CAS':3,
-			'WAS':4,
-			'MED':5,
-			'CEU':6,
-			'ENA':7,
-			'CNA':8,
-			'WNA':9,
-			'NAS':10,
-			'NEU':11,
-			'CGI':12,
-			'ALA':13,
-}
+all_files = glob.glob('reg_cor/CAM4-2degree/cor_EKE*All-Hist*_warm*')
+tmp = {}
+for file_name in all_files:
+	region = file_name.split('_')[-2]
+	if region != 'NHml':
+		tmp[region] = da.stack(da.read_nc(file_name),axis='statistic',align=True)
+tmp = da.stack(tmp, align=True, axis='region')
 
-x = 0
-for state,style in state_dict.items():
-	for corWith_name in ['EKE','SPI']:
-		x+=1
-		patches, colors = [], []
-		for region,y in regions.items():
-			for model in ['MIROC5','ECHAM6-3-LR','CAM4-2degree','NorESM1']:
-
-				data = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist',region,state])+'.nc')
-
-				x_shi,y_shi = model_shifts[model]
-				polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
-				patches.append(polygon)
-				colors.append(np.nanmean(data['corrcoef_all']['JJA']))
-
-				asdas
-
-
-
-
-				data = da.read_nc(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc', align=True, axis='region')
-				data.region = [dd.split('_')[-2] for dd in data.region]
-
-
-
+merged = tmp['CEU'].copy() * np.nan
+merged.values = np.nanmean(tmp,axis=0)
 
 
 

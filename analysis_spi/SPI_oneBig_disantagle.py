@@ -4,29 +4,6 @@ from netCDF4 import Dataset,num2date
 import dimarray as da
 import subprocess as sub
 
-def wait_timeout(proc, seconds):
-	"""Wait for a process to finish, or raise exception after timeout"""
-	start = time.time()
-	end = start + seconds
-	interval = min(seconds / 1000.0, .25)
-
-	while True:
-		result = proc.poll()
-		if result is not None:
-			return result
-		if time.time() >= end:
-			os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-			return 'failed'
-		time.sleep(interval)
-
-
-def try_several_times(command,trials=1,seconds=60):
-	for trial in range(trials):
-		proc=sub.Popen(command,stdout=sub.PIPE,shell=True, preexec_fn=os.setsid)
-		result=wait_timeout(proc,seconds)
-		if result!='failed':
-			break
-	return(result)
 
 sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
 sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
@@ -38,7 +15,7 @@ try:
 	print model
 
 except:
-	model = 'CAM4-2degree'
+	model = 'NorESM1'
 
 try:
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')

@@ -11,7 +11,7 @@ try:
 	print model,scenario
 
 except:
-	model = 'CAM4-2degree'
+	model = 'NorESM1'
 	scenario = 'All-Hist'
 
 try:

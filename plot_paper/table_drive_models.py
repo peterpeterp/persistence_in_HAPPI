@@ -25,6 +25,25 @@ cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", [sns.color_palett
 
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
+def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.5,0.5)):
+	patches = []
+	colors = []
+	ax.axvline(x-0.5,color='k')
+	ax.text(x,13.7,"\n".join(textwrap.wrap(label,15)),ha='center',va='bottom',rotation=90,fontsize=8)
+	for region,y in regions.items():
+		for model in model_shifts.keys():
+			x_shi,y_shi = model_shifts[model]
+			polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
+
+			if np.isfinite(var[model,region]):
+				patches.append(polygon)
+				colors.append(var[model,region])
+
+	p = PatchCollection(patches, cmap=matplotlib.cm.RdBu_r, alpha=1)
+	p.set_array(np.array(colors))
+	p.set_clim(c_range)
+	ax.add_collection(p)
+
 model_shifts = {
 	'CAM4-2degree':(-0.25,-0.25),
 	'ECHAM6-3-LR':(+0.25,-0.25),
@@ -35,39 +54,17 @@ model_shifts = {
 x_wi = 0.25
 y_wi = 0.25
 
-def plot_column(ax,x,var, signi=None, c_range=(-0.1,0.1), label='label'):
-	ax.axvline(x-0.5,color='k')
-	ax.text(x,13.7,"\n".join(textwrap.wrap(label,15)),ha='center',va='bottom',rotation=90,fontsize=8)
-	patches = []
-	colors = []
-	for y,region in zip(np.arange(0.5,len(regions)+0.5),regions):
-		for model in var.model:
-			x_shi,y_shi = model_shifts[model]
-			polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
-			patches.append(polygon)
-			colors.append(var[model,region])
-			if signi is not None:
-				if signi[model,region] > 0.9:
-					ax.plot(x+x_shi,y+y_shi,'*k')
-
-	p = PatchCollection(patches, cmap=matplotlib.cm.RdBu_r, alpha=1)
-	p.set_array(np.array(colors))
-	p.set_clim(c_range)
-	ax.add_collection(p)
-
-	return ax
-
 regions = {'EAS':1,
 			'TIB':2,
 			'CAS':3,
 			'WAS':4,
 			'MED':5,
 			'CEU':6,
-			'ENA':7,
-			'CNA':8,
-			'WNA':9,
-			'NAS':10,
-			'NEU':11,
+			'NEU':7,
+			'NAS':8,
+			'ENA':9,
+			'CNA':10,
+			'WNA':11,
 			'CGI':12,
 			'ALA':13,
 }
@@ -81,26 +78,27 @@ for region,y_reg in regions.items():
 	ax.text(0,y_reg,region,va='center')
 ax.axhline(13+0.5,color='k')
 
-summary = da.read_nc('data/driver_summary/*',align=True,axis='model')
-summary.model = [mm.split('_')[-1] for mm in summary.model]
+summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 
-ax = plot_column(ax,2,var=summary['mean'][:,'warm','EKE','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'warm','EKE','All-Hist',:,'corrcoef_all','JJA'], label='warm - EKE corr')
+x=1
+for state in ['warm']:	#,'dry','dry-warm','5mm'
+	for corWith in ['EKE','SPI3']:
+		x += 1
+		plot_model_column(ax,x,summary['All-Hist',:,state,corWith,:,'corrcoef_all','JJA'], label=corWith+' '+state+' cor')
 
-var = summary['mean'][:,'warm','EKE','Plus20-Future',:,'mean_EKE','JJA'] - summary['mean'][:,'warm','EKE','All-Hist',:,'mean_EKE','JJA']
-ax = plot_column(ax,3,var=var, c_range=(-0.001,0.001), label='cahnge EKE')
+		x += 1
+		var = summary['Plus20-Future',:,state,corWith,:,'mean_'+corWith,'JJA'] - summary['All-Hist',:,state,corWith,:,'mean_'+corWith,'JJA']
+		plot_model_column(ax,x,var,label = 'change '+corWith)
 
+		x += 1
+		diff_cor = summary['Plus20-Future',:,state,corWith,:,'mean_'+corWith,'JJA']  - summary['All-Hist',:,state,corWith,:,'mean_'+corWith,'JJA']
+		var = diff_cor / summary['All-Hist',:,state,corWith,:,'lr_slope','JJA']
+		asdad
+		plot_model_column(ax,x,var, label='change '+state+' due to '+corWith)
 
-ax = plot_column(ax,12,var=summary['mean'][:,'warm','SPI3','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'warm','SPI3','All-Hist',:,'corrcoef_all','JJA'], label='warm - SPI3 corr')
-
-
-ax = plot_column(ax,5,var=summary['mean'][:,'dry-warm','EKE','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'dry-warm','EKE','All-Hist',:,'corrcoef_all','JJA'], label='dry-warm - EKE corr')
-
-ax = plot_column(ax,6,var=summary['mean'][:,'dry-warm','SPI3','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'dry-warm','SPI3','All-Hist',:,'corrcoef_all','JJA'], label='dry-warm - SPI3 corr')
-
-
-ax = plot_column(ax,8,var=summary['mean'][:,'5mm','EKE','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'5mm','EKE','All-Hist',:,'corrcoef_all','JJA'], label='5mm - EKE corr')
-
-ax = plot_column(ax,9,var=summary['mean'][:,'5mm','SPI3','All-Hist',:,'corrcoef_all','JJA'], signi=summary['agree-signi'][:,'5mm','SPI3','All-Hist',:,'corrcoef_all','JJA'], label='5mm - SPI3 corr')
+		x += 1
+		var = summary['Plus20-Future',:,state,corWith,:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,corWith,:,'mean_'+state,'JJA']
+		plot_model_column(ax,x,var,label = 'change '+state)
 
 
 ax.set_xlim(0,15)

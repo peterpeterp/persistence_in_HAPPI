@@ -12,7 +12,7 @@ try:
 	print model,region
 
 except:
-	model = 'CAM4-2degree'
+	model = 'NorESM1'
 	region = 'CEU'
 
 try:
@@ -60,10 +60,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 			'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
 			'varname':'SPI3'
 		},
-		'EKE':{
-			'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
-			'varname':'eke'
-		}
+		# 'EKE':{
+		# 	'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
+		# 	'varname':'eke'
+		# }
 	}
 
 	for corWith_name,details in corWith_dict.items():
@@ -109,6 +109,8 @@ for scenario in ['All-Hist','Plus20-Future']:
 							statistics['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_full[:,y,x].values[indices])
 							for qu in [10,25,33,50,66,75,90,100]:
 								statistics[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_full[:,y,x].values[indices],qu)
+
+						# print(np.nanmean(corWith_full[:,y,x].values[indices]))
 
 						run_loc = data['run_id'][:,y,x].values
 						valid_runs = run_loc < 100
