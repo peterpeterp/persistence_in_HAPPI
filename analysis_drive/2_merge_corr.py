@@ -71,13 +71,19 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 			hist_files = glob.glob(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'All-Hist','*',state])+'.nc')
 			hist = {}
 			for hist_file in hist_files:
-				hist[hist_file.split('_')[-2]] = da.stack(da.read_nc(hist_file),axis='statistic',align=True)
+				region = hist_file.split('_')[-2]
+				hist[region] = da.stack(da.read_nc(hist_file),axis='statistic',align=True)
+				hist[region].lat = np.round(hist[region].lat,02)
+				hist[region].lon = np.round(hist[region].lon,02)
 			hist = da.stack(hist, align=True, axis='region')
 
 			fut_files = glob.glob(working_path+model+'/cor_'+corWith_name+'_'+'_'.join([model,'Plus20-Future','*',state])+'.nc')
 			fut = {}
 			for fut_file in fut_files:
-				fut[fut_file.split('_')[-2]] = da.stack(da.read_nc(fut_file),axis='statistic',align=True)
+				region = fut_file.split('_')[-2]
+				fut[region] = da.stack(da.read_nc(fut_file),axis='statistic',align=True)
+				fut[region].lat = np.round(fut[region].lat,02)
+				fut[region].lon = np.round(fut[region].lon,02)
 			fut = da.stack(fut, align=True, axis='region')
 
 			tmp_2[corWith_name] = da.stack((hist,fut), axis='scenario', keys=['All-Hist','Plus20-Future'])
@@ -96,39 +102,39 @@ for model in ['CAM4-2degree','MIROC5','ECHAM6-3-LR','NorESM1']:
 	summary['std'] = tmp.ix[:,:,:,:,:,:,0,0].copy() *np.nan
 	summary['std'].values = np.nanstd(tmp,axis=(-2,-1))
 
-	summary['agree'] = tmp[:,:,:,['corrcoef_all','corrcoef_longest','lr_slope'],:,:].ix[:,:,:,:,:,:,0,0].copy() * 0
-	summary['agree-signi'] = tmp[:,:,:,['corrcoef_all','corrcoef_longest','lr_slope'],:,:].ix[:,:,:,:,:,:,0,0].copy() * 0
+	summary['agree'] = tmp[:,:,:,:,['corrcoef_all','corrcoef_longest','lr_slope'],:].ix[:,:,:,:,:,:,0,0].copy() * 0
+	summary['agree-signi'] = tmp[:,:,:,:,['corrcoef_all','corrcoef_longest','lr_slope'],:].ix[:,:,:,:,:,:,0,0].copy() * 0
 	for state in tmp.state:
 		for corWith in tmp.corWith:
 			for scenario in tmp.scenario:
 				for region in tmp.region:
 					for season in tmp.season:
-						vals = tmp[state,corWith,scenario,'corrcoef_all',region,season,:,:]
-						signi = tmp[state,corWith,scenario,'p-value_all',region,season,:,:]
+						vals = tmp[state,corWith,scenario,region,'corrcoef_all',season,:,:]
+						signi = tmp[state,corWith,scenario,',regionp-value_all',season,:,:]
 						signi = signi[np.isfinite(vals)].values
 						vals = vals[np.isfinite(vals)].values
 
-						summary['agree'][state,corWith,scenario,'corrcoef_all',region,season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
+						summary['agree'][state,corWith,scenario,region,'corrcoef_all',season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
 
-						summary['agree-signi'][state,corWith,scenario,'corrcoef_all',region,season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
+						summary['agree-signi'][state,corWith,scenario,region,'corrcoef_all',season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
 
-						vals = tmp[state,corWith,scenario,'corrcoef_longest',region,season,:,:]
-						signi = tmp[state,corWith,scenario,'p-value_longest',region,season,:,:]
+						vals = tmp[state,corWith,scenario,region,'corrcoef_longest',season,:,:]
+						signi = tmp[state,corWith,scenario,',regionp-value_longest',season,:,:]
 						signi = signi[np.isfinite(vals)].values
 						vals = vals[np.isfinite(vals)].values
 
-						summary['agree'][state,corWith,scenario,'corrcoef_longest',region,season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
+						summary['agree'][state,corWith,scenario,region,'corrcoef_longest',season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
 
-						summary['agree-signi'][state,corWith,scenario,'corrcoef_longest',region,season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
+						summary['agree-signi'][state,corWith,scenario,region,'corrcoef_longest',season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
 
-						vals = tmp[state,corWith,scenario,'lr_slope',region,season,:,:]
-						signi = tmp[state,corWith,scenario,'lr_pvalue',region,season,:,:]
+						vals = tmp[state,corWith,scenario,region,'lr_slope',season,:,:]
+						signi = tmp[state,corWith,scenario,region,'lr_pvalue',season,:,:]
 						signi = signi[np.isfinite(vals)].values
 						vals = vals[np.isfinite(vals)].values
 
-						summary['agree'][state,corWith,scenario,'lr_slope',region,season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
+						summary['agree'][state,corWith,scenario,region,'lr_slope',season] = np.sum(np.sign(vals) == np.sign(vals.mean())) / float(vals.shape[0])
 
-						summary['agree-signi'][state,corWith,scenario,'lr_slope',region,season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
+						summary['agree-signi'][state,corWith,scenario,region,'lr_slope',season] = np.sum((np.sign(vals) == np.sign(vals.mean())) & (signi<0.05)) / float(vals.shape[0])
 
 	da.Dataset(summary).write_nc(working_path+'/cor_Summary_'+model+'.nc')
 
