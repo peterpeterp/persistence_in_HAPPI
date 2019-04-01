@@ -27,11 +27,11 @@ except:
 	home_path = '/global/homes/p/pepflei/persistence_in_models/'
 
 state_dict = {
-	'warm':'tas',
-	# 'dry':'pr',
-	'5mm':'pr',
+	# 'warm':'tas',
+	'dry':'pr',
+	# '5mm':'pr',
 	# '10mm':'pr',
-	'dry-warm':'cpd',
+	# 'dry-warm':'cpd',
 	}
 
 
