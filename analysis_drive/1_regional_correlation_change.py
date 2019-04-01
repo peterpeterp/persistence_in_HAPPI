@@ -12,7 +12,7 @@ try:
 	print model,region
 
 except:
-	model = 'NorESM1'
+	model = 'CAM4-2degree'
 	region = 'CEU'
 
 try:
@@ -27,20 +27,26 @@ except:
 	home_path = '/global/homes/p/pepflei/persistence_in_models/'
 
 state_dict = {
-	# 'warm':'tas',
+	'warm':'tas',
 	'dry':'pr',
-	# '5mm':'pr',
-	# '10mm':'pr',
-	# 'dry-warm':'cpd',
+	'5mm':'pr',
+	'dry-warm':'cpd',
 	}
 
 seasons={'MAM':0, 'JJA':1, 'SON':2, 'DJF':3}
 season_indices_monthly = {}
 for season_name,months in {'MAM':[2,3,4], 'JJA':[5,6,7], 'SON':[8,9,10], 'DJF':[11,0,1]}.items():
-	tmp = np.zeros([120],np.bool)
+	tmp = np.zeros([12000],np.bool)
 	for mon in months:
 		tmp[mon::12] = 1
 	season_indices_monthly[season_name] = tmp
+
+import __settings
+model_dict=__settings.model_dict
+reg_mask = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')[region][0:,:]
+reg_mask.lat = np.round(reg_mask.lat,02)
+reg_mask.lon = np.round(reg_mask.lon,02)
+
 
 ##############
 # correaltions
@@ -54,17 +60,17 @@ for scenario in ['All-Hist','Plus20-Future']:
 			'file':working_path+'/'+'_'.join(['SPI',model,scenario,'bigMerge',region])+'.nc',
 			'varname':'SPI3'
 		},
-		# 'EKE':{
-		# 	'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
-		# 	'varname':'eke'
-		# }
+		'EKE':{
+			'file':working_path+'/'+'_'.join(['EKE',model,scenario,'bigMerge',region])+'.nc',
+			'varname':'eke'
+		}
 	}
 
 	for corWith_name,details in corWith_dict.items():
 		print('*******************'+corWith_name)
 		nc_corWith = da.read_nc(details['file'])
-		nc_corWith.lat = np.round(nc_corWith.lat,04)
-		nc_corWith.lon = np.round(nc_corWith.lon,04)
+		nc_corWith.lat = np.round(nc_corWith.lat,02)
+		nc_corWith.lon = np.round(nc_corWith.lon,02)
 		corWith_full = nc_corWith[details['varname']]
 		corWith_run = nc_corWith['run_id']
 
@@ -73,32 +79,36 @@ for scenario in ['All-Hist','Plus20-Future']:
 		for state,style in state_dict.items():
 			print('----------------------------'+state)
 			data = da.read_nc(working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc')
-			data.lat = np.round(data.lat,04)
-			data.lon = np.round(data.lon,04)
+			data.lat = np.round(data.lat,02)
+			data.lon = np.round(data.lon,02)
 
 			cor = {}
 			for style in ['all','longest']:
 				for stat in ['corrcoef','p-value']:
 					cor[stat+'_'+style]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
-			for xxx in [corWith_name,state]:
-				for stat in ['mean','10','25','33','50','66','75','90','100']:
-					cor[stat+'_'+xxx]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 			for stat in ['lr_intercept','lr_slope','lr_pvalue']:
 				cor[stat]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+
+			statistics = {}
+			for xxx in [corWith_name,state]:
+				for stat in ['mean','10','25','33','50','66','75','90','100']:
+					statistics[stat+'_'+xxx]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+
 
 			for y in data.lat:
 				for x in data.lon:
 					pers_loc=data['period_length'][:,y,x].values
 					# print(np.nanpercentile(pers_loc,range(101)))
-					if pers_loc.sum() != 0:
+					if pers_loc.sum() != 0 and reg_mask[y,x] != 0:
+						print(y,x)
 
 						################
 						# mean of corwith
 						################
 						for season_name,indices in season_indices_monthly.items():
-							cor['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_run[indices,y,x].values)
+							statistics['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_full[:,y,x].values[indices])
 							for qu in [10,25,33,50,66,75,90,100]:
-								cor[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_run[indices,y,x].values,qu)
+								statistics[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_full[:,y,x].values[indices],qu)
 
 						run_loc = data['run_id'][:,y,x].values
 						valid_runs = run_loc < 100
@@ -126,7 +136,6 @@ for scenario in ['All-Hist','Plus20-Future']:
 							valid_season = sea_loc==season_id
 							pers_loc_sea = pers_loc[valid_season]
 							if pers_loc_sea.shape[0]>10:
-								print(y,x)
 								time_loc_sea = time_loc[valid_season]
 								monIndex_loc_sea = monIndex_loc[valid_season]
 								run_loc_sea = run_loc[valid_season]
@@ -135,9 +144,9 @@ for scenario in ['All-Hist','Plus20-Future']:
 								################
 								# mean
 								################
-								cor['mean_'+state][season_name,y,x] = np.nanmean(pers_loc_sea)
+								statistics['mean_'+state][season_name,y,x] = np.nanmean(pers_loc_sea)
 								for qu in [10,25,33,50,66,75,90,100]:
-									cor[str(qu)+'_'+state][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
+									statistics[str(qu)+'_'+state][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
 
 								'''
 								pers_loc_sea_detrend, corWith_loc_sea_detrend = np.array([]), np.array([])
@@ -203,6 +212,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 				cor['corrcoef_all'].correlated_with = details['file']
 				da.Dataset(cor).write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
+				da.Dataset(statistics).write_nc(working_path.replace('reg_merge','reg_stats')+'/stats_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
 '''
 
