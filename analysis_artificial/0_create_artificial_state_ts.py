@@ -32,6 +32,7 @@ os.system('mkdir -p '+in_path+scenario.replace('Future','Artificial-'+str(seed))
 
 import __settings
 model_dict=__settings.model_dict
+landmask = da.read_nc('masks/landmask_'+model_dict[model]['grid']+'.nc')['landmask']
 
 state_count_fut = da.read_nc('/p/projects/ikiimp/HAPPI/HAPPI_Peter/data/'+model+'/state_stats/pr_*'+scenario+'*')
 state_count_hist = da.read_nc('/p/projects/ikiimp/HAPPI/HAPPI_Peter/data/'+model+'/state_stats/pr_*All-Hist*')
@@ -51,7 +52,9 @@ for sea in seasons.keys():
 	season[np.where((month==seasons[sea]['months'][0]) | (month==seasons[sea]['months'][1]) | (month==seasons[sea]['months'][2]) )[0]]=seasons[sea]['index']
 sea_indices = {}
 for sea in range(4):
-	sea_indices[sea] = np.where(season==sea)[0]
+	sea_indices[sea] = np.array([],np.int)
+	for i in range(100):
+		sea_indices[sea] = np.append(sea_indices[sea],np.where(season==sea)[0] + i*season.shape[0])
 
 nc = Dataset(hist_files[0])
 lat = nc.variables['lat'][:]
@@ -66,7 +69,7 @@ for file_name in hist_files:
 	lat_v = dataset.createVariable('lat', np.float32,('lat',)); lat_v[:] = lat_nh
 	lon_v = dataset.createVariable('lon', np.float32,('lon',))
 
-	for key in ['dry','wet']:
+	for key in ['dry','5mm']:
 		globals()[key] = dataset.createVariable(key, np.int8,('time','lat','lon'))
 
 	dataset.close()
@@ -76,43 +79,42 @@ for file_name in hist_files:
 
 
 for yi,y in enumerate(lat_nh):
-	big_merge = {}
+	hist_merge = {}
 	nc = Dataset(hist_files[0])
-	for key in ['dry','wet']:
-		big_merge[key] = nc[key][:,yi,:]
-	big_merge['run_id'] = nc[key][:,yi,:].copy()
-	big_merge['run_id'][:] = 0
-
+	for key in ['dry','5mm']:
+		hist_merge[key] = nc[key][:,yi,:]
+	hist_merge['run_id'] = nc[key][:,yi,:].copy()
+	hist_merge['run_id'][:] = 0
 
 	for i_run,file_name in enumerate(hist_files[1:]):
 		print(file_name)
 		nc = Dataset(file_name)
-		for key in ['dry','wet']:
-			big_merge[key] = np.concatenate((big_merge[key], nc[key][:,yi,:]))
+		for key in ['dry','5mm']:
+			hist_merge[key] = np.concatenate((hist_merge[key], nc[key][:,yi,:]))
 		tmp = nc[key][:,yi,:].copy()
 		tmp[:] = i_run+1
-		big_merge['run_id'] = np.concatenate((big_merge['run_id'], tmp))
+		hist_merge['run_id'] = np.concatenate((hist_merge['run_id'], tmp))
 
 	for xi,x in enumerate(nc.variables['lon'][:]):
-		print(xi)
-		orig_dry = big_merge['dry'][:,xi]
-		orig_wet = big_merge['wet'][:,xi]
+		if landmask[y,x] == 1:
+			print(xi)
+			orig_dry = hist_merge['dry'][:,xi].copy()
+			orig_wet = hist_merge['5mm'][:,xi].copy()
 
-		arti_dry = orig_dry.copy()
-		arti_wet = orig_wet.copy()
+			arti_dry = hist_merge['dry'][:,xi].copy()
+			arti_wet = hist_merge['5mm'][:,xi].copy()
 
-		if np.sum(orig_dry) > 10 and np.sum(orig_wet) > 10:
 			for sea,season_name in {0:'MAM',1:'JJA',2:'SON',3:'DJF'}.items():
-				dry_orig_sea = orig_dry[sea_indices[sea]]
-				wet_orig_sea = orig_wet[sea_indices[sea]]
 
 				dry_change = int(state_count_fut['dry'][season_name,y,x] - state_count_hist['dry'][season_name,y,x])
 				wet_change = int(state_count_fut['5mm'][season_name,y,x] - state_count_hist['5mm'][season_name,y,x])
 
+				print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
+
 				if dry_change > 0 and wet_change > 0:
 					# identify candidates
-					candidates = np.where((dry_orig_sea!=1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,wet_change+dry_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,wet_change+dry_change))
 
 					# add wet states
 					random_wet = random_[:wet_change]
@@ -121,71 +123,79 @@ for yi,y in enumerate(lat_nh):
 					# add wet states
 					random_dry = random_[wet_change:]
 					arti_dry[sea_indices[sea][random_dry]] = 1
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change > 0 and wet_change < 0:
 					# remove wet states
-					candidates = np.where((wet_orig_sea==1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*wet_change)
+					candidates = np.where((orig_wet[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*wet_change))
 					arti_wet[sea_indices[sea][random_]] = 0
 
 					# add dry states
-					candidates = np.where((arti_dry[sea_indices[sea]]!=1) & (dry_orig_sea!=1))[0]
-					random_ = random.sample(candidates,dry_change)
+					candidates = np.where((arti_dry[sea_indices[sea]]!=1) & (orig_dry[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,dry_change))
 					arti_dry[sea_indices[sea][random_]] = 1
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change < 0 and wet_change > 0:
 					# remove dry states
-					candidates = np.where((dry_orig_sea==1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*dry_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*dry_change))
 					arti_dry[sea_indices[sea][random_]] = 0
 
 					# add wet states
-					candidates = np.where((arti_dry[sea_indices[sea]]!=1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,wet_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,wet_change))
 					arti_wet[sea_indices[sea][random_]] = 1
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change < 0 and wet_change < 0:
 					# remove wet states
-					candidates = np.where((wet_orig_sea==1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*wet_change)
+					candidates = np.where((orig_wet[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*wet_change))
 					arti_wet[sea_indices[sea][random_]] = 0
 
 					# remove dry states
-					candidates = np.where((dry_orig_sea==1) & (dry_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*dry_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]==1) & (orig_dry[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*dry_change))
 					arti_dry[sea_indices[sea][random_]] = 0
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change > 0 and wet_change == 0:
 					# add dry states
-					candidates = np.where((dry_orig_sea!=1) & (dry_orig_sea!=1))[0]
-					random_ = random.sample(candidates,dry_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_dry[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,dry_change))
 					arti_dry[sea_indices[sea][random_]] = 1
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change < 0 and wet_change == 0:
 					# remove dry states
-					candidates = np.where((dry_orig_sea==1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*dry_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*dry_change))
 					arti_dry[sea_indices[sea][random_]] = 0
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change == 0 and wet_change > 0:
 					# add wet states
-					candidates = np.where((dry_orig_sea!=1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,wet_change)
+					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,wet_change))
 					arti_wet[sea_indices[sea][random_]] = 1
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change == 0 and wet_change < 0:
 					# remove wet states
-					candidates = np.where((wet_orig_sea==1) & (wet_orig_sea!=1))[0]
-					random_ = random.sample(candidates,-1*wet_change)
+					candidates = np.where((orig_wet[sea_indices[sea]]==1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					random_ = np.array(random.sample(candidates,-1*wet_change))
 					arti_wet[sea_indices[sea][random_]] = 0
+					print(np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1))
 
 				elif dry_change == 0 and wet_change == 0:
 					pass
 
 
-				if arti_dry[sea_indices[sea]].sum() - dry_orig_sea.sum() != dry_change:
+				if np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1) != dry_change:
 					asdasd
-				if arti_wet[sea_indices[sea]].sum() - wet_orig_sea.sum() != wet_change:
+				if np.sum(arti_wet[sea_indices[sea]]==1) - np.sum(orig_wet[sea_indices[sea]]==1) != wet_change:
 					asdasd
 
 				gc.collect()
@@ -193,8 +203,8 @@ for yi,y in enumerate(lat_nh):
 		for i_run,file_name in enumerate(hist_files):
 			dataset = Dataset(file_name.replace('All-Hist',scenario.replace('Future','Artificial-'+str(seed))), 'a', format='NETCDF4_CLASSIC')
 
-			dataset.variables['dry'][:,yi,xi] = arti_dry[big_merge['run_id'][:,0] == i_run]
-			dataset.variables['wet'][:,yi,xi] = arti_wet[big_merge['run_id'][:,0] == i_run]
+			dataset.variables['dry'][:,yi,xi] = arti_dry[hist_merge['run_id'][:,0] == i_run]
+			dataset.variables['5mm'][:,yi,xi] = arti_wet[hist_merge['run_id'][:,0] == i_run]
 			dataset.variables['lon'][xi] = x
 			dataset.close()
 
