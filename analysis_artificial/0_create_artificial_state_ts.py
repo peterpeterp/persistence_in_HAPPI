@@ -27,7 +27,8 @@ except:
 	os.chdir('/global/homes/p/pepflei/')
 
 
-os.system('mkdir -p '+in_path+scenario.replace('Future','Artificial-'+str(seed))+'/pr/')
+os.system('mkdir '+in_path+scenario.replace('Future','Artificial-'+str(seed)))
+os.system('mkdir '+in_path+scenario.replace('Future','Artificial-'+str(seed))+'/pr/')
 
 import __settings
 model_dict=__settings.model_dict
