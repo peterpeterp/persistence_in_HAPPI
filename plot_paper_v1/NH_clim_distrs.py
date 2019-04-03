@@ -173,19 +173,30 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 
 plt.annotate('d', xy=(0.03, 0.93), xycoords='figure fraction', fontsize=15,fontweight='bold', backgroundcolor='w')
 plt.savefig('plots/paper/NH_clim_distrs.png',dpi=600)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #
+#
+# def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+# 	subax.set_yscale('log')
+# 	subax.set_xlim((0,21))
+# 	subax.set_ylim((0.01,100))
+# 	subax.set_xticks([7,14,21])
+# 	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=8)
+# 	subax.set_yticks([0.01,0.1,1,10,100])
+# 	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=8)
+# 	locmin = mticker.LogLocator(base=10, subs=[1.0])
+# 	subax.yaxis.set_minor_locator(locmin)
+# 	subax.yaxis.set_minor_formatter(mticker.NullFormatter())
+# 	subax.yaxis.get_label().set_backgroundcolor('w')
+# 	for tick in subax.yaxis.get_major_ticks():
+# 		tick.label.set_backgroundcolor('w')
+# 	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
+#
+# 	return(subax)
+#
+# fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+# 	arg1='summer',
+# 	arg2=['pr','pr'],
+# 	arg3=['5mm','10mm'],
+# 	arg4=['cyan','blue'],
+# 	title='exceedance probabilites of persistence in JJA')
+# plt.savefig('plots/paper/NH_clim_distrs_wet.png',dpi=600)

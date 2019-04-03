@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import matplotlib.ticker as mticker
+from matplotlib.backends.backend_pdf import PdfPages
 
 import seaborn as sns
 sns.set_style("whitegrid")
@@ -139,7 +140,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		lb_color = all_regs[region]['edge']
 	if all_regs[region]['color'] != 'none':
 		lb_color = all_regs[region]['color']
-	subax.annotate(region, xy=(0.95, 0.80), xycoords='axes fraction', color='black', weight='bold', fontsize=10, horizontalalignment='right')
+	# subax.annotate(region, xy=(0.95, 0.80), xycoords='axes fraction', color='black', weight='bold', fontsize=10, horizontalalignment='right')
 
 def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.set_yscale('log')
@@ -164,15 +165,25 @@ plt.rcParams["axes.labelweight"] = "bold"
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
-fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='summer',
-	arg2=['tas','pr','cpd','pr'],
-	arg3=['warm','dry','dry-warm','5mm'],
-	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	title=None)
+plt.close('all')
+with PdfPages('plots/mid-lat_clim_distr_zoom.pdf') as pdf:
+	arg2,arg3,arg4 = [],[],[]
+	for style,state,color,shading,c_range in zip(['tas','pr','cpd','pr'],\
+										 ['warm','dry','dry-warm','5mm'],\
+										 ['#FF3030','#FF8C00','#BF3EFF','#009ACD'],\
+										 ['/'*3,'\ '*3,'|'*3,'-'*3],
+										 [(-15,20),(-15,20),(-15,20),(-50,100)]):
 
-plt.annotate('d', xy=(0.03, 0.93), xycoords='figure fraction', fontsize=15,fontweight='bold', backgroundcolor='w')
-plt.savefig('plots/paper/NH_clim_distrs.png',dpi=600)
+		arg2.append(style)
+		arg3.append(state)
+		arg4.append(color)
+		fig,ax = plt.subplots(nrows=1, figsize=(3,2.5))
+		distrs(ax,'mid-lat',arg1='summer',arg2=arg2,arg3=arg3,arg4=arg4)
+		axis_settings(ax,label=True,arg1='summer',arg2=[style],arg3=[state],arg4=[color])
+		ax.set_ylabel(NH_regs['mid-lat']['ylabel'],fontsize=8,fontweight='bold')
+		ax.set_xlabel(NH_regs['mid-lat']['xlabel'],fontsize=8,fontweight='bold')
+
+		plt.tight_layout(); pdf.savefig(); plt.close()
 
 
 
