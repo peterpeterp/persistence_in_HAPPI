@@ -64,7 +64,7 @@ for hist_file in hist_files:
 	for y in orig_dry.lat:
 		for x in orig_dry.lon:
 
-			if np.sum(dry_orig) > 10 and np.sum(wet_orig) > 10:
+			if np.sum(orig_dry[:,y,x]) > 10 and np.sum(orig_wet[:,y,x]) > 10:
 				for sea,season_name in {0:'MAM',1:'JJA',2:'SON',3:'DJF'}.items():
 					dry_orig_sea = orig_dry[:,y,x].ix[sea_indices[sea]]
 					wet_orig_sea = orig_wet[:,y,x].ix[sea_indices[sea]]
@@ -150,6 +150,8 @@ for hist_file in hist_files:
 						asdasd
 					if arti_wet[:,y,x].ix[sea_indices[sea]].sum() - wet_orig_sea.sum() != wet_change:
 						asdasd
+
+					gc.collect()
 
 
 	da.Dataset({'dry':arti_dry,'wet':arti_wet}).write_nc(hist_file.replace('All-Hist',scenario.replace('Future','Artificial-'+str(seed))))
