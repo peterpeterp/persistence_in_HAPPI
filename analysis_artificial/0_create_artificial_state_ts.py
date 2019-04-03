@@ -8,7 +8,7 @@ import subprocess as sub
 try:
 	model=sys.argv[1]
 except:
-	model = 'CAM4-2degree'
+	model = 'ECHAM6-3-LR'
 
 scenario = 'Plus20-Future'
 seed = 'v1'
@@ -84,14 +84,14 @@ for yi,y in zip(lat_i,lat_nh):
 	nc = Dataset(hist_files[0])
 	hist_merge['dry'] = nc['dry'][:,yi,:]
 	hist_merge['5mm'] = nc['5mm'][:,yi,:]
-	hist_merge['run_id'] = np.zeros([3650]) * 0
+	hist_merge['run_id'] = np.zeros([nc.dimensions['time'].size]) * 0
 
 	for i_run,file_name in enumerate(hist_files[1:]):
 		print(file_name)
 		nc = Dataset(file_name)
 		hist_merge['dry'] = np.concatenate((hist_merge['dry'], nc['dry'][:,yi,:]))
 		hist_merge['5mm'] = np.concatenate((hist_merge['5mm'], nc['5mm'][:,yi,:]))
-		hist_merge['run_id'] = np.concatenate((hist_merge['run_id'], np.zeros([3650]) + i_run+1))
+		hist_merge['run_id'] = np.concatenate((hist_merge['run_id'], np.zeros([nc.dimensions['time'].size]) + i_run+1))
 
 	for xi,x in enumerate(nc.variables['lon'][:]):
 		print(xi)
