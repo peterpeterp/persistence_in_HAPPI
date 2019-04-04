@@ -19,8 +19,10 @@ try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 	in_path='/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'
-	out_path='/p/tmp/pepflei/HAPPI/raw_data/reg_merge/'+model+'/'
-	home_path = '/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/'
+	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/weather_persistence/')
+	import persistence_functions as prsfc; reload(prsfc)
+
+
 
 except:
 	sys.path.append('/global/homes/p/pepflei/persistence_in_models/')
