@@ -66,6 +66,9 @@ for file_name in hist_files:
 	time_d = dataset.createDimension('time', nc.dimensions['time'].size)
 
 	time_v = dataset.createVariable('time', np.float64, ('time',)); time_v[:] = nc.variables['time'][:]
+	dataset.variables['time'].units = nc.variables['time'].units
+	dataset.variables['time'].calendar = nc.variables['time'].calendar
+
 	lat_v = dataset.createVariable('lat', np.float32,('lat',)); lat_v[:] = lat
 	lon_v = dataset.createVariable('lon', np.float32,('lon',))
 
@@ -198,7 +201,6 @@ for yi,y in zip(lat_i,lat_nh):
 			dataset.variables['5mm'][:,yi,xi] = arti_wet[hist_merge['run_id'] == i_run]
 			dataset.variables['lon'][xi] = x
 			dataset.close()
-
 
 
 #
