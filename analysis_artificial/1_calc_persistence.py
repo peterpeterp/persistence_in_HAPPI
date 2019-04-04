@@ -19,9 +19,8 @@ try:
 	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/')
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 	in_path='/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'
-	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/persistence_in_HAPPI/weather_persistence/')
+	sys.path.append('/p/projects/ikiimp/HAPPI/HAPPI_Peter/weather_persistence/')
 	import persistence_functions as prsfc; reload(prsfc)
-
 
 
 except:
