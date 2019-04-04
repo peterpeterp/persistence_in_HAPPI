@@ -46,8 +46,6 @@ lat_nh = lat[lat>0]
 for i_run,file_name in enumerate(hist_files):
 	dataset = Dataset(file_name.replace('All-Hist',scenario.replace('Future','Artificial-'+str(seed))), 'a', format='NETCDF4_CLASSIC')
 
-	dataset.variables['time'].units = nc.variables['time'].units
-	dataset.variables['time'].calendar = nc.variables['time'].calendar
+	dataset.variables['dry'].description = nc.variables['dry'].description
+	dataset.variables['5mm'].description = nc.variables['5mm'].description
 	dataset.close()
-
-	
