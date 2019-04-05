@@ -21,11 +21,8 @@ scenarios=['Plus20-Artificial-v1']
 seasons={'MAM':{'months':[3,4,5],'index':0}, 'JJA':{'months':[6,7,8],'index':1}, 'SON':{'months':[9,10,11],'index':2}, 'DJF':{'months':[12,1,2],'index':3}}
 
 state_dict = {
-	'warm':'tas',
 	'dry':'pr',
 	'5mm':'pr',
-	'10mm':'pr',
-	'dry-warm':'cpd',
 	}
 
 for state,style in state_dict.items():
