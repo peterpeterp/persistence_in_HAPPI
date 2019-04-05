@@ -8,7 +8,7 @@ import subprocess as sub
 try:
 	model=sys.argv[1]
 except:
-	model = 'ECHAM6-3-LR'
+	model = 'CAM4-2degree'
 
 scenario = 'Plus20-Future'
 seed = 'v2'
@@ -131,16 +131,21 @@ for yi,y in zip(lat_i,lat_nh):
 
 				if wet_change > 0:
 					# add wet states
-					candidates = np.where((arti_wet[sea_indices[sea]]!=1) & (arti_wet[sea_indices[sea]]!=1))[0]
+					candidates = np.where((arti_wet[sea_indices[sea]]!=1) & (arti_dry[sea_indices[sea]]!=1))[0]
 					random_ = np.array(random.sample(candidates,wet_change))
 					arti_wet[sea_indices[sea][random_]] = 1
 
-				if np.sum(arti_dry) - np.sum(orig_dry) != dry_change:
+				if np.sum(arti_dry[sea_indices[sea]]) - np.sum(orig_dry[sea_indices[sea]]) != dry_change:
 					asdasd
-				if np.sum(arti_wet) - np.sum(orig_wet) != wet_change:
+				if np.sum(arti_wet[sea_indices[sea]]) - np.sum(orig_wet[sea_indices[sea]]) != wet_change:
 					asdasd
 
 				gc.collect()
+
+			if np.sum(arti_dry) - np.sum(orig_dry) != sum(state_count_fut['dry'][:,y,x] - state_count_hist['dry'][:,y,x]):
+				asdasd
+			if np.sum(arti_wet) - np.sum(orig_wet) != sum(state_count_fut['5mm'][:,y,x] - state_count_hist['5mm'][:,y,x]):
+				asdasd
 
 
 		for i_run,file_name in enumerate(hist_files):
