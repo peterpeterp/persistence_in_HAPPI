@@ -169,8 +169,8 @@ tmp_arti=big_dict['MIROC5'][region]['Plus20-Artificial-v1']['dry']['JJA']
 tmp_20=big_dict['MIROC5'][region]['Plus20-Future']['dry']['JJA']
 tmp_h=big_dict['MIROC5'][region]['All-Hist']['dry']['JJA']
 maxlen = min([len(tmp_20['count']),len(tmp_h['count']),len(tmp_arti['count'])])
-print(tmp_20['count'][:80] - tmp_h['count'][:80])
-print(tmp_arti['count'][:80] - tmp_h['count'][:80])
+print(tmp_20['count'][:maxlen] - tmp_h['count'][:maxlen])
+print(tmp_arti['count'][:maxlen] - tmp_h['count'][:maxlen])
 print(tmp_arti['count'][:maxlen] - tmp_20['count'][:maxlen])
 
 print(sum(tmp_h['count']))

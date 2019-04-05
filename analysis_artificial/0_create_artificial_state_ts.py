@@ -11,7 +11,7 @@ except:
 	model = 'ECHAM6-3-LR'
 
 scenario = 'Plus20-Future'
-seed = 'v1'
+seed = 'v2'
 
 print(model,scenario,seed)
 
@@ -135,9 +135,9 @@ for yi,y in zip(lat_i,lat_nh):
 					random_ = np.array(random.sample(candidates,wet_change))
 					arti_wet[sea_indices[sea][random_]] = 1
 
-				if np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1) != dry_change:
+				if np.sum(arti_dry) - np.sum(orig_dry) != dry_change:
 					asdasd
-				if np.sum(arti_wet[sea_indices[sea]]==1) - np.sum(orig_wet[sea_indices[sea]]==1) != wet_change:
+				if np.sum(arti_wet) - np.sum(orig_wet) != wet_change:
 					asdasd
 
 				gc.collect()
