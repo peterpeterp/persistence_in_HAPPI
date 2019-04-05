@@ -104,87 +104,36 @@ for yi,y in zip(lat_i,lat_nh):
 		arti_dry = hist_merge['dry'][:,xi].copy()
 		arti_wet = hist_merge['5mm'][:,xi].copy()
 
-		if orig_dry.sum()>100 and orig_wet.sum()>100:
+		if landmask[y,x]!=0:
 
 			for sea,season_name in {0:'MAM',1:'JJA',2:'SON',3:'DJF'}.items():
 
 				dry_change = int(state_count_fut['dry'][season_name,y,x] - state_count_hist['dry'][season_name,y,x])
 				wet_change = int(state_count_fut['5mm'][season_name,y,x] - state_count_hist['5mm'][season_name,y,x])
 
+				if dry_change < 0:
+					# remove dry states
+					candidates = np.where(arti_dry[sea_indices[sea]]==1)[0]
+					random_ = np.array(random.sample(candidates,-1*dry_change))
+					arti_dry[sea_indices[sea][random_]] = 0
 
-				if dry_change > 0 and wet_change > 0:
-					# identify candidates
-					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_wet[sea_indices[sea]]!=1))[0]
-					random_ = np.array(random.sample(candidates,wet_change+dry_change))
-
-					# add wet states
-					random_wet = random_[:wet_change]
-					arti_wet[sea_indices[sea][random_wet]] = 1
-
-					# add wet states
-					random_dry = random_[wet_change:]
-					arti_dry[sea_indices[sea][random_dry]] = 1
-
-				elif dry_change > 0 and wet_change < 0:
+				if wet_change < 0:
 					# remove wet states
-					candidates = np.where(orig_wet[sea_indices[sea]]==1)[0]
+					candidates = np.where(arti_wet[sea_indices[sea]]==1)[0]
 					random_ = np.array(random.sample(candidates,-1*wet_change))
 					arti_wet[sea_indices[sea][random_]] = 0
 
+				if dry_change > 0:
 					# add dry states
-					candidates = np.where((arti_dry[sea_indices[sea]]!=1) & (orig_dry[sea_indices[sea]]!=1))[0]
+					candidates = np.where((arti_wet[sea_indices[sea]]!=1) & (arti_dry[sea_indices[sea]]!=1))[0]
 					random_ = np.array(random.sample(candidates,dry_change))
 					arti_dry[sea_indices[sea][random_]] = 1
 
-				elif dry_change < 0 and wet_change > 0:
-					# remove dry states
-					candidates = np.where(orig_dry[sea_indices[sea]]==1)[0]
-					random_ = np.array(random.sample(candidates,-1*dry_change))
-					arti_dry[sea_indices[sea][random_]] = 0
-
+				if wet_change > 0:
 					# add wet states
-					candidates = np.where((arti_dry[sea_indices[sea]]!=1) & (orig_wet[sea_indices[sea]]!=1))[0]
+					candidates = np.where((arti_wet[sea_indices[sea]]!=1) & (arti_wet[sea_indices[sea]]!=1))[0]
 					random_ = np.array(random.sample(candidates,wet_change))
 					arti_wet[sea_indices[sea][random_]] = 1
-
-				elif dry_change < 0 and wet_change < 0:
-					# remove wet states
-					candidates = np.where(orig_wet[sea_indices[sea]]==1)[0]
-					random_ = np.array(random.sample(candidates,-1*wet_change))
-					arti_wet[sea_indices[sea][random_]] = 0
-
-					# remove dry states
-					candidates = np.where(orig_dry[sea_indices[sea]]==1)[0]
-					random_ = np.array(random.sample(candidates,-1*dry_change))
-					arti_dry[sea_indices[sea][random_]] = 0
-
-				elif dry_change > 0 and wet_change == 0:
-					# add dry states
-					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_dry[sea_indices[sea]]!=1))[0]
-					random_ = np.array(random.sample(candidates,dry_change))
-					arti_dry[sea_indices[sea][random_]] = 1
-
-				elif dry_change < 0 and wet_change == 0:
-					# remove dry states
-					candidates = np.where(orig_dry[sea_indices[sea]]==1)[0]
-					random_ = np.array(random.sample(candidates,-1*dry_change))
-					arti_dry[sea_indices[sea][random_]] = 0
-
-				elif dry_change == 0 and wet_change > 0:
-					# add wet states
-					candidates = np.where((orig_dry[sea_indices[sea]]!=1) & (orig_wet[sea_indices[sea]]!=1))[0]
-					random_ = np.array(random.sample(candidates,wet_change))
-					arti_wet[sea_indices[sea][random_]] = 1
-
-				elif dry_change == 0 and wet_change < 0:
-					# remove wet states
-					candidates = np.where(orig_wet[sea_indices[sea]]==1)[0]
-					random_ = np.array(random.sample(candidates,-1*wet_change))
-					arti_wet[sea_indices[sea][random_]] = 0
-
-				elif dry_change == 0 and wet_change == 0:
-					pass
-
 
 				if np.sum(arti_dry[sea_indices[sea]]==1) - np.sum(orig_dry[sea_indices[sea]]==1) != dry_change:
 					asdasd

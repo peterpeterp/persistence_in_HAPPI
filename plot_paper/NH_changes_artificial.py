@@ -173,6 +173,9 @@ print(tmp_20['count'][:80] - tmp_h['count'][:80])
 print(tmp_arti['count'][:80] - tmp_h['count'][:80])
 print(tmp_arti['count'][:maxlen] - tmp_20['count'][:maxlen])
 
+print(sum(tmp_h['count']))
+print(sum(tmp_arti['count']))
+print(sum(tmp_20['count']))
 
 
 
