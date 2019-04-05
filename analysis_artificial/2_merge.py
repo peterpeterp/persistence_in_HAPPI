@@ -143,7 +143,8 @@ state_dict = {
 # 	}
 # region_dict=get_regional_distribution(regions=srex,model=model,state_dict=state_dict,scenarios=scenarios,regions_id='srex')
 #
-
+types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99','npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99']
+seasons=['MAM','JJA','SON','DJF']
 
 for state,style in state_dict.items():
 	big_dict={}
