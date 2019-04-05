@@ -136,13 +136,12 @@ def get_regional_distribution(regions,model,state_dict,scenarios=scenarios,regio
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
 srex['mid-lat'] = {'points':[(-180,35),(180,35),(180,60),(-180,60)]}
-#srex = {key:value for key,value in srex.items() if key in ['CEU','NEU','NAS','MED','WAS']}
+srex = {key:value for key,value in srex.items() if key in ['EAS','TIB','CAS','WAS','MED','CEU','NEU','NAS','ENA','CNA','WNA','CGI','ALA']}
 state_dict = {
 	'dry':'pr',
 	'5mm':'pr',
 	}
 region_dict=get_regional_distribution(regions=srex,model=model,state_dict=state_dict,scenarios=scenarios,regions_id='srex')
-
 
 
 
