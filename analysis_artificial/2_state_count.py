@@ -33,10 +33,6 @@ os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 model=sys.argv[1]
 working_path='/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'
 
-sys.path.append('persistence_in_models/')
-import __settings
-model_dict=__settings.model_dict
-
 style_dict = {
 	'pr':{'states':['dry','5mm'],'days':3650},
 }
