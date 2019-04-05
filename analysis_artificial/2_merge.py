@@ -143,6 +143,39 @@ state_dict = {
 # 	}
 # region_dict=get_regional_distribution(regions=srex,model=model,state_dict=state_dict,scenarios=scenarios,regions_id='srex')
 #
+
+
+##################
+# BIg summary
+##################
+
+
+def counter_to_list(counter):
+	tmp=[]
+	lengths=counter.keys()
+	if 0 in lengths:
+		lengths.remove(0)
+	if len(lengths)>2:
+		for key in lengths:
+			for i in range(counter[key]):
+				tmp.append(key)
+		tmp=np.array(tmp)
+		return -tmp[tmp<0],tmp[tmp>0]
+	else:
+		return [],[]
+
+def quantile_from_cdf(x,qu):
+	counts, bin_edges = np.histogram(x, bins=range(0,max(x)+1), normed=True)
+	cdf = np.cumsum(counts)
+
+	quantiles=[]
+	for q in qu:
+		if q>=1:q/=100.
+		x1=np.where(cdf<q)[0][-1]
+		quantiles.append(x1+(q-cdf[x1])/(cdf[x1+1]-cdf[x1]))
+
+	return quantiles
+
 types=['mean','qu_1','qu_5','qu_10','qu_25','qu_50','qu_75','qu_90','qu_95','qu_99','npqu_1','npqu_5','npqu_10','npqu_25','npqu_50','npqu_75','npqu_90','npqu_95','npqu_99']
 seasons=['MAM','JJA','SON','DJF']
 
