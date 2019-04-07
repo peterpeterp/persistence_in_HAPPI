@@ -33,17 +33,18 @@ srex = pickle.load(pkl_file)	;	pkl_file.close()
 
 if 'big_dict' not in globals():
 	big_dict={}
-	for dataset in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
+	for dataset in ['CAM4-2degree','MIROC5','NorESM1','ECHAM6-3-LR']:
 		infile = 'data/'+dataset+'/'+dataset+'_regional_distrs_srex.pkl'
 		pkl_file=open(infile, 'rb')
 		big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
 
 
-		infile = 'data/artificial/'+model+'_regional_distrs_srex_artificial.pkl'
+		infile = 'data/artificial/'+dataset+'_regional_distrs_srex_artificial.pkl'
 		pkl_file=open(infile, 'rb')
 		tmp = pickle.load(pkl_file);	pkl_file.close()
 		for region in tmp.keys():
 			big_dict[dataset][region]['Plus20-Artificial-v1'] = tmp[region]['Plus20-Artificial-v1']
+
 
 
 NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
@@ -92,18 +93,24 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	season=all_regs[region][arg1]
 	for style,state,color,hatch in zip(arg2[::-1],arg3[::-1],arg4[::-1],arg5[::-1]):
 		ensemble=np.zeros([4,35])*np.nan
+		ensemble_arti=np.zeros([4,35])*np.nan
 		nmax=35
 		for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-			tmp_20=big_dict[dataset][region]['Plus20-Artificial-v1'][state][season]
+			tmp_arti=big_dict[dataset][region]['Plus20-Artificial-v1'][state][season]
+			tmp_20=big_dict[dataset][region]['Plus20-Future'][state][season]
 			tmp_h=big_dict[dataset][region]['All-Hist'][state][season]
+			count_arti=np.array([np.sum(tmp_arti['count'][ii:])/float(np.sum(tmp_arti['count'])) for ii in range(len(tmp_arti['count']))])
 			count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_20['count'])) for ii in range(len(tmp_20['count']))])
 			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_h['count']))])
-			nmax=min(len(count_20),len(count_h),nmax)
-			tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
-			ensemble[i,:nmax]=tmp
+			nmax=min(len(count_20),len(count_h),len(count_arti),nmax)
+			ensemble[i,:nmax]=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
+			ensemble_arti[i,:nmax]=(count_arti[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
 
 		subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle='-')
 		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color, edgecolor=color,alpha=0.3)
+
+		subax.plot(range(1,nmax+1),np.nanmean(ensemble_arti[:,0:nmax],axis=0),color=hatch,linestyle='-')
+		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble_arti[:,0:nmax],axis=0),np.nanmax(ensemble_arti[:,0:nmax],axis=0),facecolor=hatch, edgecolor=hatch,alpha=0.3)
 
 	lb_color ='none'
 	if all_regs[region]['edge'] != 'none':
@@ -141,17 +148,17 @@ with PdfPages('plots/NH_changes_artificial.pdf') as pdf:
 	arg2 = ['pr','pr']
 	arg3 = ['dry','5mm']
 	arg4 = ['#FF8C00','#009ACD']
-	arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
+	arg5 = ['red','blue']
 	c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
 	for combi in [[0],[1]]:
 		arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
 		for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
 			for co in combi:
 				aa.append(aa_all[co])
-		if combi != [3]:
-			c_range = (-200,200)
+		if combi != [1]:
+			c_range = (-20,20)
 		else:
-			c_range = (-200,200)
+			c_range = (-100,100)
 		fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
 			arg1='summer',
 			arg2=arg2_,
@@ -164,10 +171,10 @@ with PdfPages('plots/NH_changes_artificial.pdf') as pdf:
 
 
 
-region = 'CGI'
-tmp_arti=big_dict['MIROC5'][region]['Plus20-Artificial-v1']['dry']['JJA']
-tmp_20=big_dict['MIROC5'][region]['Plus20-Future']['dry']['JJA']
-tmp_h=big_dict['MIROC5'][region]['All-Hist']['dry']['JJA']
+region = 'MED'
+tmp_arti=big_dict['CAM4-2degree'][region]['Plus20-Artificial-v1']['dry']['JJA']
+tmp_20=big_dict['CAM4-2degree'][region]['Plus20-Future']['dry']['JJA']
+tmp_h=big_dict['CAM4-2degree'][region]['All-Hist']['dry']['JJA']
 maxlen = min([len(tmp_20['count']),len(tmp_h['count']),len(tmp_arti['count'])])
 print(tmp_20['count'][:maxlen] - tmp_h['count'][:maxlen])
 print(tmp_arti['count'][:maxlen] - tmp_h['count'][:maxlen])
@@ -176,8 +183,6 @@ print(tmp_arti['count'][:maxlen] - tmp_20['count'][:maxlen])
 print(sum(tmp_h['count']))
 print(sum(tmp_arti['count']))
 print(sum(tmp_20['count']))
-
-
 
 
 

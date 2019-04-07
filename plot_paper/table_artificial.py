@@ -46,8 +46,13 @@ def counter_to_list(counter):
 def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.5,0.5), plot_bool=False, cmap='RdBu'):
 	patches = []
 	colors = []
-	ax.plot([x-0.5,x-0.5],[0,15],color='k')
-	ax.text(x,13.7,"\n".join(textwrap.wrap(label,15)),ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
+	ax.plot([x-0.5,x-0.5],[-2,15],color='k')
+	ax.text(x,13.7,label,ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
+
+	if c_range == 'maxabs':
+		maxabs = np.max(np.abs(np.nanpercentile(var,[10,90])))
+		c_range = [-maxabs,maxabs]
+
 	for region,y in regions.items():
 		for model in model_shifts.keys():
 			x_shi,y_shi = model_shifts[model]
@@ -62,6 +67,14 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.5,0.5), plot_boo
 					style = bool_styles[np.sign(var[model,region])]
 					ax.plot(x+x_shi,y+y_shi, marker=style['m'], color=style['c'])
 
+	if c_range is None:
+		c_range = [np.min(var),np.max(var)]
+	y= -0.7
+	for x_shi,val in zip([-0.33,0,+0.33],[c_range[0],np.mean(c_range),c_range[1]]):
+		polygon = Polygon([(x+x_shi-0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi+y_wi),(x+x_shi-0.33*0.5,y+y_shi+y_wi)], True)
+		patches.append(polygon)
+		colors.append(val)
+		ax.text(x+x_shi,-1.3,round(val,02),ha='center',va='top',rotation=-90,fontsize=8,weight="bold")
 
 	p = PatchCollection(patches, cmap=cmap, alpha=1)
 	p.set_array(np.array(colors))
@@ -97,98 +110,105 @@ regions = {'EAS':1,
 
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 state_count = da.read_nc('data/state_count_srex.nc')['state_count']
+artificial = da.read_nc('data/artificial/reg_summary_mean_qu_artificial.nc')['artificial_summary']
 
-if 'artificial' not in globals():
-	artificial = da.DimArray(axes = [['Plus20-Artificial-v1'],['MIROC5','CAM4-2degree','ECHAM6-3-LR','NorESM1'], ['dry','5mm'], summary.region, summary.season, ['mean']], dims = ['scenario','model','state','region','season','statistic'])
+exceed_summary = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/JJA_summary_srex.nc')['exceed_prob']
+exceed_artificial = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/artificial/JJA_summary_srex_artificial.nc')['exceed_prob']
+exceed_summary = da.concatenate((exceed_summary,exceed_artificial),align=True, axis = 'scenario')
 
-	for scenario in artificial.scenario:
-		for model in artificial.model:
-			tmp = pickle.load(open('data/artificial/'+model+'_regional_distrs_srex_artificial.pkl', 'rb'))
 
-			for state in artificial.state:
-				for region in artificial.region:
-					for season in artificial.season:
-						neg,pos=counter_to_list(tmp[region][scenario][state][season]['counter'])
-						artificial[scenario,model,state,region,season,'mean'] = np.nanmean(pos)
-
-for state,state_name in {'dry':'dry','5mm':'rain'}.items(): #   }.items(): #
-
+for state,state_name,style,excee in zip(['dry','5mm'],['dry','rain'],['pr','pr'],['14','7']): #   }.items(): #
 	plt.close('all')
-	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(8,6))
-	ax.axis('off')
-
-	ax.text(0,15,"\n".join(textwrap.wrap('drivers of '+state_name+' persistence',12)),fontsize=9,va='center',weight='bold')
-
-	for region,y_reg in regions.items():
-		ax.plot([0,8.5],[y_reg-0.5,y_reg-0.5],color='k')
-		ax.text(0,y_reg,region,va='center',weight='bold')
-	ax.plot([0,8.5],[13.5,13.5],color='k')
-	x=1
-
-	# __________________________________
-	x += 1
-	var = (state_count[:,'JJA',state,:,'All-Hist'] ) *100
-	im_pers = plot_model_column(ax,x,var,label = 'state historic '+state_name+' ', cmap='PiYG_r', c_range=(0,100))
-	# __________________________________
 
 
-	# __________________________________
-	x += 1
-	var = (state_count[:,'JJA',state,:,'Plus20-Future'] - state_count[:,'JJA',state,:,'All-Hist'] ) *100
-	im_pers = plot_model_column(ax,x,var,label = 'state '+state_name+' ', cmap='PiYG_r', c_range=(-2,2))
-	# __________________________________
+	with PdfPages('plots/table_artificial_'+state+'.pdf') as pdf:
 
-	# __________________________________
-	x += 1
-	var = artificial['Plus20-Artificial-v1',:,state,:,'JJA','mean'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA']
-	im_pers = plot_model_column(ax,x,var,label = 'artificial change in mean '+state_name+' persistence', cmap='PiYG_r')
-	# __________________________________
+		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(4,6))
+		ax.axis('off')
 
-	# __________________________________
-	x += 1
-	var = (summary['Plus20-Future',:,state,'EKE',:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA'] )
-	im_pers = plot_model_column(ax,x,var,label = 'change in mean '+state_name+' persistence', cmap='PiYG_r')
-	# __________________________________
+		ax.text(0,15,"\n".join(textwrap.wrap('drivers of '+state_name+' persistence',12)),fontsize=9,va='center',weight='bold')
+
+		for region,y_reg in regions.items():
+			ax.plot([0,8.5],[y_reg-0.5,y_reg-0.5],color='k')
+			ax.text(0,y_reg,region,va='center',weight='bold')
+		ax.plot([0,8.5],[13.5,13.5],color='k')
+		ax.text(0,-1,'scale',va='center',weight='bold')
+
+		x=1
+		# __________________________________
+		x += 1
+		var = (state_count[:,'JJA',state,:,'All-Hist'] ) *100
+		im_state_hist = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('historic fraction of '+state_name+' days',15)), cmap='Wistia', c_range=None)
+		# __________________________________
+
+		# __________________________________
+		x += 1
+		var = (state_count[:,'JJA',state,:,'Plus20-Future'] - state_count[:,'JJA',state,:,'All-Hist'] ) *100
+		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in fraction of '+state_name+' days',15)), cmap='RdBu_r', c_range='maxabs')
+
+		# __________________________________
+
+		ax.text(x+0.6,16.5,"\n".join(textwrap.wrap('rel. change in probability of exceeding '+excee+' '+state_name+' days',25)) ,fontsize=9,va='center',weight='bold')
+		ax.plot([x+0.5,x+0.5],[0,18],color='k')
+
+		# __________________________________
+		x += 1
+		# var = artificial['Plus20-Artificial-v1',:,state,:,'JJA','qu_90'] - summary['All-Hist',:,state,'EKE',:,'90_'+state,'JJA']
+		# im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('artificial change in mean '+state_name+' persistence',15), cmap='PiYG_r')
+		var = (exceed_summary[:,'Plus20-Artificial-v1',:,style+'_'+state,excee] - exceed_summary[:,'All-Hist',:,style+'_'+state,excee]) / exceed_summary[:,'All-Hist',:,style+'_'+state,excee] *100
+		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('randomly added (removed) '+state+' days',10)), cmap='PiYG_r', c_range='maxabs')
+		# __________________________________
+
+		# __________________________________
+		x += 1
+		# var = (summary['Plus20-Future',:,state,'EKE',:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA'] )
+		# im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in mean '+state_name+' persistence',15), cmap='PiYG_r')
+		var = (exceed_summary[:,'Plus20-Future',:,style+'_'+state,excee] - exceed_summary[:,'All-Hist',:,style+'_'+state,excee]) / exceed_summary[:,'All-Hist',:,style+'_'+state,excee] *100
+		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range='maxabs')
+		# __________________________________
+
+		ax.set_xlim(0,6)
+		ax.set_ylim(-2,17.3)
+
+		fig.tight_layout(); pdf.savefig(); plt.close()
+
+		#################
+		# model legend
+		#################
+		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
+		ax.axis('off')
+		xx,yy = 0,0
+		patches = []
+		for model in model_shifts.keys():
+			x_shi,y_shi = model_shifts[model]
+			polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
+			ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+
+			patches.append(polygon)
+
+		patches.append(plt.Circle((xx, yy), 0.25))
+		if state == 'warm':
+			ax.annotate('HadGHCND', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+		else:
+			ax.annotate('EOBS', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+
+		colors = range(5)
+
+		p = PatchCollection(patches, cmap='gray', alpha=1)
+		p.set_array(np.array(range(4)))
+		ax.add_collection(p)
+
+		ax.set_xlim(-1,1)
+		ax.set_ylim(-1,1)
+
+		fig.tight_layout(); pdf.savefig(); plt.close()
 
 
-	#################
-	# colormaps
-	#################
-
-	cbar_ax=fig.add_axes([0.75,0.5,0.2,0.3]); cbar_ax.axis('off');
-	cb=fig.colorbar(im_pers,orientation='horizontal',ax=cbar_ax) #95th percentile\n persistence [days]
-	cb.set_label(label='stuff with persistence', fontsize=10); cb.ax.tick_params(labelsize=10)
-	tick_locator = mpl.ticker.MaxNLocator(nbins=4); cb.locator = tick_locator; cb.update_ticks()
 
 
 
-	#################
-	# model legend
-	#################
-
-	patches = []
-	for model in model_shifts.keys():
-		x_shi,y_shi = model_shifts[model]
-		polygon = Polygon([(10.5+x_shi-x_wi,15+y_shi-y_wi),(10.5+x_shi+x_wi,15+y_shi-y_wi),(10.5+x_shi+x_wi,15+y_shi+y_wi),(10.5+x_shi-x_wi,15+y_shi+y_wi)], True)
-		ax.annotate(model, xy=(10.5+ x_shi,15+ y_shi), xytext=(10.5+x_shi*3,15+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->"),fontsize=7,color='k',ha='center',rotation=0)
-
-		patches.append(polygon)
-
-	patches.append(plt.Circle((10.5, 15), 0.25))
-	if state == 'warm':
-		ax.annotate('HadGHCND', xy=(10.5,15), xytext=(10.5+x_shi*3,15),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->"),fontsize=7,color='k',ha='center',rotation=0)
-	else:
-		ax.annotate('EOBS', xy=(10.5,15), xytext=(10.5+x_shi*3,15),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->"),fontsize=7,color='k',ha='center',rotation=0)
-
-	colors = range(5)
-
-	p = PatchCollection(patches, cmap='gray', alpha=1)
-	p.set_array(np.array(range(4)))
-	ax.add_collection(p)
-
-	ax.set_xlim(0,12)
-	ax.set_ylim(0,17)
 
 
-	fig.tight_layout()
-	plt.savefig('plots/table_artificial_'+state+'.pdf')
+
+
+#

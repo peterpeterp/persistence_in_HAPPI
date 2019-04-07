@@ -113,21 +113,12 @@ regions = {'EAS':1,
 			'ALA':13,
 }
 
-state_dict = {
-	'warm':'tas',
-	'dry':'pr',
-	'5mm':'pr',
-	'10mm':'pr',
-	'dry-warm':'cpd',
-	}
-
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 had_mask = da.read_nc('masks/srex_mask_73x97.nc')
 eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
-exceed_summary = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/JJA_summary_srex.nc')['exceed_prob']
 
 for state,state_name in {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}.items(): #   }.items(): #
-	style = state_dict[state]
+
 	plt.close('all')
 	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(8,6))
 	ax.axis('off')
@@ -161,10 +152,8 @@ for state,state_name in {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'
 	x += 1
 	# var = summary['Plus20-Future',:,state,'EKE',:,'90_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'90_'+state,'JJA']
 	# im_pers = plot_model_column(ax,x,var,label = 'change in mean '+state_name+' persistence', cmap='PiYG_r', c_range=(-0.5,0.5))
-	# var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA']
-	# im_pers = plot_model_column(ax,x,var,label = 'change in mean '+state_name+' persistence', cmap='PiYG_r', c_range=(-0.1,0.1))
-	var = (exceed_summary[:,'Plus20-Future',:,style+'_'+state,'14'] - exceed_summary[:,'All-Hist',:,style+'_'+state,'14']) / exceed_summary[:,'All-Hist',:,style+'_'+state,'14'] *100
-	im_pers = plot_model_column(ax,x,var,label = 'rel. change in probability of exceeding 14 '+state_name+' days', cmap='PiYG_r', c_range=(-10,10))
+	var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA']
+	im_pers = plot_model_column(ax,x,var,label = 'change in mean '+state_name+' persistence', cmap='PiYG_r')
 	# __________________________________
 
 	x += 1

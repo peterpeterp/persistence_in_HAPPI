@@ -49,7 +49,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 
 		'NEU':{'color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
-		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
+		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF','edge':'none'},
 		'CAS':{'color':'darkgreen','pos_off':(-8,+10),'summer':'JJA','winter':'DJF'},
 		'NAS':{'color':'gray','summer':'JJA','winter':'DJF'},
 		'TIB':{'color':'darkcyan','pos_off':(+2,-4),'summer':'JJA','winter':'DJF'},
@@ -166,7 +166,7 @@ plt.rcParams["axes.labelweight"] = "bold"
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
 plt.close('all')
-with PdfPages('plots/mid-lat_clim_distr_zoom.pdf') as pdf:
+with PdfPages('plots/CEU_clim_distr_zoom.pdf') as pdf:
 	arg2,arg3,arg4 = [],[],[]
 	for style,state,color,shading,c_range in zip(['tas','pr','cpd','pr'],\
 										 ['warm','dry','dry-warm','5mm'],\
@@ -178,7 +178,7 @@ with PdfPages('plots/mid-lat_clim_distr_zoom.pdf') as pdf:
 		arg3.append(state)
 		arg4.append(color)
 		fig,ax = plt.subplots(nrows=1, figsize=(3,2.5))
-		distrs(ax,'mid-lat',arg1='summer',arg2=arg2,arg3=arg3,arg4=arg4)
+		distrs(ax,'CEU',arg1='summer',arg2=arg2,arg3=arg3,arg4=arg4)
 		axis_settings(ax,label=True,arg1='summer',arg2=[style],arg3=[state],arg4=[color])
 		ax.set_ylabel(NH_regs['mid-lat']['ylabel'],fontsize=8,fontweight='bold')
 		ax.set_xlabel(NH_regs['mid-lat']['xlabel'],fontsize=8,fontweight='bold')
