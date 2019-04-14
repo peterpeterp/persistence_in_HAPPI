@@ -165,26 +165,30 @@ plt.rcParams["axes.labelweight"] = "bold"
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
-plt.close('all')
-with PdfPages('plots/CEU_clim_distr_zoom.pdf') as pdf:
-	arg2,arg3,arg4 = [],[],[]
-	for style,state,color,shading,c_range in zip(['tas','pr','cpd','pr'],\
-										 ['warm','dry','dry-warm','5mm'],\
-										 ['#FF3030','#FF8C00','#BF3EFF','#009ACD'],\
-										 ['/'*3,'\ '*3,'|'*3,'-'*3],
-										 [(-15,20),(-15,20),(-15,20),(-50,100)]):
+for region in ['CEU','mid-lat']:
 
-		arg2.append(style)
-		arg3.append(state)
-		arg4.append(color)
+	arg2 = ['tas','pr','cpd','pr']
+	arg3 = ['warm','dry','dry-warm','5mm']
+	arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
+	arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
+	c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
+	for combi in [[0],[1],[2],[3],[0,1,2,3]]:
+		arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
+		for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
+			for co in combi:
+				aa.append(aa_all[co])
+		if combi != [3]:
+			c_range = (-15,20)
+		else:
+			c_range = (-50,100)
+
 		fig,ax = plt.subplots(nrows=1, figsize=(3,2.5))
-		distrs(ax,'CEU',arg1='summer',arg2=arg2,arg3=arg3,arg4=arg4)
+		distrs(ax,region,arg1='summer',arg2=arg2_,arg3=arg3_,arg4=arg4_)
 		axis_settings(ax,label=True,arg1='summer',arg2=[style],arg3=[state],arg4=[color])
 		ax.set_ylabel(NH_regs['mid-lat']['ylabel'],fontsize=8,fontweight='bold')
 		ax.set_xlabel(NH_regs['mid-lat']['xlabel'],fontsize=8,fontweight='bold')
 
-		plt.tight_layout(); pdf.savefig(); plt.close()
-
+		plt.tight_layout(); plt.savefig('plots/presentation/'+region+'_clim_distrs_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
 
 
 

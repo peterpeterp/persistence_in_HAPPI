@@ -54,7 +54,7 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 	if c_range is None:
 		c_range = [np.min(var),np.max(var)]
 	y= -0.7
-	for x_shi,val in zip([-0.33,0,+0.33],[c_range[0]*0.33,np.mean(c_range),c_range[1]*0.33]):
+	for x_shi,val in zip([-0.33,0,+0.33],[c_range[0],np.mean(c_range),c_range[1]]):
 		polygon = Polygon([(x+x_shi-0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi+y_wi),(x+x_shi-0.33*0.5,y+y_shi+y_wi)], True)
 		patches.append(polygon)
 		colors.append(val)
@@ -127,9 +127,9 @@ regions = {'EAS':1,
 
 state_dict = {
 	'warm':{'style':'tas','name':'warm','excee':'14'},
-	'dry':{'style':'pr','name':'dry','excee':'14'},
-	'5mm':{'style':'pr','name':'rain','excee':'7'},
-	'dry-warm':{'style':'cpd','name':'dry-warm','excee':'14'},
+	# 'dry':{'style':'pr','name':'dry','excee':'14'},
+	# '5mm':{'style':'pr','name':'rain','excee':'7'},
+	# 'dry-warm':{'style':'cpd','name':'dry-warm','excee':'14'},
 	}
 
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
@@ -138,7 +138,7 @@ eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
 exceed_summary = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/JJA_summary_srex.nc')['exceed_prob']
 
 plt.close('all')
-with PdfPages('plots/table_driver.pdf') as pdf:
+with PdfPages('plots/table_driver_warm.pdf') as pdf:
 
 	for state,details in state_dict.items(): #   }.items(): #
 		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,6))
@@ -205,11 +205,12 @@ with PdfPages('plots/table_driver.pdf') as pdf:
 		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
 		ax.axis('off')
 		xx,yy = 0,0
+		x_wi,y_wi = 0.1,0.1
 		patches = []
 		for model in model_shifts.keys():
 			x_shi,y_shi = model_shifts[model]
 			polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
-			ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=10,color='k',ha='center',rotation=0)
+			ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=7,color='k',ha='center',rotation=0)
 
 			patches.append(polygon)
 

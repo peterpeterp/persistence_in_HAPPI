@@ -117,12 +117,9 @@ exceed_artificial = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data
 exceed_summary = da.concatenate((exceed_summary,exceed_artificial),align=True, axis = 'scenario')
 
 
-for state,state_name,style,excee in zip(['dry','5mm'],['dry','rain'],['pr','pr'],['14','7']): #   }.items(): #
-	plt.close('all')
-
-
-	with PdfPages('plots/table_artificial_'+state+'.pdf') as pdf:
-
+plt.close('all')
+with PdfPages('plots/table_artificial.pdf') as pdf:
+	for state,state_name,style,excee,c_range in zip(['dry','5mm'],['dry','rain'],['pr','pr'],['14','7'],[(-15,15),(-30,30)]): #   }.items(): #
 		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(4,6))
 		ax.axis('off')
 
@@ -153,18 +150,14 @@ for state,state_name,style,excee in zip(['dry','5mm'],['dry','rain'],['pr','pr']
 
 		# __________________________________
 		x += 1
-		# var = artificial['Plus20-Artificial-v1',:,state,:,'JJA','qu_90'] - summary['All-Hist',:,state,'EKE',:,'90_'+state,'JJA']
-		# im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('artificial change in mean '+state_name+' persistence',15), cmap='PiYG_r')
 		var = (exceed_summary[:,'Plus20-Artificial-v1',:,style+'_'+state,excee] - exceed_summary[:,'All-Hist',:,style+'_'+state,excee]) / exceed_summary[:,'All-Hist',:,style+'_'+state,excee] *100
-		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('randomly added (removed) '+state+' days',10)), cmap='PiYG_r', c_range='maxabs')
+		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('randomly added (removed) '+state+' days',10)), cmap='PiYG_r', c_range=c_range)
 		# __________________________________
 
 		# __________________________________
 		x += 1
-		# var = (summary['Plus20-Future',:,state,'EKE',:,'mean_'+state,'JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+state,'JJA'] )
-		# im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in mean '+state_name+' persistence',15), cmap='PiYG_r')
 		var = (exceed_summary[:,'Plus20-Future',:,style+'_'+state,excee] - exceed_summary[:,'All-Hist',:,style+'_'+state,excee]) / exceed_summary[:,'All-Hist',:,style+'_'+state,excee] *100
-		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range='maxabs')
+		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range=c_range)
 		# __________________________________
 
 		ax.set_xlim(0,6)
@@ -172,36 +165,30 @@ for state,state_name,style,excee in zip(['dry','5mm'],['dry','rain'],['pr','pr']
 
 		fig.tight_layout(); pdf.savefig(); plt.close()
 
-		#################
-		# model legend
-		#################
-		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
-		ax.axis('off')
-		xx,yy = 0,0
-		patches = []
-		for model in model_shifts.keys():
-			x_shi,y_shi = model_shifts[model]
-			polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
-			ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+	#################
+	# model legend
+	#################
+	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
+	ax.axis('off')
+	xx,yy = 0,0
+	patches = []
+	for model in model_shifts.keys():
+		x_shi,y_shi = model_shifts[model]
+		polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
+		ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=7,color='k',ha='center',rotation=0)
 
-			patches.append(polygon)
+		patches.append(polygon)
 
-		patches.append(plt.Circle((xx, yy), 0.25))
-		if state == 'warm':
-			ax.annotate('HadGHCND', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
-		else:
-			ax.annotate('EOBS', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+	colors = range(4)
 
-		colors = range(5)
+	p = PatchCollection(patches, cmap='gray', alpha=1)
+	p.set_array(np.array(range(4)))
+	ax.add_collection(p)
 
-		p = PatchCollection(patches, cmap='gray', alpha=1)
-		p.set_array(np.array(range(4)))
-		ax.add_collection(p)
+	ax.set_xlim(-1,1)
+	ax.set_ylim(-1,1)
 
-		ax.set_xlim(-1,1)
-		ax.set_ylim(-1,1)
-
-		fig.tight_layout(); pdf.savefig(); plt.close()
+	fig.tight_layout(); pdf.savefig(); plt.close()
 
 
 

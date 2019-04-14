@@ -42,12 +42,12 @@ if 'big_dict' not in globals():
 NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
 		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
 		'CNA':{'color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
-		'ENA':{'color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
+		'ENA':{'color':'darkgreen','edge':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
 		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 
 		'NEU':{'color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
-		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
+		'CEU':{'color':'darkblue','edge':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
 		'CAS':{'color':'darkgreen','pos_off':(-8,+10),'summer':'JJA','winter':'DJF'},
 		'NAS':{'color':'gray','summer':'JJA','winter':'DJF'},
 		'TIB':{'color':'darkcyan','pos_off':(+2,-4),'summer':'JJA','winter':'DJF'},
@@ -89,7 +89,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
 			tmp_20=big_dict[dataset][region]['Plus20-Future'][state][season]
 			tmp_h=big_dict[dataset][region]['All-Hist'][state][season]
-			count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_20['count'])) for ii in range(len(tmp_20['count']))])
+			count_20=np.array([np.sum(tmp_20['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_20['count']))])
 			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) for ii in range(len(tmp_h['count']))])
 			nmax=min(len(count_20),len(count_h),nmax)
 			tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
@@ -129,14 +129,14 @@ plt.rcParams["axes.labelweight"] = "bold"
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
-plt.close('all')
-with PdfPages('plots/NH_changes.pdf') as pdf:
+for region in ['CEU','mid-lat']:
+	plt.close('all')
 	arg2 = ['tas','pr','cpd','pr']
 	arg3 = ['warm','dry','dry-warm','5mm']
 	arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
 	arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
 	c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
-	for combi in [[0],[1],[2],[3],[0,1],[0,1,2]]:
+	for combi in [[0],[1],[2],[3],[0,1],[0,1,2],[0,1,2,3]]:
 		arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
 		for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
 			for co in combi:
@@ -145,36 +145,13 @@ with PdfPages('plots/NH_changes.pdf') as pdf:
 			c_range = (-15,20)
 		else:
 			c_range = (-50,100)
-		fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-			arg1='summer',
-			arg2=arg2_,
-			arg3=arg3_,
-			arg4=arg4_,
-			arg5=arg5_,
-			title=None)
+		fig,ax = plt.subplots(nrows=1, figsize=(3,2.5))
+		distrs(ax,region,arg1='summer',arg2=arg2_,arg3=arg3_,arg4=arg4_,arg5=arg5_)
+		axis_settings(ax,label=True,arg1='summer',arg2=[style],arg3=[state],arg4=[color])
+		ax.set_ylabel(NH_regs['mid-lat']['ylabel'],fontsize=8,fontweight='bold')
+		ax.set_xlabel(NH_regs['mid-lat']['xlabel'],fontsize=8,fontweight='bold')
 
-		plt.tight_layout(); pdf.savefig(); plt.close()
-
-	size=13
-	reg_info=all_regs
-	x_ext=[-180,180]
-	y_ext=[0,85]
-	small_plot_size=0.08
-	asp=float(x_ext[-1]-x_ext[0])/float(y_ext[-1]-y_ext[0])
-	fig=plt.figure(figsize=(size,size/asp))
-	ax_map=fig.add_axes([0,0,1,1],projection=ccrs.Robinson(central_longitude=0, globe=None))
-	ax_map.set_global()
-	ax_map.coastlines()
-	ax_map.set_extent(x_ext+y_ext, crs=ccrs.PlateCarree())
-	ax_map.axis('off')
-
-	patches,colors=[],[]
-	for region in reg_info.keys():
-		if region in polygons.keys():
-			ax_map.add_geometries([Polygon(polygons[region]['points'])], ccrs.PlateCarree(), color=reg_info[region]['edge'],alpha=reg_info[region]['alpha'],facecolor=reg_info[region]['color'],hatch=reg_info[region]['hatch'],linewidth=reg_info[region]['linewidth'])
-
-
-	plt.tight_layout(); pdf.savefig(); plt.close()
+		plt.tight_layout(); plt.savefig('plots/presentation/'+region+'_change_'+'-'.join([str(tt) for tt in combi])+'___.png',dpi=600); plt.close()
 
 
 

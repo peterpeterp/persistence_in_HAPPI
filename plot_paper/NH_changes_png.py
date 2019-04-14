@@ -130,51 +130,50 @@ plt.rcParams["axes.labelweight"] = "bold"
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
 plt.close('all')
-with PdfPages('plots/NH_changes.pdf') as pdf:
-	arg2 = ['tas','pr','cpd','pr']
-	arg3 = ['warm','dry','dry-warm','5mm']
-	arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
-	arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
-	c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
-	for combi in [[0],[1],[2],[3],[0,1],[0,1,2]]:
-		arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
-		for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
-			for co in combi:
-				aa.append(aa_all[co])
-		if combi != [3]:
-			c_range = (-15,20)
-		else:
-			c_range = (-50,100)
-		fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-			arg1='summer',
-			arg2=arg2_,
-			arg3=arg3_,
-			arg4=arg4_,
-			arg5=arg5_,
-			title=None)
+arg2 = ['tas','pr','cpd','pr']
+arg3 = ['warm','dry','dry-warm','5mm']
+arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
+arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
+c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
+for combi in [[0],[1],[2],[3],[0,1],[0,1,2]]:
+	arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
+	for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
+		for co in combi:
+			aa.append(aa_all[co])
+	if combi != [3]:
+		c_range = (-15,20)
+	else:
+		c_range = (-50,100)
+	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+		arg1='summer',
+		arg2=arg2_,
+		arg3=arg3_,
+		arg4=arg4_,
+		arg5=arg5_,
+		title=None)
 
-		plt.tight_layout(); pdf.savefig(); plt.close()
+	plt.tight_layout(); plt.savefig('plots/presentation/NH_changes_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
 
-	size=13
-	reg_info=all_regs
-	x_ext=[-180,180]
-	y_ext=[0,85]
-	small_plot_size=0.08
-	asp=float(x_ext[-1]-x_ext[0])/float(y_ext[-1]-y_ext[0])
-	fig=plt.figure(figsize=(size,size/asp))
-	ax_map=fig.add_axes([0,0,1,1],projection=ccrs.Robinson(central_longitude=0, globe=None))
-	ax_map.set_global()
-	ax_map.coastlines()
-	ax_map.set_extent(x_ext+y_ext, crs=ccrs.PlateCarree())
-	ax_map.axis('off')
+size=13
+reg_info=all_regs
+x_ext=[-180,180]
+y_ext=[0,85]
+small_plot_size=0.08
+asp=float(x_ext[-1]-x_ext[0])/float(y_ext[-1]-y_ext[0])
+fig=plt.figure(figsize=(size,size/asp))
+ax_map=fig.add_axes([0,0,1,1],projection=ccrs.Robinson(central_longitude=0, globe=None))
+ax_map.set_global()
+ax_map.coastlines()
+ax_map.set_extent(x_ext+y_ext, crs=ccrs.PlateCarree())
+ax_map.axis('off')
 
-	patches,colors=[],[]
-	for region in reg_info.keys():
-		if region in polygons.keys():
-			ax_map.add_geometries([Polygon(polygons[region]['points'])], ccrs.PlateCarree(), color=reg_info[region]['edge'],alpha=reg_info[region]['alpha'],facecolor=reg_info[region]['color'],hatch=reg_info[region]['hatch'],linewidth=reg_info[region]['linewidth'])
+patches,colors=[],[]
+for region in reg_info.keys():
+	if region in polygons.keys():
+		ax_map.add_geometries([Polygon(polygons[region]['points'])], ccrs.PlateCarree(), color=reg_info[region]['edge'],alpha=reg_info[region]['alpha'],facecolor=reg_info[region]['color'],hatch=reg_info[region]['hatch'],linewidth=reg_info[region]['linewidth'])
 
 
-	plt.tight_layout(); pdf.savefig(); plt.close()
+plt.tight_layout(); plt.savefig('plots/presentation/NH_regions.png',dpi=600); plt.close()
 
 
 

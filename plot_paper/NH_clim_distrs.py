@@ -164,15 +164,60 @@ plt.rcParams["axes.labelweight"] = "bold"
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
-fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='summer',
-	arg2=['tas','pr','cpd','pr'],
-	arg3=['warm','dry','dry-warm','5mm'],
-	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	title=None)
 
-plt.annotate('d', xy=(0.03, 0.93), xycoords='figure fraction', fontsize=15,fontweight='bold', backgroundcolor='w')
-plt.savefig('plots/paper/NH_clim_distrs.png',dpi=600)
+
+plt.close('all')
+arg2 = ['tas','pr','cpd','pr']
+arg3 = ['warm','dry','dry-warm','5mm']
+arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
+arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
+c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
+for combi in [[0],[1],[2],[3],[0,1,2,3]]:
+	arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
+	for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
+		for co in combi:
+			aa.append(aa_all[co])
+	if combi != [3]:
+		c_range = (-15,20)
+	else:
+		c_range = (-50,100)
+
+	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+		arg1='summer',
+		arg2=arg2_,
+		arg3=arg3_,
+		arg4=arg4_,
+		title=None)
+
+	plt.tight_layout(); plt.savefig('plots/presentation/NH_clim_distrs_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
+
+#
+# plt.close('all')
+# arg2 = ['tas','pr','cpd','pr']
+# arg3 = ['warm','dry','dry-warm','5mm']
+# arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
+# arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
+# c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
+# for combi in [[0],[1],[2],[3],[0,1],[0,1,2],[0,1,2,3]]:
+# 	arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
+# 	for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
+# 		for co in combi:
+# 			aa.append(aa_all[co])
+# 	if combi != [3]:
+# 		c_range = (-15,20)
+# 	else:
+# 		c_range = (-50,100)
+#
+# 	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+# 		arg1='summer',
+# 		arg2=arg2_,
+# 		arg3=arg3_,
+# 		arg4=arg4_,
+# 		title=None)
+#
+# 	plt.tight_layout(); pdf.savefig(); plt.close()
+#
+
 
 
 
