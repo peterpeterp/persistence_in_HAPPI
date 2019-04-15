@@ -259,13 +259,14 @@ for scenario in ['All-Hist','Plus20-Future']:
 								# cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
 								#
 
+								gc.collect()
 
-				ds = da.Dataset(cor)
-				ds.persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
-				ds.correlated_with = details['file']
-				ds.write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
+			ds = da.Dataset(cor)
+			ds.persistence = working_path+'/'+'_'.join([style,model,scenario,'bigMerge',region,state])+'.nc'
+			ds.correlated_with = details['file']
+			ds.write_nc(working_path.replace('reg_merge','reg_cor')+'/cor_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
-				da.Dataset(statistics).write_nc(working_path.replace('reg_merge','reg_stats')+'/stats_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
+			da.Dataset(statistics).write_nc(working_path.replace('reg_merge','reg_stats')+'/stats_'+corWith_name+'_'+'_'.join([model,scenario,region,state])+'.nc')
 
 '''
 
