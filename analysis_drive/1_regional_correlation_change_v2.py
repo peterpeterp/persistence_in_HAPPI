@@ -12,7 +12,7 @@ try:
 	print model,region
 
 except:
-	model = 'NorESM1'
+	model = 'CAM4-2degree'
 	region = 'CEU'
 
 try:
@@ -41,6 +41,8 @@ for season_name,months in {'MAM':[2,3,4], 'JJA':[5,6,7], 'SON':[8,9,10], 'DJF':[
 		tmp[mon::12] = 1
 	season_indices_monthly[season_name] = tmp
 
+
+
 import __settings
 model_dict=__settings.model_dict
 reg_mask = da.read_nc('masks/srex_mask_'+model_dict[model]['grid']+'.nc')[region][0:,:]
@@ -54,6 +56,10 @@ reg_mask.lon = np.round(reg_mask.lon,02)
 
 for scenario in ['All-Hist','Plus20-Future']:
 	print('__________'+scenario)
+
+	nc = da.read_nc(glob.glob('/p/tmp/pepflei/HAPPI/raw_data/'+model+'/'+scenario+'/pr/*state.nc')[0])
+	units = nc['time'].units
+	calendar = nc['time'].calendar
 
 	corWith_dict = {
 		'SPI3':{
@@ -82,17 +88,10 @@ for scenario in ['All-Hist','Plus20-Future']:
 			data.lat = np.round(data.lat,02)
 			data.lon = np.round(data.lon,02)
 
-			if 'calendar' in data['time'].attrs.keys():
-				datevar = num2date(data['time'].values,units = data['time'].units,calendar = data['time'].calendar)
-			else:
-				datevar = num2date(data['time'].values,units = data['time'].units)
-			year = np.array([date.year for date in datevar[:]]).round(03)
-
-
 			cor = {}
 			for style in ['','_lagged','_season','_lagged_season']:
 				for stat in ['corrcoef','p-value']:
-					cor[stat+'_'+style]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+					cor[stat+style]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 			for stat in ['lr_intercept','lr_slope','lr_pvalue']:
 				cor[stat]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 
@@ -126,7 +125,6 @@ for scenario in ['All-Hist','Plus20-Future']:
 						run_loc = run_loc[valid_runs]
 						pers_loc = data['period_length'][:,y,x].values[valid_runs]
 						time_loc = data['period_midpoints'][:,y,x].values[valid_runs]
-						year_loc = year[valid_runs]
 						monIndex_loc = data['period_monthly_index'][:,y,x].values[valid_runs]
 
 						corWith_loc = np.array([])
@@ -136,18 +134,17 @@ for scenario in ['All-Hist','Plus20-Future']:
 							tmp_corWith_loc_run = corWith_full[:,y,x][corWith_run[:,y,x].values==run]
 							corWith_loc = np.append(corWith_loc, tmp_corWith_loc_run.ix[tmp_index_loc_run])
 							# month before
-							tmp_index_loc_run_lagged = tmp_index_loc_run - 1
+							tmp_index_loc_run_lagged = monIndex_loc[run_loc==run] -1
 							issue_months = np.where(tmp_index_loc_run_lagged < 0)[0]
 							tmp_index_loc_run_lagged[issue_months] = 0
-							tmp_tmp = tmp_corWith_loc_run.ix[tmp_index_loc_run]
-							tmp_tmp[issue_months] = np.nan
+							tmp_tmp = tmp_corWith_loc_run.ix[tmp_index_loc_run_lagged]
+							tmp_tmp.ix[issue_months] = np.nan
 							corWith_loc_lagged = np.append(corWith_loc_lagged, tmp_tmp)
-
 
 						# mask all
 						mask = ~np.isnan(pers_loc) & ~np.isnan(time_loc) & ~np.isnan(corWith_loc) & ~np.isnan(corWith_loc_lagged)
 						time_loc=time_loc[mask]
-						year_loc=year_loc[mask]
+						year_loc =  np.array([date.year for date in num2date(time_loc, units = units, calendar=calendar)])
 						pers_loc=pers_loc[mask]
 						monIndex_loc=monIndex_loc[mask]
 						corWith_loc=corWith_loc[mask]
@@ -191,9 +188,9 @@ for scenario in ['All-Hist','Plus20-Future']:
 								# corWith_loc_lagged_sea_detrend = corWith_loc_lagged_sea-(intercept+slope*time_loc_sea)
 
 								# normalize
-								pers_loc_sea_norm = (pers_loc_sea - pers_loc_sea.max()) / (pers_loc_sea.min() - pers_loc_sea.max)
-								corWith_loc_sea_norm = (corWith_loc_sea - corWith_loc_sea.max()) / (corWith_loc_sea.min() - corWith_loc_sea.max)
-								corWith_loc_lagged_sea_norm = (corWith_loc_lagged_sea - corWith_loc_lagged_sea.max()) / (corWith_loc_lagged_sea.min() - corWith_loc_lagged_sea.max)
+								pers_loc_sea_norm = (pers_loc_sea - pers_loc_sea.max()) / (pers_loc_sea.min() - pers_loc_sea.max())
+								corWith_loc_sea_norm = (corWith_loc_sea - corWith_loc_sea.max()) / (corWith_loc_sea.min() - corWith_loc_sea.max())
+								corWith_loc_lagged_sea_norm = (corWith_loc_lagged_sea - corWith_loc_lagged_sea.max()) / (corWith_loc_lagged_sea.min() - corWith_loc_lagged_sea.max())
 
 								################
 								# correlation
@@ -212,17 +209,17 @@ for scenario in ['All-Hist','Plus20-Future']:
 								###################
 								# longest in season
 								###################
-								pers_loc_sea_, corWith_loc_sea_, corWith_loc_sea_ = np.array([]), np.array([]), np.array([])
+								pers_loc_sea_, corWith_loc_sea_, corWith_loc_sea_lagged_ = np.array([]), np.array([]), np.array([])
 								for run in range(100):
 									tmp_year = year_loc_sea[run_loc_sea==run]
-									for ind in sorted(set(tmp_year)):
-										indices_of_year = np.where(tmp_index==ind)[0]
+									for yr in sorted(set(tmp_year)):
+										indices_of_year = np.where(tmp_year==yr)[0]
 										corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea_norm[indices_of_year][0])
-										corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_sea_lagged_norm[indices_of_year][0])
+										corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_lagged_sea_norm[indices_of_year][0])
 										pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea_norm[indices_of_year].max())
 
-								cor['corrcoef_season'][season_name,y,x],cor['p-value_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_norm,corWith_loc_sea_norm)
-								cor['corrcoef_lagged_season'][season_name,y,x],cor['p-value_lagged_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_norm,corWith_loc_lagged_sea_norm)
+								cor['corrcoef_season'][season_name,y,x],cor['p-value_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
+								cor['corrcoef_lagged_season'][season_name,y,x],cor['p-value_lagged_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_,corWith_loc_sea_lagged_)
 
 
 								###################
@@ -258,8 +255,9 @@ for scenario in ['All-Hist','Plus20-Future']:
 								################
 								# correlation longest
 								################
-
-								cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
+								#
+								# cor['corrcoef_longest'][season_name,y,x],cor['p-value_longest'][season_name,y,x]=stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
+								#
 
 
 
