@@ -23,7 +23,10 @@ sns.set()
 sns.set_style("whitegrid")
 cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", [sns.color_palette("colorblind")[0],'white',sns.color_palette("colorblind")[4]])
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
+try:
+	os.chdir('/Users/peterpfleiderer/Projects/Persistence')
+except:
+	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 
 working_path='/p/tmp/pepflei/HAPPI/raw_data/reg_cor/'
 
