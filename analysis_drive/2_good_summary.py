@@ -28,7 +28,7 @@ try:
 except:
 	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 
-working_path='/p/tmp/pepflei/HAPPI/raw_data/reg_cor/'
+working_path='/p/tmp/pepflei/HAPPI/raw_data/'
 
 state_dict = {
 	'warm':'tas',
@@ -81,7 +81,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 			tmp_2 = {}
 			for corWith_name in ['EKE','SPI3']:
 
-				all_files = glob.glob('data/reg_cor/'+model+'/cor_'+corWith_name+'*'+scenario+'*_'+state+'.nc')
+				all_files = glob.glob(working_path+'reg_cor/'+model+'/cor_'+corWith_name+'*'+scenario+'*_'+state+'.nc')
 				tmp_3 = {}
 				for file_name in all_files:
 					region = file_name.split('_')[-2]
@@ -90,7 +90,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 						tmp_3[region] = tmp.mean(axis=(-2,-1))
 						tmp_3[region].values = np.nanmean(tmp,axis=(-2,-1))
 
-				all_files = glob.glob('data/reg_stats/'+model+'/stats_'+corWith_name+'*'+scenario+'*_'+state+'.nc')
+				all_files = glob.glob(working_path+'reg_stats/'+model+'/stats_'+corWith_name+'*'+scenario+'*_'+state+'.nc')
 				tmp_4 = {}
 				for file_name in all_files:
 					region = file_name.split('_')[-2]
