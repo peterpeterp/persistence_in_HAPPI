@@ -108,6 +108,8 @@ regions = {'EAS':1,
 			'ALA':13,
 }
 
+period_count = da.read_nc('data/period_count.nc')['period_count']
+
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 state_count = da.read_nc('data/state_count_srex.nc')['state_count']
 artificial = da.read_nc('data/artificial/reg_summary_mean_qu_artificial.nc')['artificial_summary']
@@ -144,6 +146,12 @@ with PdfPages('plots/table_artificial.pdf') as pdf:
 		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in fraction of '+state_name+' days',15)), cmap='RdBu_r', c_range='maxabs')
 
 		# __________________________________
+		x += 1
+		var = (period_count[:,:,'Plus20-Future',state,'JJA',0] - period_count[:,:,'All-Hist',state,'JJA',0] ) / period_count[:,:,'All-Hist',state,'JJA',0] *100
+		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('rel. change in number of '+state_name+' periods [%]',15)), cmap='RdBu_r', c_range='maxabs')
+
+
+		# __________________________________
 
 		ax.text(x+0.6,16.5,"\n".join(textwrap.wrap('rel. change in probability of exceeding '+excee+' '+state_name+' days',25)) ,fontsize=9,va='center',weight='bold')
 		ax.plot([x+0.5,x+0.5],[0,18],color='k')
@@ -160,7 +168,7 @@ with PdfPages('plots/table_artificial.pdf') as pdf:
 		im_pers = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range=c_range)
 		# __________________________________
 
-		ax.set_xlim(0,6)
+		ax.set_xlim(0,8)
 		ax.set_ylim(-2,17.3)
 
 		fig.tight_layout(); pdf.savefig(); plt.close()
