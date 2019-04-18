@@ -232,7 +232,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 										for ind in sorted(set(tmp_index)):
 											indices_of_mon = np.where(tmp_index==ind)[0]
 											corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea[indices_of_mon][0])
-											corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_sea_lagged[indices_of_mon][0])
+											corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_lagged_sea[indices_of_mon][0])
 											pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea[indices_of_mon].max())
 											time_ = np.append(time_,time_loc_sea[indices_of_mon][np.argmax(pers_loc_sea[indices_of_mon])])
 
