@@ -137,98 +137,100 @@ had_mask = da.read_nc('masks/srex_mask_73x97.nc')
 eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
 exceed_summary = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/JJA_summary_srex.nc')['exceed_prob']
 
+state = 'warm'
+details = state_dict[state]
+
 plt.close('all')
-with PdfPages('plots/table_driver.pdf') as pdf:
+with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 
-	for state,details in state_dict.items(): #   }.items(): #
-		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,6))
-		ax.axis('off')
+	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(6,6))
+	ax.axis('off')
 
-		ax.text(0,15,"\n".join(textwrap.wrap('drivers of '+details['name']+' persistence',12)),fontsize=9,va='center',weight='bold')
+	ax.text(0,15,"\n".join(textwrap.wrap('drivers of '+details['name']+' persistence',12)),fontsize=9,va='center',weight='bold')
 
-		for region,y_reg in regions.items():
-			ax.plot([0,8.5],[y_reg-0.5,y_reg-0.5],color='k')
-			ax.text(0,y_reg,region,va='center',weight='bold')
-		ax.plot([0,8.5],[13.5,13.5],color='k')
-		ax.text(0,-1,'scale',va='center',weight='bold')
+	for region,y_reg in regions.items():
+		ax.plot([0,8.5],[y_reg-0.5,y_reg-0.5],color='k')
+		ax.text(0,y_reg,region,va='center',weight='bold')
+	ax.plot([0,8.5],[13.5,13.5],color='k')
+	ax.text(0,-1,'scale',va='center',weight='bold')
 
-		x=1
+	x=1
 
-		x += 1
-		im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef_all','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
-		if state == 'warm':
-			ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_EKE_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='PuOr')
-		else:
-			ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_EKE_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='PuOr')
-
-
-		x += 1
-		var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
-		im_eke = plot_model_column(ax,x,var,label = 'change in EKE', cmap='PuOr',c_range='maxabs')
-
-		x += 1
-		diff_cor = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA']  - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
-		var = diff_cor / summary['All-Hist',:,state,'EKE',:,'lr_slope','JJA']
-		plot_model_column(ax,x,var, label='EKE forcing on\n'+state+' persistence', plot_bool=True)
-
-		# __________________________________
-		x += 1
-		var = (exceed_summary[:,'Plus20-Future',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
-		im_pers = plot_model_column(ax,x,var,label = 'rel. change in\nprobability of exceeding\n14 '+details['name']+' days', cmap='PiYG_r', c_range='maxabs')
-		# __________________________________
-
-		x += 1
-		diff_cor = summary['Plus20-Future',:,state,'SPI3',:,'mean_'+'SPI3','JJA']  - summary['All-Hist',:,state,'SPI3',:,'mean_'+'SPI3','JJA']
-		var = diff_cor / summary['All-Hist',:,state,'SPI3',:,'lr_slope','JJA']
-		plot_model_column(ax,x,var, label='SPI3 forcing on \n'+state+' persistence', plot_bool=True)
-
-		x += 1
-		var = summary['Plus20-Future',:,state,'SPI3',:,'mean_'+'SPI3','JJA'] - summary['All-Hist',:,state,'SPI3',:,'mean_'+'SPI3','JJA']
-		plot_model_column(ax,x,var,label = 'change in SPI3', cmap='BrBG',c_range='maxabs')
-
-		x += 1
-		im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,'corrcoef_all','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
-		if state == 'warm':
-			ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_SPI3_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='BrBG')
-		else:
-			ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_SPI3_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='BrBG')
+	x += 1
+	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
+	if state == 'warm':
+		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_EKE_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='PuOr')
+	else:
+		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_EKE_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='PuOr')
 
 
-		ax.set_xlim(0,9)
-		ax.set_ylim(-2,17)
+	x += 1
+	var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
+	im_eke = plot_model_column(ax,x,var,label = 'change in EKE', cmap='PuOr',c_range='maxabs')
 
-		fig.tight_layout(); pdf.savefig(); plt.close()
+	x += 1
+	diff_cor = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA']  - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
+	var = diff_cor / summary['All-Hist',:,state,'EKE',:,'lr_slope','JJA']
+	plot_model_column(ax,x,var, label='EKE forcing on\n'+state+' persistence', plot_bool=True)
 
-		#################
-		# model legend
-		#################
-		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
-		ax.axis('off')
-		xx,yy = 0,0
-		patches = []
-		for model in model_shifts.keys():
-			x_shi,y_shi = model_shifts[model]
-			polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
-			ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=10,color='k',ha='center',rotation=0)
+	# __________________________________
+	x += 1
+	var = (exceed_summary[:,'Plus20-Future',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
+	im_pers = plot_model_column(ax,x,var,label = 'rel. change in\nprobability of exceeding\n14 '+details['name']+' days', cmap='PiYG_r', c_range='maxabs')
+	# __________________________________
 
-			patches.append(polygon)
+	x += 1
+	diff_cor = summary['Plus20-Future',:,state,'SPI3',:,'mean_'+'SPI3','JJA']  - summary['All-Hist',:,state,'SPI3',:,'mean_'+'SPI3','JJA']
+	var = diff_cor / summary['All-Hist',:,state,'SPI3',:,'lr_slope','JJA']
+	plot_model_column(ax,x,var, label='SPI3 forcing on \n'+state+' persistence', plot_bool=True)
 
-		patches.append(plt.Circle((xx, yy), 0.25))
-		if state == 'warm':
-			ax.annotate('HadGHCND', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
-		else:
-			ax.annotate('EOBS', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+	x += 1
+	var = summary['Plus20-Future',:,state,'SPI3',:,'mean_'+'SPI3','JJA'] - summary['All-Hist',:,state,'SPI3',:,'mean_'+'SPI3','JJA']
+	plot_model_column(ax,x,var,label = 'change in SPI3', cmap='BrBG') # ,c_range='maxabs')
 
-		colors = range(5)
+	x += 1
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,'corrcoef_lagged','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG', c_range='maxabs')
+	if state == 'warm':
+		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_SPI3_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='BrBG')
+	else:
+		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_SPI3_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='BrBG')
 
-		p = PatchCollection(patches, cmap='gray', alpha=1)
-		p.set_array(np.array(range(4)))
-		ax.add_collection(p)
 
-		ax.set_xlim(-1,1)
-		ax.set_ylim(-1,1)
+	ax.set_xlim(0,9)
+	ax.set_ylim(-2,17)
 
-		fig.tight_layout(); pdf.savefig(); plt.close()
+	fig.tight_layout(); pdf.savefig(); plt.close()
+
+	#################
+	# model legend
+	#################
+	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,2))
+	ax.axis('off')
+	xx,yy = 0,0
+	patches = []
+	for model in model_shifts.keys():
+		x_shi,y_shi = model_shifts[model]
+		polygon = Polygon([(xx+x_shi-x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi-y_wi),(xx+x_shi+x_wi,yy+y_shi+y_wi),(xx+x_shi-x_wi,yy+y_shi+y_wi)], True)
+		ax.annotate(model, xy=(xx+ x_shi,yy+ y_shi), xytext=(xx+x_shi*3,yy+y_shi*3),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->", lw = 2),fontsize=10,color='k',ha='center',rotation=0)
+
+		patches.append(polygon)
+
+	patches.append(plt.Circle((xx, yy), 0.25))
+	if state == 'warm':
+		ax.annotate('HadGHCND', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+	else:
+		ax.annotate('EOBS', xy=(xx,yy), xytext=(xx+x_shi*3,yy),arrowprops=dict(facecolor='k',edgecolor='m', arrowstyle="->",lw = 2),fontsize=7,color='k',ha='center',rotation=0)
+
+	colors = range(5)
+
+	p = PatchCollection(patches, cmap='gray', alpha=1)
+	p.set_array(np.array(range(4)))
+	ax.add_collection(p)
+
+	ax.set_xlim(-1,1)
+	ax.set_ylim(-1,1)
+
+	fig.tight_layout(); pdf.savefig(); plt.close()
 
 
 

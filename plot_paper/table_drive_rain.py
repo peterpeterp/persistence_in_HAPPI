@@ -157,9 +157,10 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	x=1
 
 	x += 1
-	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'mean_of_10percLongest_EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,u'mean_EKE','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
+	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'mean_of_10percLongest_EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,u'mean_EKE','JJA'], label='EKE anomaly\during longest '+details['name'], cmap='PuOr', c_range='maxabs')
 
-
+	x += 1
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'corrcoef_season','JJA'], label='correaltion \nEKE - '+details['name'], cmap='BrBG',c_range='maxabs')
 
 	x += 1
 	var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
@@ -173,7 +174,7 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	# __________________________________
 	x += 1
 	var = (exceed_summary[:,'Plus20-Future',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
-	im_pers = plot_model_column(ax,x,var,label = 'rel. change in\nprobability of exceeding\n14 '+details['name']+' days', cmap='PiYG_r', c_range='maxabs')
+	im_pers = plot_model_column(ax,x,var,label = 'rel. change in\nprobability of exceeding\n'+str(details['excee'])+' '+details['name']+' days', cmap='PiYG_r', c_range='maxabs')
 	# __________________________________
 
 	x += 1
