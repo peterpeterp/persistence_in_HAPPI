@@ -210,29 +210,29 @@ for scenario in ['All-Hist','Plus20-Future']:
 									###################
 									# longest in season
 									###################
-									pers_loc_sea_, corWith_loc_sea_, corWith_loc_sea_lagged_ = np.array([]), np.array([]), np.array([])
+									pers_loc_sea_, corWith_loc_sea_, corWith_loc_lagged_sea_ = np.array([]), np.array([]), np.array([])
 									for run in range(100):
 										tmp_year = year_loc_sea[run_loc_sea==run]
 										for yr in sorted(set(tmp_year)):
 											indices_of_year = np.where(tmp_year==yr)[0]
 											corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea_norm[indices_of_year][0])
-											corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_lagged_sea_norm[indices_of_year][0])
+											corWith_loc_lagged_sea_ = np.append(corWith_loc_lagged_sea_,corWith_loc_lagged_sea_norm[indices_of_year][0])
 											pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea_norm[indices_of_year].max())
 
 									cor['corrcoef_season'][season_name,y,x],cor['p-value_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_,corWith_loc_sea_)
-									cor['corrcoef_lagged_season'][season_name,y,x],cor['p-value_lagged_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_,corWith_loc_sea_lagged_)
+									cor['corrcoef_lagged_season'][season_name,y,x],cor['p-value_lagged_season'][season_name,y,x] = stats.pearsonr(pers_loc_sea_,corWith_loc_lagged_sea_)
 
 
 									################
 									# longest in month
 									################
-									pers_loc_sea_, corWith_loc_sea_, corWith_loc_sea_lagged_ = np.array([]), np.array([]), np.array([])
+									pers_loc_sea_, corWith_loc_sea_, corWith_loc_lagged_sea_ = np.array([]), np.array([]), np.array([])
 									for run in range(100):
 										tmp_index = monIndex_loc_sea[run_loc_sea==run]
 										for ind in sorted(set(tmp_index)):
 											indices_of_mon = np.where(tmp_index==ind)[0]
 											corWith_loc_sea_ = np.append(corWith_loc_sea_,corWith_loc_sea[indices_of_mon][0])
-											corWith_loc_sea_lagged_ = np.append(corWith_loc_sea_lagged_,corWith_loc_lagged_sea[indices_of_mon][0])
+											corWith_loc_lagged_sea_ = np.append(corWith_loc_lagged_sea_,corWith_loc_lagged_sea[indices_of_mon][0])
 											pers_loc_sea_ = np.append(pers_loc_sea_,pers_loc_sea[indices_of_mon].max())
 											# time_ = np.append(time_,time_loc_sea[indices_of_mon][np.argmax(pers_loc_sea[indices_of_mon])])
 
