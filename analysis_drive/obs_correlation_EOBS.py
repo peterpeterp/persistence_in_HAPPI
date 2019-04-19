@@ -80,7 +80,7 @@ for state,pers_file in zip(['dry-warm','warm','dry','5mm'], ['cpd_0.50deg_reg_me
 					corWith_loc_lagged = tmp_tmp
 
 					# mask all
-					mask = ~np.isnan(pers_loc) & ~np.isnan(time_loc) & ~np.isnan(corWith_loc) & ~np.isnan(corWith_loc_lagged)
+					mask = np.isfinite(pers_loc) & np.isfinite(time_loc) & np.isfinite(corWith_loc) & np.isfinite(corWith_loc_lagged)
 					time_loc=time_loc[mask]
 					if len(time_loc) > 1:
 						year_loc =  np.array([date.year for date in num2date(time_loc, units = "days since 1950-01-01 00:00")])
