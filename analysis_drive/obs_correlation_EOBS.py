@@ -14,8 +14,8 @@ scenario='All-Hist'
 
 os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
 corWith_dict = {
-	'SPI3':{'file':'data/rr_0p5_1950-2018_mon_SPI3.nc','corWith_start':1950,'corWith_end':2018},
-	'EKE':{'file':'data/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc','corWith_start':1979,'corWith_end':2017}
+	'SPI3':{'file':'data/rr_0p5_1950-2018_mon_SPI3.nc','corWith_start':1950,'corWith_end':2018, 'var_name':'spi'},
+	'EKE':{'file':'data/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc','corWith_start':1979,'corWith_end':2017, 'var_name':'eke'}
 }
 
 working_path='data/'+model+'/'
@@ -27,7 +27,7 @@ for state,pers_file in zip(['dry-warm','warm','dry','5mm'], ['cpd_0.50deg_reg_me
 	pers_end = 2017
 
 	for corWith_name,corWith_detials in corWith_dict.items():
-		corWith_full = da.read_nc(corWith_detials['file'])['spi']
+		corWith_full = da.read_nc(corWith_detials['file'])[corWith_details['var_name']]
 
 		'''
 		carefully check time axis of both files
