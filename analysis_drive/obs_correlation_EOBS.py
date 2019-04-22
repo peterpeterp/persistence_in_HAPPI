@@ -11,6 +11,14 @@ import scipy
 model='EOBS'
 scenario='All-Hist'
 
+try:
+       	states = [sys.argv[1]]
+        corWith_names = [sys.argv[2]]
+except:
+	states = ['dry']
+        corWith_names = ['EKE']
+
+print(states,corWith_names)
 
 os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter')
 corWith_dict = {
@@ -18,22 +26,30 @@ corWith_dict = {
 	'EKE':{'file':'data/ERA-Interim_eke_1979-2017_850hPa_mon_EOBSgrid.nc','corWith_start':1979,'corWith_end':2017, 'var_name':'eke'}
 }
 
+state_dict = {
+	'dry':'rr_0.50deg_reg_merged_period_dry.nc',
+	'5mm':'rr_0.50deg_reg_merged_period_5mm.nc',
+	'dry-warm':'cpd_0.50deg_reg_merged_period_dry-warm.nc',
+	'warm':'tg_0.50deg_reg_merged_period_warm.nc'
+}
+
 working_path='data/'+model+'/'
 
-for state,pers_file in zip(['dry-warm','warm','dry','5mm'], ['cpd_0.50deg_reg_merged_period_dry-warm.nc','tg_0.50deg_reg_merged_period_warm.nc','rr_0.50deg_reg_merged_period_dry.nc','rr_0.50deg_reg_merged_period_5mm.nc']):
-
-	data =da.read_nc(working_path+scenario+'/'+pers_file)
+for state in states:
+	
+	data =da.read_nc(working_path+scenario+'/'+state_dict[state])
 	pers_start = 1950
 	pers_end = 2017
 
-	for corWith_name,corWith_detials in corWith_dict.items():
-		corWith_full = da.read_nc(corWith_detials['file'])[corWith_details['var_name']]
+	for corWith_name in corWith_names:
+		corWith_details = corWith_dict[corWith_name]	
+		corWith_full = da.read_nc(corWith_details['file'])[corWith_details['var_name']]
 
 		'''
 		carefully check time axis of both files
 		'''
-		corWith_start = corWith_detials['corWith_start']
-		corWith_end = corWith_detials['corWith_end']
+		corWith_start = corWith_details['corWith_start']
+		corWith_end = corWith_details['corWith_end']
 
 		index_shift = (pers_start - corWith_start) * 12
 		cut_start = corWith_start - pers_start
