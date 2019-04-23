@@ -67,15 +67,15 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 
 	return im
 
-def plot_obs_column(ax,x,var,masks,c_range=(-0.3,0.3), label=' ', x_shi=0 ,y_shi=0, cmap='RdBu'):
+def plot_obs_column(ax,x,var,masks,pval=None,c_range=(-0.3,0.3), label=' ', x_shi=0 ,y_shi=0, cmap='RdBu'):
 	patches = []
 	colors = []
 	for region,y in regions.items():
 		if region in masks.keys():
 			mask = masks[region].copy()
-			if mask.shape != var['corrcoef']['JJA'].shape:
+			if mask.shape != var['JJA'].shape:
 				mask = mask.T
-			cor = np.array(var['corrcoef']['JJA'].values * mask.values).flatten()
+			cor = np.array(var['JJA'].values * mask.values).flatten()
 			relevant_cells = np.where((mask.flatten()>0) & (np.isfinite(cor)))[0]
 			cor = cor[relevant_cells]
 
@@ -87,8 +87,8 @@ def plot_obs_column(ax,x,var,masks,c_range=(-0.3,0.3), label=' ', x_shi=0 ,y_shi
 				ax.plot([x],[y],'*k')
 
 			mask[mask>0] = 1
-			pval = np.array(var['p_value']['JJA'].values * mask.values).flatten()
-			signi = np.sum( (np.sign(cor) == np.sign(np.nansum(cor))) & (pval[relevant_cells] < 0.05) ) / float(cor.shape[0])
+			pval_ = np.array(pval['JJA'].values * mask.values).flatten()
+			signi = np.sum( (np.sign(cor) == np.sign(np.nansum(cor))) & (pval_[relevant_cells] < 0.05) ) / float(cor.shape[0])
 			if signi >= 0.5:
 				ax.plot([x],[y],'vk')
 
@@ -157,11 +157,9 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	x=1
 
 	x += 1
-	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
-	if state == 'warm':
-		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_EKE_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='PuOr')
-	else:
-		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_EKE_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='PuOr')
+	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef_mon','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
+	data = da.read_nc('data/EOBS/cor/cor_EKE_EOBS_'+state+'.nc')
+	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon'], pval=data['p-value_mon'], label=' ', masks=eobs_mask, cmap='PuOr')
 
 
 	x += 1
@@ -189,11 +187,9 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	plot_model_column(ax,x,var,label = 'change in SPI3', cmap='BrBG',c_range='maxabs')
 
 	x += 1
-	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_lagged','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
-	if state == 'warm':
-		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/HadGHCND/All-Hist/cor_SPI3_HadGHCND_All-Hist_'+state+'.nc'), label=' ', masks=had_mask, cmap='BrBG')
-	else:
-		ax = plot_obs_column(ax, x=x, var=da.read_nc('data/EOBS/All-Hist/cor_SPI3_EOBS_All-Hist_'+state+'.nc'), label=' ', masks=eobs_mask, cmap='BrBG')
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_mon_lagged','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
+	data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
+	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon_lagged'], pval=data['p-value_mon_lagged'], label=' ', masks=eobs_mask, cmap='BrBG')
 
 
 	ax.set_xlim(0,9)
