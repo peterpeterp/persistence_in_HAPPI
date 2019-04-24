@@ -157,9 +157,9 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	x=1
 
 	x += 1
-	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef_mon','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
-	data = da.read_nc('data/EOBS/cor/cor_EKE_EOBS_'+state+'.nc')
-	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon'], pval=data['p-value_mon'], label=' ', masks=eobs_mask, cmap='PuOr')
+	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,'corrcoef','JJA'], label='correlation\nEKE - '+details['name'], cmap='PuOr')
+	# data = da.read_nc('data/EOBS/cor/cor_EKE_EOBS_'+state+'.nc')
+	# ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon'], pval=data['p-value_mon'], label=' ', masks=eobs_mask, cmap='PuOr')
 
 
 	x += 1
@@ -187,9 +187,9 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	plot_model_column(ax,x,var,label = 'change in SPI3', cmap='BrBG',c_range='maxabs')
 
 	x += 1
-	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_mon_lagged','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
-	data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
-	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon_lagged'], pval=data['p-value_mon_lagged'], label=' ', masks=eobs_mask, cmap='BrBG')
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_lagged','JJA'], label='lag correaltion \nSPI3 - '+details['name'], cmap='BrBG')
+	# data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
+	# ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon_lagged'], pval=data['p-value_mon_lagged'], label=' ', masks=eobs_mask, cmap='BrBG')
 
 
 	ax.set_xlim(0,9)

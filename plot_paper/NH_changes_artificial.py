@@ -86,8 +86,10 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		legend_elements.append(Line2D([0], [0], color=color, linestyle='-', label=' '))
 		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
 
+	legend_elements.append(Line2D([0], [0], color=arg5[0], linestyle='-', label=' '))
+	legend_elements.append(Patch(facecolor=arg5[0],alpha=0.3, label=' '))
 
-	subax.legend(handles=legend_elements ,title='                                       '+'      '.join([legend_dict[aa]+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
+	subax.legend(handles=legend_elements ,title='                                       '+'      '.join([legend_dict[aa]+''.join([' ']*int(6/len(aa))) for aa in arg3])+'  artificial', loc='lower right',fontsize=9,ncol=len(arg3)+2, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	season=all_regs[region][arg1]

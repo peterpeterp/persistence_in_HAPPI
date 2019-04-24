@@ -192,6 +192,8 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_mon_lagged','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
 	data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
 	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon_lagged'], pval=data['p-value_mon_lagged'], label=' ', masks=eobs_mask, cmap='BrBG')
+	data = da.read_nc('data/HadGHCND/All-Hist/cor_SPI3_HadGHCND_All-Hist_'+state+'.nc')
+	ax = plot_obs_column(ax, x=x, var=data['corrcoef'], pval=data['p_value'], label=' ', masks=had_mask, cmap='BrBG')
 
 
 	ax.set_xlim(0,9)

@@ -156,14 +156,14 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	ax.text(0,-1,'scale',va='center',weight='bold')
 
 	x=1
+	#
+	# x += 1
+	# im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'mean_of_10percLongest_EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,u'mean_EKE','JJA'], label='EKE anomaly\nduring longest '+details['name'], cmap='PuOr', c_range='maxabs')
 
 	x += 1
-	im_eke = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'mean_of_10percLongest_EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,u'mean_EKE','JJA'], label='EKE anomaly\during longest '+details['name'], cmap='PuOr', c_range='maxabs')
-
-	x += 1
-	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'corrcoef_mon','JJA'], label='correaltion \nEKE - '+details['name'], cmap='BrBG',c_range='maxabs')
-	data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
-	ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon'], pval=data['p-value_mon'], label=' ', masks=eobs_mask, cmap='BrBG')
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'EKE',:,u'corrcoef_season','JJA'], label='correaltion \nEKE - longest '+details['name']+'\nperiod in season', cmap='BrBG',c_range='maxabs')
+	# data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
+	# ax = plot_obs_column(ax, x=x, var=data['corrcoef_mon'], pval=data['p-value_mon'], label=' ', masks=eobs_mask, cmap='BrBG')
 
 	x += 1
 	var = summary['Plus20-Future',:,state,'EKE',:,'mean_'+'EKE','JJA'] - summary['All-Hist',:,state,'EKE',:,'mean_'+'EKE','JJA']
@@ -190,9 +190,9 @@ with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 	plot_model_column(ax,x,var,label = 'change in SPI3', cmap='BrBG',c_range='maxabs')
 
 	x += 1
-	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_lagged_season','JJA'], label='correaltion \nSPI3 - '+details['name'], cmap='BrBG')
-	data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
-	ax = plot_obs_column(ax, x=x, var=data['corrcoef_lagged'], pval=data['p-value_lagged_season'], label=' ', masks=eobs_mask, cmap='BrBG')
+	im_spi = plot_model_column(ax,x,summary['All-Hist',:,state,'SPI3',:,u'corrcoef_lagged_season','JJA'], label='correaltion \nSPI3 - longest '+details['name']+'\nperiod in season', cmap='BrBG')
+	# data = da.read_nc('data/EOBS/cor/cor_SPI3_EOBS_'+state+'.nc')
+	# ax = plot_obs_column(ax, x=x, var=data['corrcoef_lagged'], pval=data['p-value_lagged_season'], label=' ', masks=eobs_mask, cmap='BrBG')
 
 
 	ax.set_xlim(0,9)
