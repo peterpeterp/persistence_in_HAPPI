@@ -22,7 +22,11 @@ import shapely
 sns.set()
 sns.set_style("whitegrid")
 
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
+for home_path in ['/Users/peterpfleiderer/Projects/Persistence','~/Dokumente/klima_uni/Persistence_small']:
+	try:
+		os.chdir(home_path)
+	except:
+		pass
 
 bool_styles = {-1:{'c':'green','m':'v'},
 				1:{'c':'magenta','m':'^'}}
@@ -135,7 +139,7 @@ state_dict = {
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 had_mask = da.read_nc('masks/srex_mask_73x97.nc')
 eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
-exceed_summary = da.read_nc('/Users/peterpfleiderer/Projects/Persistence/data/JJA_summary_srex.nc')['exceed_prob']
+exceed_summary = da.read_nc('data/JJA_summary_srex.nc')['exceed_prob']
 
 state = 'warm'
 details = state_dict[state]

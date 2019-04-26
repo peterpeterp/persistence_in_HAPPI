@@ -23,10 +23,11 @@ sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
 import srex_overview as srex_overview; reload(srex_overview)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-try:
-	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
-except:
-	os.chdir('/global/homes/p/pepflei/')
+for home_path in ['/Users/peterpfleiderer/Projects/Persistence','~/Dokumente/klima_uni/Persistence_small']:
+	try:
+		os.chdir(home_path)
+	except:
+		pass
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
