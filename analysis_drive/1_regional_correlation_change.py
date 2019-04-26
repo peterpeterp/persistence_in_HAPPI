@@ -57,7 +57,7 @@ def normalize_correlation(y,x):
 
 	cor,cor_pval = stats.pearsonr(x_norm,y_norm)
 	slope, intercept, r_value, p_value, std_err = stats.linregress(pers_loc_sea_norm,corWith_loc_sea_norm)
-	return {'corrcoef':cor,'p-value':cor_pval,'lr_slope':slope,'lr_intercept':intercept,'lr_p-value':p_value]}
+	return {'corrcoef':cor,'p-value':cor_pval,'lr_slope':slope,'lr_intercept':intercept,'lr_p-value':p_value}
 
 
 ##############
