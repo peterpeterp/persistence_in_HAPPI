@@ -107,6 +107,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 			for xxx in [corWith_name,state]:
 				for stat in ['mean','10','25','33','50','66','75','90','100']:
 					statistics[stat+'_'+xxx]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
+					statistics[stat+'_lagged_'+xxx]=da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 			statistics['mean_of_10percLongest_'+state] = da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 			statistics['mean_of_10percLongest_'+corWith_name] =  da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
 			statistics['mean_of_10percLongest_lagged_'+corWith_name] =  da.DimArray(axes=[seasons.keys(),data.lat,data.lon],dims=['season','lat','lon'])
@@ -118,14 +119,6 @@ for scenario in ['All-Hist','Plus20-Future']:
 					# print(np.nanpercentile(pers_loc,range(101)))
 					if pers_loc.sum() != 0 and reg_mask[y,x] != 0:
 						print(y,x)
-
-						################
-						# mean of corwith
-						################
-						for season_name,indices in season_indices_monthly.items():
-							statistics['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_full[:,y,x].values[indices])
-							for qu in [10,25,33,50,66,75,90,100]:
-								statistics[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_full[:,y,x].values[indices],qu)
 
 						# print(np.nanmean(corWith_full[:,y,x].values[indices]))
 						run_loc = data['run_id'][:,y,x].values
@@ -150,7 +143,7 @@ for scenario in ['All-Hist','Plus20-Future']:
 							corWith_loc_lagged = np.append(corWith_loc_lagged, tmp_tmp)
 
 						# mask all
-						mask = ~np.isnan(pers_loc) & ~np.isnan(time_loc) & ~np.isnan(corWith_loc) & ~np.isnan(corWith_loc_lagged)
+						mask = np.isfinite(pers_loc) & np.isfinite(time_loc) & np.isfinite(corWith_loc) & np.isfinite(corWith_loc_lagged)
 						time_loc=time_loc[mask]
 						if len(time_loc) > 1:
 							year_loc =  np.array([date.year for date in num2date(time_loc, units = units, calendar=calendar)])
@@ -178,6 +171,14 @@ for scenario in ['All-Hist','Plus20-Future']:
 									statistics['mean_'+state][season_name,y,x] = np.nanmean(pers_loc_sea)
 									for qu in [10,25,33,50,66,75,90,100]:
 										statistics[str(qu)+'_'+state][season_name,y,x] = np.nanpercentile(pers_loc_sea,qu)
+
+									statistics['mean_'+corWith_name][season_name,y,x] = np.nanmean(corWith_loc_sea)
+									for qu in [10,25,33,50,66,75,90,100]:
+										statistics[str(qu)+'_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_loc_sea,qu)
+
+									statistics['mean_lagged_'+corWith_name][season_name,y,x] = np.nanmean(corWith_loc_lagged_sea)
+									for qu in [10,25,33,50,66,75,90,100]:
+										statistics[str(qu)+'_lagged_'+corWith_name][season_name,y,x] = np.nanpercentile(corWith_loc_lagged_sea,qu)
 
 									'''
 									detrend and normalize
