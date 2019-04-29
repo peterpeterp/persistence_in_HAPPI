@@ -34,9 +34,10 @@ icon_dict = {
 	# 'water':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/drop.png')),
 	# 'dry':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/plumbing.png')),
 	# 'drought':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/nature.png')),
-	1:plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase.png')),
-	-1:plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease.png')),
-	'SPI3':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/rain.png')),
+	'increase':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase.png')),
+	'decrease':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease.png')),
+	'SPI3':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/soil-moisture.png')),
+	'rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/rain.png')),
 	# 'no_rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/no_rain.png')),
 }
 

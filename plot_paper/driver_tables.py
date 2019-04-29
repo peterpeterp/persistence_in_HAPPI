@@ -37,7 +37,7 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 
 				if signi is not None:
 					if signi[model,region] < signi_lvl:
-						ax.plot(x+x_shi*1.2,y+y_shi*1.2, marker='*', color='k')
+						ax.plot(x+x_shi*1.2,y+y_shi*1.2, marker='.', color='k')
 
 	if plot_bool == False:
 		if c_range is None:
@@ -71,15 +71,15 @@ def plot_obs_column(ax,x,var,masks,pval=None,c_range=(-0.3,0.3), label=' ', x_sh
 			patches.append(plt.Circle((x, y), 0.25))
 			colors.append(np.nansum(cor))
 
-			homogenety = np.sum( np.sign(cor) == np.sign(np.nansum(cor)) ) / float(cor.shape[0])
-			if homogenety >= 0.9:
-				ax.plot([x],[y],'*k')
+			# homogenety = np.sum( np.sign(cor) == np.sign(np.nansum(cor)) ) / float(cor.shape[0])
+			# if homogenety >= 0.9:
+			# 	ax.plot([x],[y],'*k')
 
 			mask[mask>0] = 1
 			pval_ = np.array(pval['JJA'].values * mask.values).flatten()
 			signi = np.sum( (np.sign(cor) == np.sign(np.nansum(cor))) & (pval_[relevant_cells] < 0.05) ) / float(cor.shape[0])
 			if signi >= 0.5:
-				ax.plot([x],[y],'vk')
+				ax.plot([x],[y],'*k')
 
 
 	p = PatchCollection(patches, cmap=cmap, edgecolor='k', alpha=1)
@@ -94,12 +94,14 @@ summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 exceed_summary = da.read_nc('data/JJA_summary_srex.nc')['exceed_prob']
 had_mask = da.read_nc('masks/srex_mask_73x97.nc')
 eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
+drive_summary = da.DimArray( axes = [summary.region, summary.state,['EKE','SPI3','decrease','increase']], dims=['region','state','icon'], dtype=np.int)
+drive_summary.values[:,:,:] = 0
 
 state_dict = {
-	'warm' : {'EKE':'', 'SPI3':'', 'name':'warm', 'style':'tas', 'excee':'14'},
-	'dry' : {'EKE':'', 'SPI3':'_lagged', 'name':'dry', 'style':'pr', 'excee':'14'},
-	'dry-warm' : {'EKE':'', 'SPI3':'_lagged', 'name':'dry-warm', 'style':'cpd', 'excee':'14'},
-	'5mm' : {'EKE':'', 'SPI3':'_lagged', 'name':'rain', 'style':'pr', 'excee':'7'},
+	'warm' : {'EKE':'_mon', 'SPI3':'_mon', 'name':'warm', 'style':'tas', 'excee':'14'},
+	'dry' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'dry', 'style':'pr', 'excee':'14'},
+	'dry-warm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'dry-warm', 'style':'cpd', 'excee':'14'},
+	'5mm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'rain', 'style':'pr', 'excee':'7'},
 }
 
 model_shifts = {
@@ -109,7 +111,7 @@ model_shifts = {
 	'NorESM1':(-0.25,+0.25),
 }
 
-style_dict = {'':'correlation', '_lagged':'lagged correlation'}
+style_dict = {'':'correlation', '_lagged':'lagged correlation', '_lagged_mon':'lagged monthly correlation', '_lagged_season':'lagged seasonal correaltion', '_season':'seasonal correaltion' , '_mon':'monthly correaltion'}
 
 bool_styles = {-1:{'c':'green','m':'v'},
 				1:{'c':'magenta','m':'^'},
@@ -131,7 +133,7 @@ for state in summary.state:
 			x += 1
 			c_range = plot_model_column(ax,x,var=summary['All-Hist',:,state,corWi,:,'corrcoef'+details[corWi],'JJA'],\
 			 					signi=summary['All-Hist',:,state,corWi,:,'p-value'+details[corWi],'JJA'],\
-								label=style_dict[details[corWi]]+'\n'+corWi+' - '+details['name'], cmap='PuOr', c_range='maxabs')
+								label=style_dict[details[corWi]]+'\n'+corWi+' - '+details['name'], cmap='PuOr', c_range='maxabs', signi_lvl=0.1)
 			if state != 'warm':
 				data = da.read_nc('data/EOBS/cor/cor_'+corWi+'_EOBS_'+state+'.nc')
 				ax = plot_obs_column(ax, x=x, var=data['corrcoef'+details[corWi]], pval=data['p-value'+details[corWi]], label=' ', masks=eobs_mask, cmap='PuOr', c_range=c_range)
@@ -142,7 +144,6 @@ for state in summary.state:
 			x += 1
 			rel_diff_corWi = (summary['Plus20-Future',:,state,corWi,:,'mean_'+corWi,'JJA'] - summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'])# / summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'] * 100
 			rel_diff_corWi[np.isfinite(rel_diff_corWi)==False] = np.nan
-			print(corWi,rel_diff_corWi)
 			c_range = plot_model_column(ax,x,rel_diff_corWi,label = 'change\nin '+corWi+' []', cmap='PuOr',c_range='maxabs')
 
 
@@ -152,7 +153,7 @@ for state in summary.state:
 
 
 			drive = rel_diff_corWi / summary['All-Hist',:,state,corWi,:,'corrcoef'+details[corWi],'JJA']
-			# drive *= np.array(summary['All-Hist',:,state,corWi,:,'p-value'+details[corWi],'JJA'] < 0.1, np.int)
+			drive *= np.array(summary['All-Hist',:,state,corWi,:,'p-value'+details[corWi],'JJA'] < 0.1, np.int)
 			# var *= np.array(np.abs(rel_diff_corWi) > 1, np.int)
 			c_range = plot_model_column(ax,x,drive, label='', plot_bool=True) # ''+corWi+' forcing on\n'+state+' persistence'
 
@@ -163,12 +164,21 @@ for state in summary.state:
 
 				if np.sum(np.sign(var[:,region]) == np.sign(np.nanmean(var[:,region]))) >= 3 and np.sign(np.nanmean(var[:,region]))!=0:
 					ax.text(0.2,y_reg,region,va='center',weight='bold')
-					# ax.plot([0.1,x+0.5,x+0.5,0.1,0.1],[y_reg-0.5,y_reg-0.5,y_reg+0.5,y_reg+0.5,y_reg-0.5], linestyle='-', linewidth=3, color='darkred')
-					imscatter(x+1, y_reg, icon_dict[np.sign(np.nanmean(var[:,region]))], zoom=0.025, ax=ax)
+					icon = {-1:'decrease', 1:'increase'}[np.sign(np.nanmean(var[:,region]))]
+					imscatter(x+1, y_reg, icon_dict[icon], zoom=0.025, ax=ax)
+					drive_summary[region,state,icon] = 1
 
-				if np.sum(np.sign(var[:,region] * drive[:,region])) >= 3 and np.sign(np.nanmean(drive[:,region]))!=0:
+				print(state+' '+corWi+' '+region)
+				print(summary['All-Hist',:,state,corWi,region,'corrcoef'+details[corWi],'JJA'].values)
+				print(rel_diff_corWi[:,region].values)
+				print(var[:,region].values)
+				print(drive[:,region].values)
+				print(np.sign(var[:,region].values * drive[:,region].values))
+				if np.sum(np.sign(var[:,region].values * drive[:,region].values)) >= 2:
+					print('-----------')
 					# ax.plot([0.1,x+0.5,x+0.5,0.1,0.1],[y_reg-0.5,y_reg-0.5,y_reg+0.5,y_reg+0.5,y_reg-0.5], linestyle='--', linewidth=3, color='green')
 					imscatter(x+1.5, y_reg, icon_dict[corWi], zoom=0.025, ax=ax)
+					drive_summary[region,state,corWi] = 1
 
 			ax.plot([0,8.5],[13.5,13.5],color='k')
 			# ax.text(0,-1,'scale',va='center',weight='bold')
@@ -211,6 +221,6 @@ for state in summary.state:
 
 		fig.tight_layout(); pdf.savefig(); plt.close()
 
-
+da.Dataset({'drive':drive_summary}).write_nc('data/drive_summary.nc')
 
 #

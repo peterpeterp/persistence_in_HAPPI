@@ -51,17 +51,6 @@ all_regs=NH_regs.copy()
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
-icon_dict = {
-	'storm_track':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/storm.png')),
-	# 'water':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/drop.png')),
-	# 'dry':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/plumbing.png')),
-	# 'drought':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/nature.png')),
-	'increase':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase.png')),
-	'decrease':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease.png')),
-	'rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/rain.png')),
-	# 'no_rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/no_rain.png')),
-}
-
 # ---------------------------- changes
 def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.axis('off')
@@ -72,24 +61,6 @@ def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5
 	subax.set_yticklabels([])
 	subax.set_xticklabels([])
 	return(subax)
-
-def imscatter(x, y, image, ax=None, zoom=1):
-    if ax is None:
-        ax = plt.gca()
-    try:
-        image = plt.imread(image)
-    except TypeError:
-        # Likely already an array...
-        pass
-    im = OffsetImage(image, zoom=zoom)
-    x, y = np.atleast_1d(x, y)
-    artists = []
-    for x0, y0 in zip(x, y):
-        ab = AnnotationBbox(im, (x0, y0), xycoords='data', frameon=False)
-        artists.append(ax.add_artist(ab))
-    ax.update_datalim(np.column_stack([x, y]))
-    # ax.autoscale()
-    return artists
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	print('________'+region+'________')
@@ -104,14 +75,18 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		if region=='mid-lat':
 			subax.annotate(legend_dict[state],xy=(x*1.9,y*1.8),ha={-1:'left',1:'right'}[x], va='center', fontsize=8,fontweight='bold')
 
-	for state,icons in arg1[region].items():
-		drivers=icons['drive']
-		if len(drivers)>0:
-			for icon,xx,yy in zip(drivers,{1:[0],2:[-0.33,0.33],3:[-0.5,0,0.5]}[len(drivers)],{1:[0],2:[0,0],3:[-0.33,0.33,-0.33]}[len(drivers)]):
-				imscatter(state_details[state]['x']*1.5+xx, state_details[state]['y']*1.2+yy, icon_dict[icon], zoom=0.03 * (1/float(len(drivers)))**0.5, ax=subax)
+	if region!='mid-lat':
+		for state in arg1.state:
+			drivers=arg1[region,state,['EKE','SPI3','rain']]
+			drivers = drivers.icon[drivers == 1]
+			print(region,state,drivers)
+			if len(drivers)>0:
+				for icon,xx,yy in zip(drivers,{1:[1.5],2:[1.2,1.6],3:[0.9,1.5,1.6]}[len(drivers)],{1:[1.2],2:[1.5,0.8],3:[1.6,0.7,1.6]}[len(drivers)]):
+					imscatter(state_details[state]['x']*xx, state_details[state]['y']*yy, icon_dict[icon], zoom=0.03 * (1/float(len(drivers)))**0.3, ax=subax)
 
-		if icons['change'] != 'none':
-			imscatter(state_details[state]['x']*0.7, state_details[state]['y']*0.9, icon_dict[icons['change']], zoom=0.025, ax=subax)
+			change = arg1[region,state,['decrease','increase']]
+			if np.max(change) != 0:
+				imscatter(state_details[state]['x']*0.7, state_details[state]['y']*0.9, icon_dict[change.icon[change==1][0]], zoom=0.025, ax=subax)
 
 	# for state,icons in arg1[region].items():
 	# 	drivers=icons['drive']
@@ -137,102 +112,17 @@ state_details = {
 	'5mm':{'x':1,'y':-1,'color':'#009ACD'},
 }
 
-arg1 = {'ALA':{
-				'warm':{'drive':[],'change':'none'},
-				'dry':{'drive':['rain'],'change':'decrease'},
-				'dry-warm':{'drive':[],'change':'decrease'},
-				'5mm':{'drive':['rain'],'change':'increase'},
-				},
-		'WNA':{
-				'warm':{'drive':[],'change':'increase'},
-				'dry':{'drive':[],'change':'none'},
-				'dry-warm':{'drive':[],'change':'none'},
-				'5mm':{'drive':['rain'],'change':'decrease'},
-				},
-		'CNA':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':['storm_track'],'change':'increase'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-		'ENA':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':['storm_track'],'change':'increase'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-		'CGI':{
-				'warm':{'drive':[],'change':'none'},
-				'dry':{'drive':['rain'],'change':'decrease'},
-				'dry-warm':{'drive':[],'change':'none'},
-				'5mm':{'drive':['rain'],'change':'increase'},
-				},
-		'NEU':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':['storm_track'],'change':'increase'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-		'CEU':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':['storm_track'],'change':'increase'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-		'CAS':{
-				'warm':{'drive':['storm_track'],'change':'none'},
-				'dry':{'drive':[],'change':'none'},
-				'dry-warm':{'drive':['storm_track'],'change':'none'},
-				'5mm':{'drive':[],'change':'none'},
-				},
-		'NAS':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':['storm_track'],'change':'increase'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':['rain'],'change':'increase'},
-				},
-		'TIB':{
-				'warm':{'drive':[],'change':'increase'},
-				'dry':{'drive':[],'change':'none'},
-				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-				'5mm':{'drive':[],'change':'none'},
-				},
-		'EAS':{
-				'warm':{'drive':[],'change':'none'},
-				'dry':{'drive':[],'change':'decrease'},
-				'dry-warm':{'drive':[],'change':'none'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-
-		'MED':{
-				'warm':{'drive':[],'change':'none'},
-				'dry':{'drive':[],'change':'increase'},
-				'dry-warm':{'drive':[],'change':'none'},
-				'5mm':{'drive':[],'change':'none'},
-				},
-		'WAS':{
-				'warm':{'drive':[],'change':'none'},
-				'dry':{'drive':[],'change':'none'},
-				'dry-warm':{'drive':[],'change':'none'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-		'mid-lat':{
-				'warm':{'drive':['storm_track'],'change':'increase'},
-				'dry':{'drive':[],'change':'increase'},
-				'dry-warm':{'drive':[],'change':'increase'},
-				'5mm':{'drive':[],'change':'increase'},
-				},
-}
+arg1 = da.read_nc('data/drive*summary.nc',align=True, axis='icon')['drive']
 
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[-160,20], \
-	arg1=arg1,
+	arg1=arg1,arg2=arg2,
 	title=None)
 
-legax = fig.add_axes([0.01,0.01,0.3,0.2])
+legax = fig.add_axes([0.01,0.01,0.3,0.26])
 legax.set_yticklabels([])
 legax.set_xticklabels([])
-x,y = 0,4
+x,y = 0,5
 for state,details in state_details.items():
 	pc = PatchCollection([matplotlib.patches.Polygon([(x-0.5,y-0.9),(x+0.5,y-0.9),(x+0.5,y+0.9),(x-0.5,y+0.9)])], color=details['color'], edgecolor="k", alpha=0.5, lw=0.5)
 	legax.add_collection(pc)
@@ -240,15 +130,15 @@ for state,details in state_details.items():
 	y-=2
 legax.annotate('Persistence',xy=(1,6.5),ha='left', va='center', fontsize=8,fontweight='bold')
 
-x,y = 5,3
+x,y = 5,4
 for icon_name,icon_realname in zip(['increase','decrease'],['increase','decrease']):
 	imscatter(x, y, icon_dict[icon_name], zoom=0.025, ax=legax)
 	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=8,fontweight='bold')
 	y-=3
 legax.annotate('Change',xy=(x+1,6.5),ha='left', va='center', fontsize=8,fontweight='bold')
 
-x,y = 10,3
-for icon_name,icon_realname in zip(['storm_track','rain'],['storm tracks','water cycle']):
+x,y = 10,4
+for icon_name,icon_realname in zip(['EKE','SPI3','rain'],['EKE','SPI3','change in number\nof rain/dry days']):
 	imscatter(x, y, icon_dict[icon_name], zoom=0.025, ax=legax)
 	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=8,fontweight='bold')
 	y-=3
@@ -257,8 +147,104 @@ legax.annotate('Driver',xy=(x+1,6.5),ha='left', va='center', fontsize=8,fontweig
 # legax.axhline(y=5.5,color='k')
 
 legax.set_xlim(-1,16)
-legax.set_ylim(-3,8)
+legax.set_ylim(-4,8)
 
 
 
 plt.savefig('plots/NH_summary_drive.png',dpi=600)
+
+
+
+
+
+
+
+
+
+
+# arg1 = {'ALA':{
+# 				'warm':{'drive':[],'change':'none'},
+# 				'dry':{'drive':['rain'],'change':'decrease'},
+# 				'dry-warm':{'drive':[],'change':'decrease'},
+# 				'5mm':{'drive':['rain'],'change':'increase'},
+# 				},
+# 		'WNA':{
+# 				'warm':{'drive':[],'change':'increase'},
+# 				'dry':{'drive':[],'change':'none'},
+# 				'dry-warm':{'drive':[],'change':'none'},
+# 				'5mm':{'drive':['rain'],'change':'decrease'},
+# 				},
+# 		'CNA':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':['storm_track'],'change':'increase'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# 		'ENA':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':['storm_track'],'change':'increase'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# 		'CGI':{
+# 				'warm':{'drive':[],'change':'none'},
+# 				'dry':{'drive':['rain'],'change':'decrease'},
+# 				'dry-warm':{'drive':[],'change':'none'},
+# 				'5mm':{'drive':['rain'],'change':'increase'},
+# 				},
+# 		'NEU':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':['storm_track'],'change':'increase'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# 		'CEU':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':['storm_track'],'change':'increase'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# 		'CAS':{
+# 				'warm':{'drive':['storm_track'],'change':'none'},
+# 				'dry':{'drive':[],'change':'none'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'none'},
+# 				'5mm':{'drive':[],'change':'none'},
+# 				},
+# 		'NAS':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':['storm_track'],'change':'increase'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':['rain'],'change':'increase'},
+# 				},
+# 		'TIB':{
+# 				'warm':{'drive':[],'change':'increase'},
+# 				'dry':{'drive':[],'change':'none'},
+# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'none'},
+# 				},
+# 		'EAS':{
+# 				'warm':{'drive':[],'change':'none'},
+# 				'dry':{'drive':[],'change':'decrease'},
+# 				'dry-warm':{'drive':[],'change':'none'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+#
+# 		'MED':{
+# 				'warm':{'drive':[],'change':'none'},
+# 				'dry':{'drive':[],'change':'increase'},
+# 				'dry-warm':{'drive':[],'change':'none'},
+# 				'5mm':{'drive':[],'change':'none'},
+# 				},
+# 		'WAS':{
+# 				'warm':{'drive':[],'change':'none'},
+# 				'dry':{'drive':[],'change':'none'},
+# 				'dry-warm':{'drive':[],'change':'none'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# 		'mid-lat':{
+# 				'warm':{'drive':['storm_track'],'change':'increase'},
+# 				'dry':{'drive':[],'change':'increase'},
+# 				'dry-warm':{'drive':[],'change':'increase'},
+# 				'5mm':{'drive':[],'change':'increase'},
+# 				},
+# }

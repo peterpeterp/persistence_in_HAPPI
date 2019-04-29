@@ -107,6 +107,13 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 			nmax=min(len(count_20),len(count_h),nmax)
 			tmp=(count_20[0:nmax]-count_h[0:nmax])/count_h[0:nmax]*100
 			ensemble[i,:nmax]=tmp
+			subax.plot(range(1,nmax+1),tmp,color='green',linestyle='--')
+
+
+			print(region,state,dataset)
+			print(tmp_20['count'][:nmax] - tmp_h['count'][:nmax])
+			print(count_20[:nmax] - count_h[:nmax])
+			print(tmp)
 
 		subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color='green',linestyle='-')
 		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor='green', edgecolor='green',alpha=0.3)
@@ -148,8 +155,7 @@ with PdfPages('plots/NH_changes_check.pdf') as pdf:
 	arg3 = ['warm','dry','dry-warm','5mm']
 	arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
 	arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
-	c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
-	for combi in [[0],[1],[2],[3],[0,1],[0,1,2]]:
+	for combi in [[0],[1],[2],[3]]:
 		arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
 		for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
 			for co in combi:
