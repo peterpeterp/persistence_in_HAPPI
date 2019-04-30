@@ -44,7 +44,8 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'
 
 		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-5,-1),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,42),'title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
+		# 'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,42),'title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}
+		}
 
 all_regs=NH_regs.copy()
 
@@ -119,35 +120,40 @@ fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons,
 	arg1=arg1,arg2=arg2,
 	title=None)
 
-legax = fig.add_axes([0.01,0.01,0.3,0.26])
+legax = fig.add_axes([0.89,0.01,0.105,0.98])
 legax.set_yticklabels([])
 legax.set_xticklabels([])
-x,y = 0,5
-for state,details in state_details.items():
-	pc = PatchCollection([matplotlib.patches.Polygon([(x-0.5,y-0.9),(x+0.5,y-0.9),(x+0.5,y+0.9),(x-0.5,y+0.9)])], color=details['color'], edgecolor="k", alpha=0.5, lw=0.5)
-	legax.add_collection(pc)
-	legax.annotate(legend_dict[state],xy=(1,y),ha='left', va='center', fontsize=8,fontweight='bold')
-	y-=2
-legax.annotate('Persistence',xy=(1,6.5),ha='left', va='center', fontsize=8,fontweight='bold')
+x,y = 0,15
 
-x,y = 5,4
+legax.annotate('Persistence',xy=(1,y),ha='left', va='center', fontsize=8,fontweight='bold')
+legax.plot([0,4.5],[y-0.5,y-0.5],'k')
+y-=1.5
+for state,details in state_details.items():
+	pc = PatchCollection([matplotlib.patches.Polygon([(x-0.5,y-0.7),(x+0.5,y-0.7),(x+0.5,y+0.7),(x-0.5,y+0.7)])], color=details['color'], edgecolor="k", alpha=0.5, lw=0.5)
+	legax.add_collection(pc)
+	legax.annotate(legend_dict[state],xy=(1,y),ha='left', va='center', fontsize=7,fontweight='bold')
+	y-=1.5
+y-=1
+legax.annotate('Change',xy=(1,y),ha='left', va='center', fontsize=8,fontweight='bold')
+legax.plot([0,4.5],[y-0.5,y-0.5],'k')
+y-=1.5
 for icon_name,icon_realname in zip(['increase','decrease'],['increase','decrease']):
 	imscatter(x, y, icon_dict[icon_name], zoom=0.025, ax=legax)
-	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=8,fontweight='bold')
-	y-=3
-legax.annotate('Change',xy=(x+1,6.5),ha='left', va='center', fontsize=8,fontweight='bold')
-
-x,y = 10,4
+	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=7,fontweight='bold')
+	y-=1.5
+y-=1
+legax.annotate('Driver',xy=(1,y),ha='left', va='center', fontsize=8,fontweight='bold')
+legax.plot([0,4.5],[y-0.5,y-0.5],'k')
+y-=1.5
 for icon_name,icon_realname in zip(['EKE','SPI3','rain'],['EKE','SPI3','change in number\nof rain/dry days']):
 	imscatter(x, y, icon_dict[icon_name], zoom=0.025, ax=legax)
-	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=8,fontweight='bold')
-	y-=3
-legax.annotate('Driver',xy=(x+1,6.5),ha='left', va='center', fontsize=8,fontweight='bold')
+	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=7,fontweight='bold')
+	y-=1.5
 
 # legax.axhline(y=5.5,color='k')
 
-legax.set_xlim(-1,16)
-legax.set_ylim(-4,8)
+legax.set_xlim(-1,5)
+legax.set_ylim(-5,16)
 
 
 
@@ -155,96 +161,4 @@ plt.savefig('plots/NH_summary_drive.png',dpi=600)
 
 
 
-
-
-
-
-
-
-
-# arg1 = {'ALA':{
-# 				'warm':{'drive':[],'change':'none'},
-# 				'dry':{'drive':['rain'],'change':'decrease'},
-# 				'dry-warm':{'drive':[],'change':'decrease'},
-# 				'5mm':{'drive':['rain'],'change':'increase'},
-# 				},
-# 		'WNA':{
-# 				'warm':{'drive':[],'change':'increase'},
-# 				'dry':{'drive':[],'change':'none'},
-# 				'dry-warm':{'drive':[],'change':'none'},
-# 				'5mm':{'drive':['rain'],'change':'decrease'},
-# 				},
-# 		'CNA':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':['storm_track'],'change':'increase'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# 		'ENA':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':['storm_track'],'change':'increase'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# 		'CGI':{
-# 				'warm':{'drive':[],'change':'none'},
-# 				'dry':{'drive':['rain'],'change':'decrease'},
-# 				'dry-warm':{'drive':[],'change':'none'},
-# 				'5mm':{'drive':['rain'],'change':'increase'},
-# 				},
-# 		'NEU':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':['storm_track'],'change':'increase'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# 		'CEU':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':['storm_track'],'change':'increase'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# 		'CAS':{
-# 				'warm':{'drive':['storm_track'],'change':'none'},
-# 				'dry':{'drive':[],'change':'none'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'none'},
-# 				'5mm':{'drive':[],'change':'none'},
-# 				},
-# 		'NAS':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':['storm_track'],'change':'increase'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':['rain'],'change':'increase'},
-# 				},
-# 		'TIB':{
-# 				'warm':{'drive':[],'change':'increase'},
-# 				'dry':{'drive':[],'change':'none'},
-# 				'dry-warm':{'drive':['storm_track'],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'none'},
-# 				},
-# 		'EAS':{
-# 				'warm':{'drive':[],'change':'none'},
-# 				'dry':{'drive':[],'change':'decrease'},
-# 				'dry-warm':{'drive':[],'change':'none'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
 #
-# 		'MED':{
-# 				'warm':{'drive':[],'change':'none'},
-# 				'dry':{'drive':[],'change':'increase'},
-# 				'dry-warm':{'drive':[],'change':'none'},
-# 				'5mm':{'drive':[],'change':'none'},
-# 				},
-# 		'WAS':{
-# 				'warm':{'drive':[],'change':'none'},
-# 				'dry':{'drive':[],'change':'none'},
-# 				'dry-warm':{'drive':[],'change':'none'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# 		'mid-lat':{
-# 				'warm':{'drive':['storm_track'],'change':'increase'},
-# 				'dry':{'drive':[],'change':'increase'},
-# 				'dry-warm':{'drive':[],'change':'increase'},
-# 				'5mm':{'drive':[],'change':'increase'},
-# 				},
-# }

@@ -10,7 +10,7 @@ os.chdir('persistence_in_HAPPI/plot_paper')
 from __plot_imports import *
 os.chdir('../../')
 
-def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_bool=False, cmap='RdBu', signi_lvl=0.05):
+def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_type='normal', cmap='RdBu', signi_lvl=0.05):
 	patches = []
 	colors = []
 	ax.plot([x-0.5,x-0.5],[-2,15],color='k')
@@ -26,12 +26,15 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 			x_shi,y_shi = model_shifts[model]
 
 			if np.isfinite(var[model,region]):
-				if plot_bool == False:
+				if plot_type=='normal':
 					polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
 					patches.append(polygon)
 					colors.append(var[model,region])
-
-				else:
+				if plot_type=='upper':
+					polygon = Polygon([(x+x_shi-x_wi,y+y_shi-y_wi),(x+x_shi+x_wi,y+y_shi+y_wi),(x+x_shi-x_wi,y+y_shi+y_wi)], True)
+					patches.append(polygon)
+					colors.append(var[model,region])
+				if plot_type=='bool':
 					style = bool_styles[np.sign(var[model,region])]
 					ax.plot(x+x_shi,y+y_shi, marker=style['m'], color=style['c'])
 
@@ -39,11 +42,11 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 					if signi[model,region] < signi_lvl:
 						ax.plot(x+x_shi*1.2,y+y_shi*1.2, marker='.', color='k')
 
-	if plot_bool == False:
+	if plot_type != 'bool':
 		if c_range is None:
 			c_range = [np.min(var),np.max(var)]
 		y= -0.3
-		for x_shi,val in zip([-0.33,0,+0.33],[c_range[0]*0.33,np.mean(c_range),c_range[1]*0.33]):
+		for x_shi,val in zip([-0.33,0,+0.33],[c_range[0]*2/3.,np.mean(c_range),c_range[1]*2/3.]):
 			polygon = Polygon([(x+x_shi-0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi-y_wi),(x+x_shi+0.33*0.5,y+y_shi+y_wi),(x+x_shi-0.33*0.5,y+y_shi+y_wi)], True)
 			patches.append(polygon)
 			colors.append(val)
@@ -102,8 +105,8 @@ drive_state_summary = da.DimArray( axes = [summary.region, summary.state,['rain'
 drive_state_summary.values[:,:,:] = 0
 
 state_dict = {
-	'dry' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'dry', 'style':'pr', 'excee':'14'},
-	'5mm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'rain', 'style':'pr', 'excee':'7'},
+	'dry' : {'c_range':[-15,15], 'name':'dry', 'style':'pr', 'excee':'14'},
+	'5mm' : {'c_range':[-30,30], 'name':'rain', 'style':'pr', 'excee':'7'},
 }
 
 model_shifts = {
@@ -134,46 +137,40 @@ with PdfPages('plots/table_driver_state_change.pdf') as pdf:
 		# __________________________________
 		x += 1
 		var = (state_count[:,'JJA',state,:,'All-Hist'] ) *100
-		im_state_hist = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('historic fraction of '+state+' days',15)), cmap='Wistia', c_range=None)
+		im_state_hist = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('historic fraction of '+details['name']+' days',15)), cmap='Wistia', c_range=None)
 		# __________________________________
 
 		# __________________________________
 		x += 1
 		var = (state_count[:,'JJA',state,:,'Plus20-Future'] - state_count[:,'JJA',state,:,'All-Hist'] ) * 100
-		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in fraction of '+state+' days',15)), cmap='RdBu_r', c_range='maxabs')
+		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('change in fraction of '+details['name']+' days',15)), cmap='RdBu_r', c_range='maxabs')
+
+		# __________________________________
+
+		ax.text(x+0.6,16.5,"\n".join(textwrap.wrap('rel. change in probability of exceeding '+details['excee']+' '+details['name']+' days',20)) ,fontsize=8,va='center') # ,weight='bold'
+		ax.plot([x+0.5,x+0.5],[0,18],color='k')
+		#
+		# ax.text(x+1.2,14.8,'added\n'+details['name']+' days\n----------\nprojected\nby GCMs',fontsize=7,va='center',ha='center',rotation=35) # ,weight='bold'
 
 		# __________________________________
 		x += 1
-		var = (period_count[:,:,'Plus20-Future',state,'JJA',0] - period_count[:,:,'All-Hist',state,'JJA',0] ) / period_count[:,:,'All-Hist',state,'JJA',0] *100
-		im_state_change = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('rel. change in number of '+state+' periods [%]',15)), cmap='RdBu_r', c_range='maxabs')
-
-
-		# __________________________________
-
-		ax.text(x+0.6,16.5,"\n".join(textwrap.wrap('rel. change in probability of exceeding '+details['excee']+' '+state+' days',25)) ,fontsize=9,va='center',weight='bold')
-		ax.plot([x+0.5,x+0.5],[0,18],color='k')
-
-		# __________________________________
-		x += 2
-		var = (exceed_summary[:,'Plus20-Future',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
-		c_range = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range='maxabs')
-		# __________________________________
-
-		# __________________________________
-		x -= 1
 		arti = (exceed_summary[:,'Plus20-Artificial-v1',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
-		im_pers = plot_model_column(ax,x,arti,label = '\n'.join(textwrap.wrap('randomly added (removed) '+state+' days',10)), cmap='PiYG_r', c_range=c_range)
+		im_pers = plot_model_column(ax,x,arti,label = '\n'.join(textwrap.wrap('randomly altered '+details['name']+' days',10)), cmap='PiYG_r', c_range=details['c_range'], plot_type='normal')
+
+		x += 1
+		var = (exceed_summary[:,'Plus20-Future',:,details['style']+'_'+state,details['excee']] - exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']]) / exceed_summary[:,'All-Hist',:,details['style']+'_'+state,details['excee']] *100
+		c_range = plot_model_column(ax,x,var,label = '\n'.join(textwrap.wrap('projected by GCMs',10)), cmap='PiYG_r', c_range=details['c_range'])
 		# __________________________________
 
 		for region,y_reg in regions.items():
-			ax.plot([0,x+0.5],[y_reg-0.5,y_reg-0.5],color='gray')
+			ax.plot([0,x+0.5],[y_reg-0.5,y_reg-0.5],color='k')
 			ax.text(0.2,y_reg,region,va='center',weight='bold',color='gray')
 		for region,y_reg in regions.items():
 
 
-			if np.sum(np.sign(var[:,region]) == np.sign(arti[:,region])) >= 3:
+			if np.sum(np.sign(var[:,region]) == np.sign(arti[:,region])) >= 3 and np.sum(np.sign(var[:,region]) == np.sign(np.nanmean(var[:,region]))) >= 3:
 				ax.text(0.2,y_reg,region,va='center',weight='bold')
-				imscatter(x+2, y_reg, icon_dict['rain'], zoom=0.025, ax=ax)
+				imscatter(x+1, y_reg, icon_dict['rain'], zoom=0.025, ax=ax)
 				drive_state_summary[region,state,'rain'] = 1
 
 
@@ -183,7 +180,7 @@ with PdfPages('plots/table_driver_state_change.pdf') as pdf:
 		ax.text(0,15,"\n".join(textwrap.wrap(details['name']+' persistence',12)),fontsize=9,va='center',weight='bold')
 
 
-		ax.set_xlim(0,8)
+		ax.set_xlim(0,6.5)
 		ax.set_ylim(-1.5,17)
 
 		fig.tight_layout(); pdf.savefig(); plt.close()

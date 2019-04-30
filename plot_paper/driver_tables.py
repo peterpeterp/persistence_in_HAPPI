@@ -142,7 +142,7 @@ for state in summary.state:
 				ax = plot_obs_column(ax, x=x, var=data['corrcoef'], pval=data['p_value'], label=' ', masks=had_mask, cmap='PuOr', c_range=c_range)
 
 			x += 1
-			rel_diff_corWi = (summary['Plus20-Future',:,state,corWi,:,'mean_'+corWi,'JJA'] - summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'])# / summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'] * 100
+			rel_diff_corWi = (summary['Plus20-Future',:,state,corWi,:,'mean'+details[corWi].replace('_mon','')+'_'+corWi,'JJA'] - summary['All-Hist',:,state,corWi,:,'mean'+details[corWi].replace('_mon','')+'_'+corWi,'JJA'])# / summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'] * 100
 			rel_diff_corWi[np.isfinite(rel_diff_corWi)==False] = np.nan
 			c_range = plot_model_column(ax,x,rel_diff_corWi,label = 'change\nin '+corWi+' []', cmap='PuOr',c_range='maxabs')
 
@@ -168,13 +168,7 @@ for state in summary.state:
 					imscatter(x+1, y_reg, icon_dict[icon], zoom=0.025, ax=ax)
 					drive_summary[region,state,icon] = 1
 
-				print(state+' '+corWi+' '+region)
-				print(summary['All-Hist',:,state,corWi,region,'corrcoef'+details[corWi],'JJA'].values)
-				print(rel_diff_corWi[:,region].values)
-				print(var[:,region].values)
-				print(drive[:,region].values)
-				print(np.sign(var[:,region].values * drive[:,region].values))
-				if np.sum(np.sign(var[:,region].values * drive[:,region].values)) >= 2:
+				if np.sum(np.sign(var[:,region] * drive[:,region])) >= 2:
 					print('-----------')
 					# ax.plot([0.1,x+0.5,x+0.5,0.1,0.1],[y_reg-0.5,y_reg-0.5,y_reg+0.5,y_reg+0.5,y_reg-0.5], linestyle='--', linewidth=3, color='green')
 					imscatter(x+1.5, y_reg, icon_dict[corWi], zoom=0.025, ax=ax)
