@@ -46,9 +46,9 @@ p_value = da.DimArray(axes=[models,regions,states,scenarios,scenarios], dims=['m
 D_stat.values = 0
 p_value.values = 1
 
-for model in periods.model:
-	for region in periods.region:
-		for state in periods.state:
+for model in p_value.model:
+	for region in p_value.region:
+		for state in p_value.state:
 			for scenario1,scenario2 in [('All-Hist','Plus20-Future'),('All-Hist','Plus15-Future'),('Plus20-Future','Plus15-Future')]:
 				distr_1 = counter_to_list(big_dict[model][region][scenario1][state]['JJA']['counter'])[1]
 				distr_2 = counter_to_list(big_dict[model][region][scenario2][state]['JJA']['counter'])[1]
