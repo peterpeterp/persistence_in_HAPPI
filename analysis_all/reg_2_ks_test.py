@@ -8,7 +8,7 @@ from scipy import stats
 try:
 	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
 except:
-	os.chdir('/global/homes/p/pepflei/')
+	os.chdir('/p/projects/ikiimp/HAPPI/HAPPI_Peter/')
 
 def counter_to_list(counter):
 	tmp=[]
