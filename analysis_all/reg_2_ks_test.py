@@ -3,25 +3,7 @@ import numpy as np
 from netCDF4 import Dataset,num2date
 import cPickle as pickle
 import dimarray as da
-from scipy.optimize import curve_fit
-import pandas as pd
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
 from scipy import stats
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-import matplotlib.ticker as mticker
-
-import seaborn as sns
-sns.set_style("whitegrid")
-
-
-sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
-import srex_overview as srex_overview; reload(srex_overview)
-os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
 try:
 	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
