@@ -77,17 +77,23 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 			subax.annotate(legend_dict[state],xy=(x*1.9,y*1.8),ha={-1:'left',1:'right'}[x], va='center', fontsize=8,fontweight='bold')
 
 	if region!='mid-lat':
-		for state in arg1.state:
+		for state,details in state_details.items():
 			drivers=arg1[region,state,['EKE','SPI3','rain']]
 			drivers = drivers.icon[drivers == 1]
 			print(region,state,drivers)
-			if len(drivers)>0:
-				for icon,xx,yy in zip(drivers,{1:[1.5],2:[1.2,1.6],3:[0.9,1.5,1.6]}[len(drivers)],{1:[1.2],2:[1.5,0.8],3:[1.6,0.7,1.6]}[len(drivers)]):
-					imscatter(state_details[state]['x']*xx, state_details[state]['y']*yy, icon_dict[icon], zoom=0.03 * (1/float(len(drivers)))**0.3, ax=subax)
 
 			change = arg1[region,state,['decrease','increase']]
 			if np.max(change) != 0:
 				imscatter(state_details[state]['x']*0.7, state_details[state]['y']*0.9, icon_dict[change.icon[change==1][0]], zoom=0.025, ax=subax)
+			else:
+				x,y = details['x'],details['y']
+				pc = PatchCollection([matplotlib.patches.Polygon([(x-1.0,y-1.0),(x+1.0,y-1.0),(x+1.0,y+1.0),(x-1.0,y+1.0)])], color='white', edgecolor="k", alpha=0.8, lw=0.5)
+				subax.add_collection(pc)
+
+			if len(drivers)>0:
+				for icon,xx,yy in zip(drivers,{1:[1.5],2:[1.2,1.6],3:[0.9,1.5,1.6]}[len(drivers)],{1:[1.2],2:[1.5,0.8],3:[1.6,0.7,1.6]}[len(drivers)]):
+					imscatter(state_details[state]['x']*xx, state_details[state]['y']*yy, icon_dict[icon], zoom=0.03 * (1/float(len(drivers)))**0.3, ax=subax)
+
 
 	# for state,icons in arg1[region].items():
 	# 	drivers=icons['drive']
@@ -117,7 +123,7 @@ arg1 = da.read_nc('data/drive*summary.nc',align=True, axis='icon')['drive']
 
 
 fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[-160,20], \
-	arg1=arg1,arg2=arg2,
+	arg1=arg1,
 	title=None)
 
 legax = fig.add_axes([0.89,0.01,0.105,0.98])
