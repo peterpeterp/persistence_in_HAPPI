@@ -19,7 +19,7 @@ for home_path in ['/Users/peterpfleiderer/Projects/Persistence','Dokumente/klima
 		pass
 
 os.chdir('persistence_in_HAPPI/plot_paper')
-from __plot_imports import *
+import __plot_imports; reload(__plot_imports); from __plot_imports import *
 os.chdir('../../')
 
 def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_bool=False, cmap='RdBu', signi_lvl=0.05):
@@ -145,8 +145,6 @@ bool_styles = {-1:{'c':'green','m':'v'},
 x_wi, y_wi = 0.25, 0.25
 regions = {'EAS':1,'TIB':2,'CAS':3,'WAS':4,'MED':5,'CEU':6,'NEU':7,'NAS':8,'ENA':9,'CNA':10,'WNA':11,'CGI':12,'ALA':13}
 
-selection = {'EKE':{}, 'SPI3':{}}
-
 for state in summary.state:
 	details = state_dict[state]
 	plt.close('all')
@@ -212,10 +210,6 @@ for state in summary.state:
 					# ax.plot([0.1,x+0.5,x+0.5,0.1,0.1],[y_reg-0.5,y_reg-0.5,y_reg+0.5,y_reg+0.5,y_reg-0.5], linestyle='--', linewidth=3, color='green')
 					imscatter(x+1.5, y_reg, icon_dict[corWi], zoom=0.025, ax=ax)
 					drive_summary[region,state,corWi] = 1
-					if state not in selection[corWi].keys():
-						selection[corWi][state] = [region]
-					else:
-						selection[corWi][state].append(region)
 
 			ax.plot([0,8.5],[13.5,13.5],color='k')
 			# ax.text(0,-1,'scale',va='center',weight='bold')
