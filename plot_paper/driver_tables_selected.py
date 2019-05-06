@@ -10,17 +10,6 @@ os.chdir('persistence_in_HAPPI/plot_paper')
 import __plot_imports; reload(__plot_imports); from __plot_imports import *
 os.chdir('../../')
 
-import os,sys,glob,time,collections,gc,pickle,textwrap
-
-for home_path in ['/Users/peterpfleiderer/Projects/Persistence','Dokumente/klima_uni/Persistence_small']:
-	try:
-		os.chdir(home_path)
-	except:
-		pass
-
-os.chdir('persistence_in_HAPPI/plot_paper')
-from __plot_imports import *
-os.chdir('../../')
 
 def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_bool=False, cmap='RdBu', signi_lvl=0.05):
 	patches = []

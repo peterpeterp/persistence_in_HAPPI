@@ -1,32 +1,21 @@
 import os,sys,glob,time,collections,gc
-import numpy as np
-from netCDF4 import Dataset,num2date
-import cPickle as pickle
-import dimarray as da
-from scipy.optimize import curve_fit
-import pandas as pd
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-from scipy import stats
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-import matplotlib.ticker as mticker
+for home_path in ['/Users/peterpfleiderer/Projects/Persistence','Dokumente/klima_uni/Persistence_small']:
+	try:
+		os.chdir(home_path)
+	except:
+		pass
+
+os.chdir('persistence_in_HAPPI/plot_paper')
+import __plot_imports; reload(__plot_imports); from __plot_imports import *
+os.chdir('../../')
 
 import seaborn as sns
 sns.set_style("whitegrid")
 
-
 sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
 import srex_overview as srex_overview; reload(srex_overview)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
-
-try:
-	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
-except:
-	os.chdir('/global/homes/p/pepflei/')
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
@@ -40,22 +29,22 @@ if 'big_dict' not in globals():
 
 
 
-NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
+NH_regs={'ALA':{'color':'darkgreen','pos_off':(+0,+3),'summer':'JJA','winter':'DJF'},
 		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
-		'CNA':{'color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
-		'ENA':{'color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
+		'CNA':{'color':'gray','pos_off':(+8,-8),'summer':'JJA','winter':'DJF'},
+		'ENA':{'color':'darkgreen','pos_off':(+23,-5),'summer':'JJA','winter':'DJF'},
 		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
 
-		'NEU':{'color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
-		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
-		'CAS':{'color':'darkgreen','pos_off':(-8,+10),'summer':'JJA','winter':'DJF'},
-		'NAS':{'color':'gray','summer':'JJA','winter':'DJF'},
-		'TIB':{'color':'darkcyan','pos_off':(+2,-4),'summer':'JJA','winter':'DJF'},
-		'EAS':{'color':'darkgreen','summer':'JJA','winter':'DJF'},
+		'NEU':{'color':'darkgreen','pos_off':(-23,+5),'summer':'JJA','winter':'DJF'},
+		'CEU':{'color':'darkblue','pos_off':(+6,+7),'summer':'JJA','winter':'DJF'},
+		'CAS':{'color':'darkgreen','pos_off':(-4,+12),'summer':'JJA','winter':'DJF'},
+		'NAS':{'color':'gray','pos_off':(-6,+11),'summer':'JJA','winter':'DJF'},
+		'TIB':{'color':'darkcyan','pos_off':(-5,-16),'summer':'JJA','winter':'DJF'},
+		'EAS':{'color':'darkgreen','pos_off':(-3,0),'summer':'JJA','winter':'DJF'},
 
-		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
-		'WAS':{'color':'darkcyan','pos_off':(-5,-5),'summer':'JJA','winter':'DJF'},
+		'MED':{'color':'gray','pos_off':(-16,-10),'summer':'JJA','winter':'DJF'},
+		'WAS':{'color':'darkcyan','pos_off':(-7,-10),'summer':'JJA','winter':'DJF'},
 		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,35),'xlabel':'Period length [days]','ylabel':'Exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
 
 all_regs=NH_regs.copy()
@@ -63,29 +52,9 @@ all_regs=NH_regs.copy()
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
-#colors=['black']+sns.color_palette("colorblind", 4)
-
-
-
-
 # ---------------------------- changes
 def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	subax.axis('off')
-	legend_elements=[]
-	legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='EOBS'))
-	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='HAPPI models'))
-	for style,state,color in zip(arg2,arg3,arg4):
-		# legend_elements.append(Line2D([0], [0], color='w', label=state))
-		if state == 'warm':
-			legend_elements.append(Line2D([0], [0], color=color, label=' '))
-		else:
-			legend_elements.append(Line2D([0], [0], color='w', label=' '))
-		legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=' '))
-		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=' '))
-
-
-	subax.legend(handles=legend_elements ,title='                                   '+'      '.join([legend_dict[aa]+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	season=all_regs[region][arg1]
@@ -168,7 +137,7 @@ arg3 = ['warm','dry','dry-warm','5mm']
 arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
 arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
 c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
-for combi in [[0],[1],[2],[3],[0,1,2,3]]:
+for combi in [[0,1,2,3]]:	#,[1],[2],[3],[0,1,2,3]]:
 	arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
 	for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
 		for co in combi:
@@ -178,42 +147,36 @@ for combi in [[0],[1],[2],[3],[0,1,2,3]]:
 	else:
 		c_range = (-50,100)
 
-	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
+	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.1, legend_plot=legend_plot, legend_pos=[164,9], \
 		arg1='summer',
 		arg2=arg2_,
 		arg3=arg3_,
 		arg4=arg4_,
 		title=None)
 
+	legax = fig.add_axes([0.89,0.01,0.105,0.98])
+	legax.axis('off')
+	legax.set_yticklabels([])
+	legax.set_xticklabels([])
+
+	legend_elements=[]
+
+	legend_elements.append(Line2D([0], [0], color='w', label='HAPPI models'))
+	for style,state,color in zip(arg2,arg3,arg4):
+		legend_elements.append(Patch(facecolor=color,alpha=0.3, label=state))
+
+	legend_elements.append(Line2D([0], [0], color='w', label=''))
+	legend_elements.append(Line2D([0], [0], color='w', label='HadGHCND'))
+	legend_elements.append(Line2D([0], [0], color='#FF3030', linestyle='-', label='warm'))
+
+	legend_elements.append(Line2D([0], [0], color='w', label=''))
+	legend_elements.append(Line2D([0], [0], color='w', label='EOBS'))
+	for style,state,color in zip(arg2,arg3,arg4):
+		legend_elements.append(Line2D([0], [0], color=color, linestyle='--', label=state))
+
+	legax.legend(handles=legend_elements, loc='upper right',fontsize=9,ncol=1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
+
 	plt.tight_layout(); plt.savefig('plots/NH_clim_distrs_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
-
-#
-# plt.close('all')
-# arg2 = ['tas','pr','cpd','pr']
-# arg3 = ['warm','dry','dry-warm','5mm']
-# arg4 = ['#FF3030','#FF8C00','#BF3EFF','#009ACD']
-# arg5 = ['/'*3,'\ '*3,'|'*3,'-'*3]
-# c_range = [(-15,20),(-15,20),(-15,20),(-50,100)]
-# for combi in [[0],[1],[2],[3],[0,1],[0,1,2],[0,1,2,3]]:
-# 	arg2_,arg3_,arg4_,arg5_ = [],[],[],[]
-# 	for aa,aa_all in zip([arg2_,arg3_,arg4_,arg5_],[arg2,arg3,arg4,arg5]):
-# 		for co in combi:
-# 			aa.append(aa_all[co])
-# 	if combi != [3]:
-# 		c_range = (-15,20)
-# 	else:
-# 		c_range = (-50,100)
-#
-# 	fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-# 		arg1='summer',
-# 		arg2=arg2_,
-# 		arg3=arg3_,
-# 		arg4=arg4_,
-# 		title=None)
-#
-# 	plt.tight_layout(); pdf.savefig(); plt.close()
-#
-
 
 
 
