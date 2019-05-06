@@ -150,22 +150,30 @@ region_dict = {'EAS':1,'TIB':2,'CAS':3,'WAS':4,'MED':5,'CEU':6,'NEU':7,'NAS':8,'
 
 pos_dict = {
 	'EKE':{
-		'dry':(5.5,0),
-		'dry-warm':(5.5,6.4),
-		'warm':(1,3.4),
-		'5mm':(1,0),
+		'warm':(1,21.2),
+		'dry':(1,14.8),
+		'dry-warm':(1,12.4),
+		'5mm':(1,9),
 	},
 	'SPI3':{
-		'warm':(10,4.8),
-		'dry':(10,2.4),
-		'5mm':(10,0),
+		'warm':(1,4.8),
+		'dry':(1,2.4),
+		'5mm':(1,0),
 	}
 }
 
+
 plt.close('all')
 with PdfPages('plots/table_driver_selected.pdf') as pdf:
-	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(8,4), dpi=600)
+	fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(4,8), dpi=600)
 	ax.axis('off')
+
+
+	ax.text(2,25,"\n".join(textwrap.wrap('Correlation between longest period in month and EKE',20)),fontsize=9,va='bottom',weight='bold',ha='center', backgroundcolor = 'w', rotation=-90)
+	ax.text(3,25,"\n".join(textwrap.wrap('Correlation between longest period in month and EKE',20)),fontsize=9,va='bottom',weight='bold',ha='center', backgroundcolor = 'w', rotation=-90)
+
+
+
 	for corWi in selection.keys():
 
 		for state in selection[corWi].keys():
@@ -214,8 +222,8 @@ with PdfPages('plots/table_driver_selected.pdf') as pdf:
 			c_range = plot_model_column(ax,x,drive, label='', plot_bool=True) # ''+corWi+' forcing on\n'+state+' persistence'
 
 
-	ax.set_xlim(0,14)
-	ax.set_ylim(-0.9,12)
+	ax.set_xlim(0,6)
+	ax.set_ylim(-0.9,30)
 
 	fig.tight_layout(); pdf.savefig(); plt.close()
 

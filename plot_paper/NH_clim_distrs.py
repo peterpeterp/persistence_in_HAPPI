@@ -87,10 +87,6 @@ def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 
 	subax.legend(handles=legend_elements ,title='                                   '+'      '.join([legend_dict[aa]+''.join([' ']*int(6/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
-
-
-
-
 def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 	season=all_regs[region][arg1]
 	print('________'+region+'________')
@@ -103,7 +99,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 			nmax=min(nmax,len(count_h))
 			ensemble[i,:nmax]=count_h[0:nmax]
 		#subax.plot(range(1,nmax+1),np.nanmean(ensemble[:,0:nmax],axis=0),color=color,linestyle=':')
-		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.4,edgecolor=color)
+		subax.fill_between(range(1,nmax+1),np.nanmin(ensemble[:,0:nmax],axis=0),np.nanmax(ensemble[:,0:nmax],axis=0),facecolor=color,alpha=0.3,edgecolor=color)
 
 		# if state=='warm':
 		# 	#print(style,state)
@@ -114,7 +110,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		if region in ['CEU','NEU','MED']:
 			tmp_h=big_dict['EOBS'][region]['All-Hist'][state][season]
 			count_h=np.array([np.sum(tmp_h['count'][ii:])/float(np.sum(tmp_h['count'])) * 100 for ii in range(len(tmp_h['count']))])
-			subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='--')
+			subax.plot(range(1,len(count_h)+1),count_h,color=color,linestyle='-.')
 			if state=='warm':
 				#print('EOBS',style,state)
 				print('EOBS',count_h[21])
@@ -189,7 +185,7 @@ for combi in [[0],[1],[2],[3],[0,1,2,3]]:
 		arg4=arg4_,
 		title=None)
 
-	plt.tight_layout(); plt.savefig('plots/presentation/NH_clim_distrs_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
+	plt.tight_layout(); plt.savefig('plots/NH_clim_distrs_'+'-'.join([str(tt) for tt in combi])+'.png',dpi=600); plt.close()
 
 #
 # plt.close('all')

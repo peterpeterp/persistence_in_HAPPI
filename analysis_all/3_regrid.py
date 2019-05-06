@@ -23,7 +23,7 @@ for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	da.Dataset(ds).write_nc('data/'+model+'/'+model+'_SummaryMeanQu_regridReady.nc', mode='w')
 	os.system('cdo remapbil,data/grid1x1.cdo data/'+model+'/'+model+'_SummaryMeanQu_regridReady.nc data/'+model+'/'+model+'_SummaryMeanQu_1x1.nc')
 
-for model in ['ECHAM6-3-LR','MIROC5','NorESM1','CAM4-2degree']:
+for model in ['ECHAM6-3-LR','MIROC5','NorESM1','CAM4-2degree','HadGHCND']:
 	data=da.read_nc('data/'+model+'/'+model+'_EsceedanceProb_gridded.nc')
 	lon=data['lon']; lon.units="degrees_east"
 	lat=data['lat']; lat.units="degrees_north"
