@@ -21,6 +21,9 @@ big_summary={}
 big_summary['EOBS'] = da.read_nc('data/EOBS/EOBS_SummaryMeanQu.nc')['SummaryMeanQu']
 big_summary['HadGHCND'] = da.read_nc('data/HadGHCND/HadGHCND_SummaryMeanQu.nc')['SummaryMeanQu']
 
+sys.path.append("/Users/peterpfleiderer/Projects/git-packages/ScientificColourMaps5/lajolla")
+from lajolla import *
+
 models = {}
 for model in ['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree']:
 	models[model] = da.read_nc('data/'+model+'/'+model+'_SummaryMeanQu_1x1.nc')
@@ -71,7 +74,7 @@ for state,row in zip(['warm'],range(1)):
 			ax.annotate(name, xy=(0.02, 0.05), xycoords='axes fraction', fontsize=9,fontweight='bold')
 			ax.annotate(letter, xy=(0.02, 0.95), xycoords='axes fraction', fontsize=10,fontweight='bold', backgroundcolor='w')
 			crange=color_range[state][stat]
-			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=cmap[state],transform=ccrs.PlateCarree());
+			im[stat]=ax.pcolormesh(to_plot.lon,to_plot.lat,to_plot ,vmin=crange[0],vmax=crange[1],cmap=lajolla_map,transform=ccrs.PlateCarree());
 			ax.coastlines(color='black')
 		else:
 			ax.coastlines(color='white')
@@ -89,4 +92,4 @@ for state,row in zip(['warm'],range(1)):
 
 # plt.suptitle(title+' persistence', fontweight='bold')
 fig.tight_layout()
-plt.savefig('plots/paper/map_validation_'+stat+'_warm.png',dpi=300)
+plt.savefig('plots/map_validation_'+stat+'_warm.png',dpi=300)
