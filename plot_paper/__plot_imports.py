@@ -26,23 +26,23 @@ import shapely
 sns.set()
 sns.set_style("whitegrid")
 
-
-
+plt.rcParams["font.weight"] = "bold"
+plt.rcParams["axes.labelweight"] = "bold"
 
 icon_dict = {
-	'avoided':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/avoided.png')),
-	'mitigated':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/mitigated.png')),
-	'increase_red':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase_red.png')),
-	'decrease_red':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease_red.png')),
-	'EKE':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/EKE.png')),
-	# 'water':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/drop.png')),
-	# 'dry':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/plumbing.png')),
-	# 'drought':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/nature.png')),
-	'increase':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase.png')),
-	'decrease':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease.png')),
-	'SPI3':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/soil-moisture.png')),
-	'rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/rain.png')),
-	# 'no_rain':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/no_rain.png')),
+	'avoided':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/avoided.png')),'scale':1},
+	'mitigated':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/mitigated.png')),'scale':1},
+	'increase_red':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase_red.png')),'scale':1},
+	'decrease_red':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease_red.png')),'scale':1},
+	'EKE':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/EKE.png')),'scale':1},
+	# 'water':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/drop.png')),'scale':1},
+	# 'dry':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/plumbing.png')),'scale':1},
+	# 'drought':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/nature.png')),'scale':1},
+	'increase':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase.png')),'scale':1},
+	'decrease':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease.png')),'scale':1},
+	'SPI3':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/SPI3.png')),'scale':1.5},
+	'rain':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/rain.png')),'scale':1},
+	# 'no_rain':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/no_rain.png')),'scale':1},
 }
 
 def imscatter(x, y, image, ax=None, zoom=1):
