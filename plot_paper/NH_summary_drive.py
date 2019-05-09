@@ -50,19 +50,19 @@ def distrs(subax,region,info_dict):
 	print('________'+region+'________')
 	patches,colors = [], []
 	for state,details in state_details.items():
-
 		x,y = details['x'],details['y']
-		pc = PatchCollection([Polygon([(x-1.0,y-1.0),(x+1.0,y-1.0),(x+1.0,y+1.0),(x-1.0,y+1.0)])], cmap=details['cmap'], alpha=1, edgecolor='k', linewidth=2)
+
 		if np.max(info_dict['icons'][region,state,['decrease','increase']]) != 0:
 			excee_change = np.nanmean((info_dict['exceed'][:,'Plus20-Future',region,details['style'],details['excee']] - info_dict['exceed'][:,'All-Hist',region,details['style'],details['excee']]) / info_dict['exceed'][:,'All-Hist',region,details['style'],details['excee']] *100)
-			subax.annotate(legend_dict[state], xy=(details['x']-0.95,details['y']*1.75), color='k', weight='bold', fontsize=8, ha='left', va='center', backgroundcolor='none')
 
+			subax.annotate(legend_dict[state], xy=(details['x']*1.9,details['y']*1.75), color='k', weight='bold', fontsize=8, ha={-1:'left',1:'right'}[np.sign(details['x'])], va='center', backgroundcolor='none')
 		else:
 			excee_change = 0
 
-		pc.set_array(np.array([excee_change]))
-		pc.set_clim(details['c_range'])
-		subax.add_collection(pc)
+		for name,c_detail in color_dict.items():
+			if c_detail['range'][0] < excee_change <= c_detail['range'][1]:
+				pc = PatchCollection([Polygon([(x-1.0,y-1.0),(x+1.0,y-1.0),(x+1.0,y+1.0),(x-1.0,y+1.0)])], color=c_detail['color'], alpha=1, edgecolor='k', linewidth=2)
+				subax.add_collection(pc)
 
 
 	for state,details in state_details.items():
@@ -78,14 +78,24 @@ def distrs(subax,region,info_dict):
 
 legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
 
-colors = {
-	'<-75': {'range':(-np.inf,-75),'color':'b'},
-	'<-50': {'range':(-75,-50),'color':'g'},
-	'<-10': {'range':(-20,-10),'color':'red'},
-	' ': {'range':(-5,5),'color':'red'},
-	'>5': {'range':(5,10),'color':'o'},
-	'>10': {'range':(10,20),'color':'m'},
-	'>20': {'range':(20,50),'color':'c'},
+from colormap import hex2rgb, rgb2hex
+sys.path.append("/Users/peterpfleiderer/Projects/git-packages/ScientificColourMaps5/acton")
+from acton import *
+sys.path.append("/Users/peterpfleiderer/Projects/git-packages/ScientificColourMaps5/devon")
+from devon import *
+
+greens = matplotlib.cm.get_cmap('YlGn')
+
+color_dict = {
+	'<-50': {'range':(np.inf,-50),'color':greens(0.9)},
+	'<-20': {'range':(-50,-20),'color':greens(0.7)},
+	'<-10': {'range':(-20,-10),'color':greens(0.5)},
+	'<-3': {'range':(-10,-3),'color':greens(0.3)},
+	' ': {'range':(-3,3),'color':'w'},
+	'>3': {'range':(3,10),'color':acton_map(0.9)},
+	'>10': {'range':(10,20),'color':acton_map(0.7)},
+	'>20': {'range':(20,50),'color':acton_map(0.5)},
+	'>50': {'range':(50,np.inf),'color':acton_map(0.3)},
 }
 
 state_details = {
@@ -104,9 +114,9 @@ fig,ax_map=regional_panels_on_map.regional_panels_on_map(distrs, axis_settings, 
 legax = fig.add_axes([0.85,0.05,0.145,0.9])
 legax.set_yticklabels([])
 legax.set_xticklabels([])
-legax.set_xlim(-1,12)
+legax.set_xlim(0,10)
 legax.set_ylim(0,20)
-x,y = 0,20
+x,y = 1,20
 y-=1
 legax.annotate('Driver',xy=(x,y),ha='left', va='center', fontsize=8,fontweight='bold')
 legax.plot([x+0,x+4.5],[y-0.5,y-0.5],'k')
@@ -116,19 +126,42 @@ for icon_name,icon_realname in zip(['EKE','SPI3','rain'],['EKE','SPI3','\nchange
 	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=7,fontweight='bold')
 	y-=1.5
 
-ax = fig.add_axes([0.86,0.5,0.13,0.06])
-cmap = mpl.cm.cool
-norm = mpl.colors.Normalize(vmin=state_details['warm']['c_range'][0], vmax=state_details['warm']['c_range'][1])
-cb1 = mpl.colorbar.ColorbarBase(ax, cmap=state_details['warm']['cmap'],norm=norm,orientation='horizontal')
-cb1.ax.tick_params(labelsize=7)
-cb1.set_label('rel. change in exceedance probabilites\nof warm, dry and dry-warm\n14-day periods [%]', fontsize=7)
+y-=2.5
+legax.annotate('rel. change in\nexceedance probabilites [%]',xy=(x,y),ha='left', va='center', fontsize=8,fontweight='bold')
+y-=0.5
+legax.plot([x+0,x+4.5],[y-0.5,y-0.5],'k')
+y-=1.5
+for name in ['<-50','<-20','<-10','<-3',' ','>3','>10','>20','>50']:
+	pc = PatchCollection([Polygon([(x-0.5,y-0.5),(x+0.5,y-0.5),(x+0.5,y+0.5),(x-0.5,y+0.5)])], color=color_dict[name]['color'], alpha=1, edgecolor='k', linewidth=1)
+	legax.add_collection(pc)
+	legax.annotate(name,xy=(x,y),ha='center', va='center', fontsize=6,fontweight='bold')
 
-ax = fig.add_axes([0.86,0.25,0.13,0.06])
-cmap = mpl.cm.cool
-norm = mpl.colors.Normalize(vmin=state_details['5mm']['c_range'][0], vmax=state_details['5mm']['c_range'][1])
-cb1 = mpl.colorbar.ColorbarBase(ax, cmap=state_details['5mm']['cmap'],norm=norm,orientation='horizontal')
-cb1.ax.tick_params(labelsize=7)
-cb1.set_label('rel. change in exceedance\nprobabilites of rain\n7-day periods [%]', fontsize=7)
+	x+=1
+y-=2.5
+legax.annotate('14-day warm periods\n14-day dry periods\n14-day dry-warm periods\n7-day rain periods',xy=(5,y),ha='center', va='center', fontsize=7,fontweight='bold')
+
+
+
+
+# ax = fig.add_axes([0.86,0.5,0.13,0.06])
+# cmap = mpl.cm.cool
+# bounds = [-50., -20., -10., -5., 5., 10., 20., 50.]
+# # cmap = mpl.colors.LinearSegmentedColormap.from_list("", ['darkolivegreen4','darkolivegreen3','darkolivegreen2','darkolivegreen1','white','orchid1','orchid2','orchid3','orchid4',])
+# norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+# cb = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+#                                 norm=norm,
+#                                 boundaries=[-100] + bounds + [100],
+#                                 extend='both',
+#                                 # Make the length of each extension
+#                                 # the same as the length of the
+#                                 # interior colors:
+#                                 extendfrac='auto',
+#                                 ticks=bounds,
+#                                 spacing='uniform',
+#                                 orientation='horizontal')
+# cb.set_label('Custom extension lengths, some other units')
+# cb.ax.tick_params(labelsize=7)
+# cb.set_label('rel. change in exceedance probabilites\nof warm, dry and dry-warm\n14-day periods [%]', fontsize=7)
 
 
 
