@@ -30,6 +30,10 @@ sns.set_style("whitegrid")
 
 
 icon_dict = {
+	'avoided':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/avoided.png')),
+	'mitigated':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/mitigated.png')),
+	'increase_red':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/increase_red.png')),
+	'decrease_red':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/decrease_red.png')),
 	'EKE':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/EKE.png')),
 	# 'water':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/drop.png')),
 	# 'dry':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/plumbing.png')),
@@ -59,6 +63,23 @@ def imscatter(x, y, image, ax=None, zoom=1):
     # ax.autoscale()
     return artists
 
+NH_regs={'ALA':{'color':'darkgreen','pos_off':(+0,+3),'summer':'JJA','winter':'DJF'},
+		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
+		'CNA':{'color':'gray','pos_off':(+8,-8),'summer':'JJA','winter':'DJF'},
+		'ENA':{'color':'darkgreen','pos_off':(+23,-5),'summer':'JJA','winter':'DJF'},
+		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
+		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
+
+		'NEU':{'color':'darkgreen','pos_off':(-23,+5),'summer':'JJA','winter':'DJF'},
+		'CEU':{'color':'darkblue','pos_off':(+6,+7),'summer':'JJA','winter':'DJF'},
+		'CAS':{'color':'darkgreen','pos_off':(-3,+13),'summer':'JJA','winter':'DJF'},
+		'NAS':{'color':'gray','pos_off':(-6,+11),'summer':'JJA','winter':'DJF'},
+		'TIB':{'color':'darkcyan','pos_off':(-5,-16),'summer':'JJA','winter':'DJF'},
+		'EAS':{'color':'darkgreen','pos_off':(-3,0),'summer':'JJA','winter':'DJF'},
+
+		'MED':{'color':'gray','pos_off':(-16,-10),'summer':'JJA','winter':'DJF'},
+		'WAS':{'color':'darkcyan','pos_off':(-7,-10),'summer':'JJA','winter':'DJF'},
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-143,27),'summer':'JJA','winter':'DJF','scaling_factor':1.1}}
 
 
 

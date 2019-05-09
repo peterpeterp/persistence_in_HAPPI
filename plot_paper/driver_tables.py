@@ -123,7 +123,7 @@ drive_summary = da.DimArray( axes = [summary.region, summary.state,['EKE','SPI3'
 drive_summary.values[:,:,:] = 0
 
 state_dict = {
-	'warm' : {'EKE':'_mon', 'SPI3':'_mon', 'name':'warm', 'style':'tas', 'excee':'14'},
+	'warm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'warm', 'style':'tas', 'excee':'14'},
 	'dry' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'dry', 'style':'pr', 'excee':'14'},
 	'dry-warm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'dry-warm', 'style':'cpd', 'excee':'14'},
 	'5mm' : {'EKE':'_mon', 'SPI3':'_lagged_mon', 'name':'rain', 'style':'pr', 'excee':'7'},
@@ -136,7 +136,7 @@ model_shifts = {
 	'NorESM1':(-0.25,+0.25),
 }
 
-style_dict = {'':'correlation', '_lagged':'lagged correlation', '_lagged_mon':'lagged monthly correlation', '_lagged_season':'lagged seasonal correaltion', '_season':'seasonal correaltion' , '_mon':'monthly correaltion'}
+style_dict = {'':'correlation', '_lagged':'lagged correlation', '_lagged_mon':'lagged monthly\ncorrelation', '_lagged_season':'lagged seasonal correaltion', '_season':'seasonal correaltion' , '_mon':'monthly\ncorrealtion'}
 
 bool_styles = {-1:{'c':'green','m':'v'},
 				1:{'c':'magenta','m':'^'},
@@ -152,8 +152,8 @@ for state in summary.state:
 	plt.close('all')
 	with PdfPages('plots/table_driver_'+state+'.pdf') as pdf:
 
-		for corWi in ['EKE','SPI3']:
-			fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(4,6), dpi=600)
+		for corWi,cmap_corWi,units,letter in zip(['EKE','SPI3'],['PuOr','BrBG'],['[m2/s2]',''],['a','b']):
+			fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3,6), dpi=600)
 			ax.axis('off')
 
 			x=1
@@ -161,18 +161,18 @@ for state in summary.state:
 			cor = summary['All-Hist',:,state,corWi,:,'corrcoef'+details[corWi],'JJA']
 			c_range = plot_model_column(ax,x,var=cor,\
 			 					signi=summary['All-Hist',:,state,corWi,:,'p-value'+details[corWi],'JJA'],\
-								label=style_dict[details[corWi]]+'\n'+corWi+' - '+details['name'], cmap='PuOr', c_range='maxabs', signi_lvl=0.1)
+								label=style_dict[details[corWi]]+'\n'+corWi+' - '+details['name'], cmap=cmap_corWi, c_range='maxabs', signi_lvl=0.1)
 			if state != 'warm':
 				data = da.read_nc('data/EOBS/cor/cor_'+corWi+'_EOBS_'+state+'.nc')
-				ax = plot_obs_column(ax, x=x, var=data['corrcoef'+details[corWi]], pval=data['p-value'+details[corWi]], label=' ', masks=eobs_mask, cmap='PuOr', c_range=c_range)
+				ax = plot_obs_column(ax, x=x, var=data['corrcoef'+details[corWi]], pval=data['p-value'+details[corWi]], label=' ', masks=eobs_mask, cmap=cmap_corWi, c_range=c_range)
 			if state == 'warm':
 				data = da.read_nc('data/HadGHCND/All-Hist/cor_EKE_HadGHCND_All-Hist_'+state+'.nc')
-				ax = plot_obs_column(ax, x=x, var=data['corrcoef'], pval=data['p_value'], label=' ', masks=had_mask, cmap='PuOr', c_range=c_range)
+				ax = plot_obs_column(ax, x=x, var=data['corrcoef'], pval=data['p_value'], label=' ', masks=had_mask, cmap=cmap_corWi, c_range=c_range)
 
 			x += 1
 			rel_diff_corWi = (summary['Plus20-Future',:,state,corWi,:,'mean'+details[corWi].replace('_mon','')+'_'+corWi,'JJA'] - summary['All-Hist',:,state,corWi,:,'mean'+details[corWi].replace('_mon','')+'_'+corWi,'JJA'])# / summary['All-Hist',:,state,corWi,:,'mean_'+corWi,'JJA'] * 100
 			rel_diff_corWi[np.isfinite(rel_diff_corWi)==False] = np.nan
-			c_range = plot_model_column(ax,x,rel_diff_corWi,label = 'change\nin '+corWi+' []', cmap='PuOr',c_range='maxabs')
+			c_range = plot_model_column(ax,x,rel_diff_corWi,label = 'change\nin '+corWi+' '+units, cmap=cmap_corWi,c_range='maxabs')
 
 
 			x += 1
@@ -188,7 +188,7 @@ for state in summary.state:
 
 			for region,y_reg in regions.items():
 				ax.plot([0,x+0.5],[y_reg-0.5,y_reg-0.5],color='gray')
-				ax.text(0.2,y_reg,region,va='center',weight='bold',color='gray')
+				ax.text(0.5,y_reg,region,va='center',weight='bold',color='gray')
 			for region,y_reg in regions.items():
 
 				############
@@ -198,7 +198,7 @@ for state in summary.state:
 				agreeing_change = np.sign(var[:,region]) == np.sign(np.nanmean(var[:,region]))
 				contributing_change = significant_change * agreeing_change
 				if np.sum(contributing_change) >= 3 and np.sign(np.nanmean(var[:,region]))!=0:
-					ax.text(0.2,y_reg,region,va='center',weight='bold')
+					ax.text(0.5,y_reg,region,va='center',weight='bold')
 					icon = {-1:'decrease', 1:'increase'}[np.sign(np.nanmean(var[:,region]))]
 					imscatter(x+1, y_reg, icon_dict[icon], zoom=0.025, ax=ax)
 					drive_summary[region,state,icon] = 1
@@ -216,10 +216,11 @@ for state in summary.state:
 
 			ax.plot([0,8.5],[13.5,13.5],color='k')
 			# ax.text(0,-1,'scale',va='center',weight='bold')
-			ax.text(0,15,"\n".join(textwrap.wrap(details['name']+' persistence',12)),fontsize=9,va='center',weight='bold')
+			ax.text(0.5,14.5,details['name']+'\n'+corWi,fontsize=10,va='center',weight='bold')
+			ax.annotate(letter, xy=(0.0,1), xycoords='axes fraction', fontsize=10, va='center', weight='bold')
 
 
-			ax.set_xlim(0,6)
+			ax.set_xlim(0.6,5.5)
 			ax.set_ylim(-1.5,17)
 
 			fig.tight_layout(); pdf.savefig(); plt.close()

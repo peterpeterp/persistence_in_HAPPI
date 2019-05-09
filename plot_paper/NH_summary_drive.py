@@ -1,7 +1,7 @@
 import os,sys,glob,time,collections,gc
 
 sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
-import srex_overview as srex_overview; reload(srex_overview)
+import regional_panels_on_map as regional_panels_on_map; reload(regional_panels_on_map)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
 os.chdir('persistence_in_HAPPI/plot_paper')
@@ -42,18 +42,14 @@ all_regs=NH_regs.copy()
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
-# ---------------------------- changes
-def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
-	subax.axis('off')
-
-def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None,region=None):
+def axis_settings(subax,info_dict,label=False,region=None):
 	subax.set_xlim(-2,2)
 	subax.set_ylim(-2,2)
 	subax.set_yticklabels([])
 	subax.set_xticklabels([])
 	return(subax)
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
+def distrs(subax,region,info_dict):
 	print('________'+region+'________')
 	patches,colors = [], []
 	for state,details in state_details.items():
@@ -68,11 +64,11 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 
 	if region!='mid-lat':
 		for state,details in state_details.items():
-			drivers=arg1[region,state,['EKE','SPI3','rain']]
+			drivers=info_dict['icons'][region,state,['EKE','SPI3','rain']]
 			drivers = drivers.icon[drivers == 1]
 			print(region,state,drivers)
 
-			change = arg1[region,state,['decrease','increase']]
+			change = info_dict['icons'][region,state,['decrease','increase']]
 			if np.max(change) != 0:
 				imscatter(state_details[state]['x']*0.7, state_details[state]['y']*0.9, icon_dict[change.icon[change==1][0]], zoom=0.03, ax=subax)
 			else:
@@ -80,7 +76,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 				pc = PatchCollection([matplotlib.patches.Polygon([(x-1.0,y-1.0),(x+1.0,y-1.0),(x+1.0,y+1.0),(x-1.0,y+1.0)])], color='white', edgecolor="k", alpha=0.8, lw=0.5)
 				subax.add_collection(pc)
 
-			change = arg1[region,state,['decrease_red','increase_red','avoided','mitigated']]
+			change = info_dict['icons'][region,state,['decrease_red','increase_red','avoided','mitigated']]
 			if np.max(change) != 0:
 				icon = change.icon[change==1][0]
 				if icon in ['avoided','mitigated']:
@@ -93,7 +89,7 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 					imscatter(state_details[state]['x']*xx, state_details[state]['y']*yy, icon_dict[icon], zoom=0.035 * (1/float(len(drivers)))**0.3, ax=subax)
 
 
-	# for state,icons in arg1[region].items():
+	# for state,icons in info_dict['icons'][region].items():
 	# 	drivers=icons['drive']
 	# 	if len(drivers)>0:
 	# 		for icon,xx,yy in zip(drivers,{1:[0],2:[-0.33,0.33],3:[-0.5,0,0.5]}[len(drivers)],{1:[0],2:[0,0],3:[-0.33,0.33,-0.33]}[len(drivers)]):
@@ -117,12 +113,11 @@ state_details = {
 	'5mm':{'x':1,'y':-1,'color':'#009ACD'},
 }
 
-arg1 = da.read_nc('data/drive*summary.nc',align=True, axis='icon')['drive']
+info_dict = {}
+info_dict['icons'] = da.read_nc('data/drive*summary.nc',align=True, axis='icon')['drive']
 
 
-fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-150,180], y_ext=[0,85], small_plot_size=0.1, legend_plot=legend_plot, legend_pos=[-160,20], \
-	arg1=arg1,
-	title=None)
+fig,ax_map=regional_panels_on_map.regional_panels_on_map(distrs, axis_settings, polygons=polygons, reg_info=all_regs, info_dict=info_dict, x_ext=[-150,180], y_ext=[0,85], small_plot_size=0.1)
 
 legax = fig.add_axes([0.85,0.2,0.145,0.78])
 legax.set_yticklabels([])

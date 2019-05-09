@@ -38,25 +38,6 @@ if 'big_dict' not in globals():
 		pkl_file=open(infile, 'rb')
 		big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
 
-
-NH_regs={'ALA':{'color':'darkgreen','pos_off':(+0,+3),'summer':'JJA','winter':'DJF'},
-		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
-		'CNA':{'color':'gray','pos_off':(+8,-8),'summer':'JJA','winter':'DJF'},
-		'ENA':{'color':'darkgreen','pos_off':(+23,-5),'summer':'JJA','winter':'DJF'},
-		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-
-		'NEU':{'color':'darkgreen','pos_off':(-23,+5),'summer':'JJA','winter':'DJF'},
-		'CEU':{'color':'darkblue','pos_off':(+6,+7),'summer':'JJA','winter':'DJF'},
-		'CAS':{'color':'darkgreen','pos_off':(-3,+13),'summer':'JJA','winter':'DJF'},
-		'NAS':{'color':'gray','pos_off':(-6,+11),'summer':'JJA','winter':'DJF'},
-		'TIB':{'color':'darkcyan','pos_off':(-5,-16),'summer':'JJA','winter':'DJF'},
-		'EAS':{'color':'darkgreen','pos_off':(-3,0),'summer':'JJA','winter':'DJF'},
-
-		'MED':{'color':'gray','pos_off':(-16,-10),'summer':'JJA','winter':'DJF'},
-		'WAS':{'color':'darkcyan','pos_off':(-7,-10),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-143,27),'summer':'JJA','winter':'DJF','scaling_factor':1.1}}
-
 all_regs=NH_regs.copy()
 
 polygons=srex.copy()
@@ -131,7 +112,7 @@ def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5
 		subax.set_yticklabels([])
 		subax.set_xticklabels([])
 	subax.locator_params(axis = 'y', nbins = 8)
-	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
+	subax.grid(True,which="both",ls="--",c='gray',lw=0.35)
 	return(subax)
 
 plt.rcParams["font.weight"] = "bold"

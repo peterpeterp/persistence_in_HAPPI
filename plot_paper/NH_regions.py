@@ -99,11 +99,12 @@ patches,colors=[],[]
 for region in reg_info.keys():
 	if region in polygons.keys():
 		ax_map.add_geometries([Polygon(polygons[region]['points'])], ccrs.PlateCarree(), color=None,alpha=0.3,facecolor=reg_info[region]['color'],hatch=' ')
-		ax_map.text(x[0],y[0],region, color='black', weight='bold', fontsize=8,backgroundcolor='w', transform=ccrs.PlateCarree(), ha='center')
-		x,y=Polygon(polygons[region]['points']).centroid.xy
 		if region=='mid-lat':
 			ax_map.add_geometries([Polygon(polygons[region]['points'])], ccrs.PlateCarree(), color=reg_info[region]['edge'],alpha=1,facecolor=reg_info[region]['color'],linewidth=3)
 			# ax_map.text(-160,50,region, color='black', weight='bold', fontsize=8,backgroundcolor='w', transform=ccrs.PlateCarree(), ha='center')
+		else:
+			x,y=Polygon(polygons[region]['points']).centroid.xy
+			ax_map.text(x[0],y[0],region, color='black', weight='bold', fontsize=8,backgroundcolor='w', transform=ccrs.PlateCarree(), ha='center')
 
 
 plt.tight_layout(); plt.savefig('plots/NH_regions.png',dpi=600); plt.close()

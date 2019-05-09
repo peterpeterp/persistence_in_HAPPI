@@ -13,12 +13,12 @@ sys.path.append('weather_persistence/')
 import persistence_support as persistence_support; reload(persistence_support)
 from persistence_support import *
 
-sys.path.append('persistence_in_models/')
+sys.path.append('persistence_in_HAPPI/')
 import __settings
 model_dict=__settings.model_dict
 
 models = ['CAM4-2degree','MIROC5','NorESM1','ECHAM6-3-LR']
-scenarios = ['All-Hist','Plus20-Future']
+scenarios = ['All-Hist','Plus20-Future','Plus15-Future']
 styles = ['tas','pr','cpd','pr']
 states = ['warm','dry','dry-warm','5mm']
 styleStates = [sty+'_'+sta for sty,sta in zip(styles,states)]

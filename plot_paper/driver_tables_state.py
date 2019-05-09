@@ -305,7 +305,7 @@ with PdfPages('plots/table_driver_state_change.pdf') as pdf:
 
 	for state,details in state_dict.items():
 
-		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(4,6), dpi=600)
+		fig,ax  = plt.subplots(nrows=1,ncols=1,figsize=(3.5,6), dpi=600)
 		ax.axis('off')
 
 		x=1
@@ -340,20 +340,20 @@ with PdfPages('plots/table_driver_state_change.pdf') as pdf:
 
 		for region,y_reg in regions.items():
 			ax.plot([0,x+0.5],[y_reg-0.5,y_reg-0.5],color='k')
-			ax.text(0.2,y_reg,region,va='center',weight='bold',color='gray')
+			ax.text(0.5,y_reg,region,va='center',weight='bold',color='gray')
 		for region,y_reg in regions.items():
 
 			significant_change = ks[:,region] < 0.01
 			agreeing_change = np.sign(var[:,region]) == np.sign(np.nanmean(var[:,region]))
 			contributing_change = significant_change * agreeing_change
 			if np.sum(contributing_change) >= 3 and np.sign(np.nanmean(var[:,region]))!=0:
-				ax.text(0.2,y_reg,region,va='center',weight='bold')
+				ax.text(0.5,y_reg,region,va='center',weight='bold')
 				icon = {-1:'decrease', 1:'increase'}[np.sign(np.nanmean(var[:,region]))]
 				imscatter(x+1, y_reg, icon_dict[icon], zoom=0.025, ax=ax)
 				drive_summary[region,state,icon] = 1
 
 			if np.sum(np.sign(var[:,region][contributing_change].values) == np.sign(arti[:,region][contributing_change].values)) >= 3:
-				ax.text(0.2,y_reg,region,va='center',weight='bold')
+				ax.text(0.5,y_reg,region,va='center',weight='bold')
 				imscatter(x+2, y_reg, icon_dict['rain'], zoom=0.025, ax=ax)
 				drive_state_summary[region,state,'rain'] = 1
 
@@ -361,10 +361,10 @@ with PdfPages('plots/table_driver_state_change.pdf') as pdf:
 
 		ax.plot([0,8.5],[13.5,13.5],color='k')
 		# ax.text(0,-1,'scale',va='center',weight='bold')
-		ax.text(0,15,"\n".join(textwrap.wrap(details['name']+' persistence',12)),fontsize=9,va='center',weight='bold')
+		ax.text(0.5,14,"\n".join(textwrap.wrap(details['name']+'',12)),fontsize=10,va='center',weight='bold')
 
 
-		ax.set_xlim(0,7.5)
+		ax.set_xlim(0.8,7.5)
 		ax.set_ylim(-1.5,17)
 
 		fig.tight_layout(); pdf.savefig(); plt.close()
