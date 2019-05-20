@@ -21,7 +21,7 @@ def plot_model_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), plot_boo
 	patches = []
 	colors = []
 	ax.plot([x-0.5,x-0.5],[-2,15],color='k')
-	ax.text(x,13.7,label,ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
+	ax.text(x,y_label,label,ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
 
 	if c_range == 'maxabs':
 		maxabs = np.nanmax(np.abs(np.nanpercentile(var,[0,100])))
@@ -89,7 +89,8 @@ def plot_ensemble_mean_column(ax,x,var,signi=None,label=' ',c_range=(-0.3,0.3), 
 	patches = []
 	colors = []
 	ax.plot([x-0.5,x-0.5],[-2,15],color='k')
-	ax.text(x,13.7,label,ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
+	print(y_label)
+	ax.text(x,y_label,label,ha='center',va='bottom',rotation=90,fontsize=8,weight="bold")
 
 	if c_range == 'maxabs':
 		maxabs = np.nanmax(np.abs(np.nanpercentile(var,[0,100])))
@@ -238,12 +239,11 @@ def plot_state_change_table(ax,x0,state,letter):
 		DRIVER
 ##############################################################################
 '''
-def plot_driver_column(ax,x0,state,corWi,letter):
+def plot_driver_column(ax,x0,state,corWi):
 	details = state_dict[state]
 
 	x = x0
-	ax.text(x+0.3,14.5,details['name'],fontsize=10,va='center',ha='right',weight='bold')
-	ax.text(x,17,letter,fontsize=10,va='center',ha='right',weight='bold')
+	ax.text(x+0.3,y_label,details['name'],fontsize=10,va='center',ha='right',weight='bold')
 
 	x += 1
 	cor = summary['All-Hist',:,state,corWi,:,'corrcoef'+details[corWi],'JJA']
@@ -303,10 +303,10 @@ def plot_driver_column(ax,x0,state,corWi,letter):
 		if np.sum(drive_match) >= 3 and np.sum(drive_homogenity) >= 3:
 			imscatter(x+1, y_reg, icon_dict[corWi]['icon'], zoom=0.035*icon_dict[corWi]['scale'], ax=ax)
 			drive_summary[region,state,corWi] = 1
-			if state not in selection[corWi].keys():
-				selection[corWi][state] = [region]
-			else:
-				selection[corWi][state].append(region)
+			# if state not in selection[corWi].keys():
+			# 	selection[corWi][state] = [region]
+			# else:
+			# 	selection[corWi][state].append(region)
 
 	plot_ensemble_mean_column(ax,x,ens_mean,signi=sig,label=' ',c_range=c_range, cmap='PiYG_r')
 
@@ -339,7 +339,7 @@ def plot_legend(ax,x,y,obs=None,icons=None,forced_symbols=True):
 
 	if icons is not None:
 
-		y -= 3
+		y -= 2
 		ax.annotate('Insignificance',xy=(x,y),ha='left', va='center', fontsize=8,fontweight='bold')
 		ax.plot([x+0,x+2],[y-0.5,y-0.5],'k')
 		y-=1
@@ -377,7 +377,8 @@ def plot_legend(ax,x,y,obs=None,icons=None,forced_symbols=True):
 			y-=1
 
 
-
+had_mask = da.read_nc('masks/srex_mask_73x97.nc')
+eobs_mask = da.read_nc('masks/srex_mask_EOBS.nc')
 
 summary = da.read_nc('data/cor_reg_summary.nc')['summary_cor']
 
@@ -445,50 +446,23 @@ bool_styles = {-1:{'c':'green','m':'v'},
 				0:{'c':'w','m':'.'}}
 
 x_wi, y_wi = 0.25, 0.25
-regions = {'EAS':1,'TIB':2,'CAS':3,'WAS':4,'MED':5,'CEU':6,'NEU':7,'NAS':8,'ENA':9,'CNA':10,'WNA':11,'CGI':12,'ALA':13}
-
+regions = {'MED':1,'CEU':2,'NEU':3,'NAS':4,'ENA':5,'CNA':6}
+y_label = 6.6
 hatch_dict = {'change\nalpha = 0.01':'////','no consistent\nsignificant change':'....'}
-
-plt.close('all')
-fig,ax = plt.subplots(nrows=1,figsize = (8,6.4), dpi=600)
-ax.axis('off')
-plot_state_change_table(ax,x0=0,state='dry',letter='a')
-plot_state_change_table(ax,x0=7,state='5mm',letter='b')
-plot_legend(ax,14,15.5,None, icons={'rain':'\nchange in\nnumber of\nrain/dry days'},forced_symbols=False)
-ax.set_ylim(-1.5,17.5)
-ax.set_xlim(-0.5,17)
-plt.tight_layout()
-plt.savefig('plots/table_driver_'+'rain-dry'+'.pdf')
 
 hatch_dict = {'correlation\nalpha = 0.1':'\\\\\\\\\\','change\nalpha = 0.01':'////','no consistent\nsignificant change':'....'}
 
 plt.close('all')
-fig,ax = plt.subplots(nrows=1,figsize = (12,6.4), dpi=600)
+fig,ax = plt.subplots(nrows=1,figsize = (7,4), dpi=600)
 ax.axis('off')
-var = plot_driver_column(ax,x0=0,state='warm',corWi='EKE',letter='a')
-plot_driver_column(ax,x0=6,state='dry',corWi='EKE',letter='b')
-plot_driver_column(ax,x0=12,state='dry-warm',corWi='EKE',letter='c')
-plot_driver_column(ax,x0=18,state='5mm',corWi='EKE',letter='d')
-plot_legend(ax,24,15.5,'Obs', icons={'EKE':'EKE'})
-ax.set_ylim(-1.5,17.5)
-ax.set_xlim(-0.5,27)
+var = plot_driver_column(ax,x0=0,state='warm',corWi='EKE')
+ax.text(0,9,'',fontsize=10,va='center',ha='right',weight='bold')
+plot_driver_column(ax,x0=6,state='dry',corWi='EKE')
+plot_legend(ax,12,9,'Obs', icons={'EKE':'EKE'})
+ax.set_ylim(-1.5,10)
+ax.set_xlim(-0.5,15)
 plt.tight_layout()
-plt.savefig('plots/table_driver_'+'EKE'+'.pdf')
-
-
-plt.close('all')
-fig,ax = plt.subplots(nrows=1,figsize = (12,6.4), dpi=600)
-ax.axis('off')
-var = plot_driver_column(ax,x0=0,state='warm',corWi='SPI3',letter='a')
-plot_driver_column(ax,x0=6,state='dry',corWi='SPI3',letter='b')
-plot_driver_column(ax,x0=12,state='dry-warm',corWi='SPI3',letter='c')
-plot_driver_column(ax,x0=18,state='5mm',corWi='SPI3',letter='d')
-plot_legend(ax,24,15.5,'Obs', icons={'SPI3':'SPI3'})
-ax.set_ylim(-1.5,17.5)
-ax.set_xlim(-0.5,27)
-plt.tight_layout()
-plt.savefig('plots/table_driver_'+'SPI3'+'.pdf')
-
+plt.savefig('plots/table_driver_'+'EKE'+'_poster.pdf', transparent=True)
 
 # da.Dataset({'drive':drive_summary}).write_nc('data/drive_summary.nc')
 

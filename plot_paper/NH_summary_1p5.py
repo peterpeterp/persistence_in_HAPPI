@@ -16,14 +16,15 @@ import seaborn as sns
 sns.set_style("whitegrid")
 import matplotlib.ticker as mticker
 
-sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
-import srex_overview as srex_overview; reload(srex_overview)
+
+sys.path.append('/Users/peterpfleiderer/Projects/git-packages/regional_panels_on_map')
+import regional_panels_on_map as regional_panels_on_map; reload(regional_panels_on_map)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-try:
-	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
-except:
-	os.chdir('/global/homes/p/pepflei/')
+os.chdir('persistence_in_HAPPI/plot_paper')
+import __plot_imports; reload(__plot_imports); from __plot_imports import *
+os.chdir('../../')
+
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
@@ -35,83 +36,38 @@ if 'big_dict' not in globals():
 		pkl_file=open(infile, 'rb')
 		big_dict[dataset] = pickle.load(pkl_file);	pkl_file.close()
 
-NH_regs={'ALA':{'color':'darkgreen','pos_off':(+10,+7),'summer':'JJA','winter':'DJF'},
-		'WNA':{'color':'darkblue','pos_off':(+20,+15),'summer':'JJA','winter':'DJF'},
-		'CNA':{'color':'gray','pos_off':(+8,-4),'summer':'JJA','winter':'DJF'},
-		'ENA':{'color':'darkgreen','pos_off':(+18,-5),'summer':'JJA','winter':'DJF'},
-		'CGI':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-		# 'CAM':{'color':'darkcyan','pos_off':(+0,-5),'summer':'JJA','winter':'DJF'},
-
-		'NEU':{'color':'darkgreen','pos_off':(-13,+0),'summer':'JJA','winter':'DJF'},
-		'CEU':{'color':'darkblue','pos_off':(+9,+5),'summer':'JJA','winter':'DJF'},
-		'CAS':{'color':'darkgreen','pos_off':(-8,+14),'summer':'JJA','winter':'DJF'},
-		'NAS':{'color':'gray','summer':'JJA','winter':'DJF'},
-		'TIB':{'color':'darkcyan','pos_off':(+2,-4),'summer':'JJA','winter':'DJF'},
-		'EAS':{'color':'darkgreen','summer':'JJA','winter':'DJF'},
-
-		'MED':{'color':'gray','pos_off':(-15,-5),'summer':'JJA','winter':'DJF'},
-		'WAS':{'color':'darkcyan','pos_off':(-5,-1),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-142,42),'xlabel':'Period length [days]','ylabel':'Exceedence probability [%]','title':'','summer':'JJA','winter':'DJF','scaling_factor':1.3}}
-
 all_regs=NH_regs.copy()
+
+all_regs['mid-lat']['pos'] = (-140,37)
 
 polygons=srex.copy()
 polygons['mid-lat']={'points':[(-180,35),(180,35),(180,60),(-180,60)]}
 
 
-# ---------------------------- changes
-def legend_plot(subax,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
-	subax.axis('off')
-	legend_elements=[]
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='1.5$^\circ$C ensemble mean'))
-	legend_elements.append(Line2D([0], [0], color='w', linestyle='--', label='2.0$^\circ$C ensemble mean'))
-	legend_elements.append(Patch(facecolor='w', alpha=0.3, label='model spread'))
-	for style,state,color in zip(arg2,arg3,arg4):
-		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
-			legend_elements.append(Line2D([0], [0], color='k', linestyle='', label=' ', marker=marker))
-		legend_elements.append(Patch(facecolor=color,alpha=0.4, label=' '))
-
-	subax.legend(handles=legend_elements ,title='                                                 '+'    '.join([legend_dict[aa]+''.join([' ']*int(9/len(aa))) for aa in arg3]), loc='lower right',fontsize=9,ncol=len(arg3)+1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
-
-
-def axis_settings(subax,label=False,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
-	subax.set_xlim((0.5,len(arg3)+0.5))
-	subax.set_ylim((-10,30))
-	subax.set_xticks(range(1,len(arg3)+1))
-	subax.set_xticklabels([legend_dict[a3]+'\n'+str(a2)+'-day periods' for a3,a2 in zip(arg3,arg2)])
-	subax.tick_params(axis='x',which='both',bottom=True,top=True,labelbottom=label,labelsize=7,rotation=90)
-	subax.set_yticks([-10,0,10,20])
-	subax.tick_params(axis='y',which='both',left=True,right=True,labelleft=label,labelsize=7)
-	subax.yaxis.get_label().set_backgroundcolor('w')
-	for tick in subax.yaxis.get_major_ticks()+subax.xaxis.get_major_ticks():
-		tick.label.set_backgroundcolor('w')
-	subax.grid(True,which="both",ls="--",c='gray',lw=0.5)
-	subax.axhline(y=0,c='gray')
-	return(subax)
 
 def plot_bar(ax,x,to_plot,color,hatch=None, alpha=0.4, marker='+'):
 	ax.fill_between([x-0.1,x+0.1],[np.nanmin(to_plot,axis=0),np.nanmin(to_plot,axis=0)],[np.nanmax(to_plot,axis=0),np.nanmax(to_plot,axis=0)],\
-	 color=color, edgecolor='k', hatch=hatch, alpha=alpha)
+	 color=color, edgecolor='w', hatch=hatch, alpha=alpha)
 	#ax.plot([x-0.1,x+0.1],[np.nanmean(to_plot,axis=0),np.nanmean(to_plot,axis=0)],color='k')
 	ax.scatter([x],[np.nanmean(to_plot,axis=0)],color='k',marker=marker)
 
 
 
-def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
-	season=all_regs[region][arg1]
+def distrs(subax,region,info_dict):
 	print('________'+region+'________')
-	for state,per_length,color,pos in zip(arg3,arg2,arg4,range(1,1+len(arg3))):
+	for pos,state in enumerate(['warm','dry','dry-warm','5mm']):
+		details = info_dict[state]
 		for scenario,hatch,marker,shift in zip(['Plus15-Future','Plus20-Future'],['---','///'],['x','+'],[-0.2,0.2]):
 			ensemble=np.zeros([4])*np.nan
 			nmax=35
 			for dataset,i in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],range(4)):
-				tmp_fu=big_dict[dataset][region][scenario][state][season]
-				tmp_h=big_dict[dataset][region]['All-Hist'][state][season]
-				count_fu=np.sum(tmp_fu['count'][per_length:])/float(np.sum(tmp_fu['count']))
-				count_h=np.sum(tmp_h['count'][per_length:])/float(np.sum(tmp_h['count']))
+				tmp_fu=big_dict[dataset][region][scenario][state]['JJA']
+				tmp_h=big_dict[dataset][region]['All-Hist'][state]['JJA']
+				count_fu=np.sum(tmp_fu['count'][details['excee']:])/float(np.sum(tmp_fu['count']))
+				count_h=np.sum(tmp_h['count'][details['excee']:])/float(np.sum(tmp_h['count']))
 				ensemble[i]= (count_fu - count_h) / count_h * 100.
 
-			plot_bar(subax,pos+shift,ensemble,color,hatch=hatch,marker=marker)
+			plot_bar(subax,pos+shift,ensemble,details['color'],hatch=hatch,marker=marker)
 
 
 	lb_color ='none'
@@ -121,16 +77,91 @@ def distrs(subax,region,arg1=None,arg2=None,arg3=None,arg4=None,arg5=None):
 		lb_color = all_regs[region]['color']
 	subax.annotate(region, xy=(0.05, 0.80), xycoords='axes fraction', color='k', weight='bold', fontsize=10)
 
+def axis_settings(subax,info_dict,label=False,region=None):
+	subax.set_xlim((-0.5,3.5))
+	subax.set_ylim((-10,30))
+	subax.set_xticks([0,1,2,3])
+	subax.set_xticklabels([state+'\n'+str(info_dict[state]['excee'])+'-days' for state in ['warm','dry','dry-warm','5mm']])
+	if region == 'mid-lat':
+		subax.set_ylabel('rel. change in\nExceedence probability [%]',fontsize=10)
+		subax.tick_params(axis='x',labelsize=9, colors='k',size=1,rotation=90)
+		subax.tick_params(axis='y',labelsize=10, colors='k',size=1)
+		subax.yaxis.get_label().set_backgroundcolor('w')
+		bbox = dict(boxstyle="round", ec="w", fc="w", alpha=1)
+		plt.setp(subax.get_yticklabels(), bbox=bbox)
+	else:
+		subax.set_yticklabels([])
+		subax.set_xticklabels([])
+	subax.locator_params(axis = 'y', nbins = 5)
+	subax.grid(True,which="both",ls="--",c='gray',lw=0.35)
+	subax.axhline(y=0,c='gray')
+	return(subax)
 
-plt.rcParams["font.weight"] = "bold"
-plt.rcParams["axes.labelweight"] = "bold"
+info_dict = {
+	'warm': {
+		'state':'warm', 'name':'warm', 'style':'tas', 'color':'#FF3030', 'excee':14, 'letter':'a'
+	},
+	'dry': {
+		'state':'dry', 'name':'dry', 'style':'pr', 'color':'#FF8C00', 'excee':14, 'letter':'b'
+	},
+	'dry-warm': {
+		'state':'dry-warm', 'name':'dry-warm', 'style':'cpd', 'color':'#BF3EFF', 'excee':14, 'letter':'c'
+	},
+	'5mm': {
+		'state':'5mm', 'name':'rain', 'style':'pr', 'color':'#009ACD', 'excee':7, 'letter':'d'
+	}
+}
 
-legend_dict = {'warm':'warm','dry':'dry','dry-warm':'dry-warm','5mm':'rain'}
+plt.close('all')
+fig,ax_map=regional_panels_on_map.regional_panels_on_map(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.1, info_dict = info_dict, title=None)
 
-fig,ax_map=srex_overview.srex_overview(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.08, legend_plot=legend_plot, legend_pos=[164,9], \
-	arg1='summer',
-	arg2=[14,14,14,7],
-	arg3=['warm','dry','dry-warm','5mm'],
-	arg4=['#FF3030','#FF8C00','#BF3EFF','#009ACD'],
-	title=None)
-plt.savefig('plots/paper/NH_summary.png',dpi=600)
+
+with sns.axes_style("white"):
+	legax = fig.add_axes([0.885,0.01,0.11,0.98], facecolor='w')
+plt.setp(legax.spines.values(), color='k', linewidth=2)
+legax.set_yticklabels([])
+legax.set_xticklabels([])
+legax.set_ylim(-4,11)
+x,y = 0,10
+
+legax.annotate('ensomble mean',xy=(x-0.2,y),ha='left', va='center', fontsize=9,fontweight='bold')
+legax.plot([x+0,x+2],[y-0.5,y-0.5],'k')
+y-=1
+for scenario,hatch,marker,shift in zip(['$1.5^\circ C$','$2^\circ C$'],['---','///'],['x','+'],[-0.2,0.2]):
+	legax.scatter(x,y, marker=marker, color='k')
+	legax.annotate(scenario,xy=(x+0.5,y),ha='left', va='center', fontsize=8,fontweight='bold')
+	y-=0.7
+
+y-=0.5
+legax.annotate('$1.5^\circ C$ model spread',xy=(x-0.2,y),ha='left', va='center', fontsize=9,fontweight='bold')
+legax.plot([x+0,x+2],[y-0.5,y-0.5],'k')
+y-=1
+for pos,state in enumerate(['warm','dry','dry-warm','5mm']):
+	details = info_dict[state]
+	legax.fill_between([x-0.25,x+0.25],[y+0.25,y+0.25],[y-0.25,y-0.25], hatch='---', edgecolor=details['color'], facecolor=details['color'], alpha=0.3)
+	legax.annotate(state,xy=(x+0.5,y),ha='left', va='center', fontsize=8,fontweight='bold')
+	y-=1
+
+y-=0.5
+legax.annotate('$2^\circ C$ model spread',xy=(x-0.2,y),ha='left', va='center', fontsize=9,fontweight='bold')
+legax.plot([x+0,x+2],[y-0.5,y-0.5],'k')
+y-=1
+for pos,state in enumerate(['warm','dry','dry-warm','5mm']):
+	details = info_dict[state]
+	legax.fill_between([x-0.25,x+0.25],[y+0.25,y+0.25],[y-0.25,y-0.25], hatch='///', edgecolor=details['color'], facecolor=details['color'], alpha=0.3)
+	legax.annotate(state,xy=(x+0.5,y),ha='left', va='center', fontsize=8,fontweight='bold')
+	y-=1
+
+plt.tight_layout(); plt.savefig('plots/NH_1p5_avoid.png',dpi=600); plt.close()
+
+
+
+
+
+
+
+
+
+
+
+#

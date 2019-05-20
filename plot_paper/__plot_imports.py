@@ -79,7 +79,7 @@ NH_regs={'ALA':{'color':'darkgreen','pos_off':(+0,+3),'summer':'JJA','winter':'D
 
 		'MED':{'color':'gray','pos_off':(-16,-10),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-7,-10),'summer':'JJA','winter':'DJF'},
-		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-143,27),'summer':'JJA','winter':'DJF','scaling_factor':1.1}}
+		'mid-lat':{'edge':'darkgreen','color':'none','alpha':1,'pos':(-130,27),'summer':'JJA','winter':'DJF','scaling_factor':1.1}}
 
 
 

@@ -1,6 +1,6 @@
 import os,sys,glob,time,collections,gc
 
-sys.path.append('/Users/peterpfleiderer/Projects/allgemeine_scripte')
+sys.path.append('/Users/peterpfleiderer/Projects/git-packages/regional_panels_on_map')
 import regional_panels_on_map as regional_panels_on_map; reload(regional_panels_on_map)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
@@ -26,10 +26,10 @@ all_regs={'ALA':{'color':'darkgreen','pos_off':(+40,+3),'summer':'JJA','winter':
 
 		'NEU':{'color':'darkgreen','pos_off':(-23,+5),'summer':'JJA','winter':'DJF'},
 		'CEU':{'color':'darkblue','pos_off':(+4,+7),'summer':'JJA','winter':'DJF'},
-		'CAS':{'color':'darkgreen','pos_off':(-5,+13),'summer':'JJA','winter':'DJF'},
-		'NAS':{'color':'gray','pos_off':(-13,+11),'summer':'JJA','winter':'DJF'},
-		'TIB':{'color':'darkcyan','pos_off':(-15,-16),'summer':'JJA','winter':'DJF'},
-		'EAS':{'color':'darkgreen','pos_off':(-13,0),'summer':'JJA','winter':'DJF'},
+		'CAS':{'color':'darkgreen','pos_off':(-7,+13),'summer':'JJA','winter':'DJF'},
+		'NAS':{'color':'gray','pos_off':(-15,+11),'summer':'JJA','winter':'DJF'},
+		'TIB':{'color':'darkcyan','pos_off':(-17,-16),'summer':'JJA','winter':'DJF'},
+		'EAS':{'color':'darkgreen','pos_off':(-18,0),'summer':'JJA','winter':'DJF'},
 
 		'MED':{'color':'gray','pos_off':(-20,-10),'summer':'JJA','winter':'DJF'},
 		'WAS':{'color':'darkcyan','pos_off':(-16,-10),'summer':'JJA','winter':'DJF'},
@@ -87,15 +87,15 @@ from devon import *
 greens = matplotlib.cm.get_cmap('YlGn')
 
 color_dict = {
-	'<-50': {'range':(np.inf,-50),'color':greens(0.9)},
-	'<-20': {'range':(-50,-20),'color':greens(0.7)},
-	'<-10': {'range':(-20,-10),'color':greens(0.5)},
-	'<-3': {'range':(-10,-3),'color':greens(0.3)},
-	' ': {'range':(-3,3),'color':'w'},
-	'>3': {'range':(3,10),'color':acton_map(0.9)},
-	'>10': {'range':(10,20),'color':acton_map(0.7)},
-	'>20': {'range':(20,50),'color':acton_map(0.5)},
-	'>50': {'range':(50,np.inf),'color':acton_map(0.3)},
+	'<-50': {'range':(np.inf,-50),'color':greens(0.9), 'fontcolor':'w'},
+	'<-20': {'range':(-50,-20),'color':greens(0.7), 'fontcolor':'k'},
+	'<-10': {'range':(-20,-10),'color':greens(0.5), 'fontcolor':'k'},
+	'<-2': {'range':(-10,-2),'color':greens(0.3), 'fontcolor':'k'},
+	' ': {'range':(-2,2),'color':'w', 'fontcolor':'k'},
+	'>2': {'range':(2,10),'color':acton_map(0.9), 'fontcolor':'k'},
+	'>10': {'range':(10,20),'color':acton_map(0.7), 'fontcolor':'k'},
+	'>20': {'range':(20,50),'color':acton_map(0.5), 'fontcolor':'k'},
+	'>50': {'range':(50,np.inf),'color':acton_map(0.3), 'fontcolor':'w'},
 }
 
 state_details = {
@@ -106,39 +106,39 @@ state_details = {
 }
 
 info_dict = {}
-info_dict['icons'] = da.read_nc('data/drive*summary.nc',align=True, axis='icon')['drive']
+info_dict['icons'] = da.read_nc('data/drive_summary.nc')['drive']
 info_dict['exceed'] = da.read_nc('data/JJA_summary_srex.nc')['exceed_prob']
 
 fig,ax_map=regional_panels_on_map.regional_panels_on_map(distrs, axis_settings, polygons=polygons, reg_info=all_regs, info_dict=info_dict, x_ext=[-150,180], y_ext=[0,85], small_plot_size=0.1)
 
-legax = fig.add_axes([0.85,0.05,0.145,0.9])
+legax = fig.add_axes([0.825,0.15,0.17,0.8])
 legax.set_yticklabels([])
 legax.set_xticklabels([])
 legax.set_xlim(0,10)
-legax.set_ylim(0,20)
+legax.set_ylim(3,20)
 x,y = 1,20
 y-=1
-legax.annotate('Driver',xy=(x,y),ha='left', va='center', fontsize=8,fontweight='bold')
+legax.annotate('Driver',xy=(x,y),ha='left', va='center', fontsize=9,fontweight='bold')
 legax.plot([x+0,x+4.5],[y-0.5,y-0.5],'k')
 y-=1.5
-for icon_name,icon_realname in zip(['EKE','SPI3','rain'],['EKE','SPI3','\nchange in\nnumber of\nrain/dry days']):
+for icon_name,icon_realname in zip(['EKE','SPI3','rain'],['EKE','SPI3','\n\nchange in\nnumber of\nrain/dry days']):
 	imscatter(x, y, icon_dict[icon_name]['icon'], zoom=icon_dict[icon_name]['scale'] * 0.025, ax=legax)
-	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=7,fontweight='bold')
+	legax.annotate(icon_realname,xy=(x+1,y),ha='left', va='center', fontsize=9,fontweight='bold')
 	y-=1.5
 
-y-=2.5
-legax.annotate('rel. change in\nexceedance probabilites [%]',xy=(x,y),ha='left', va='center', fontsize=8,fontweight='bold')
+y-=3
+legax.annotate('rel. change in\nexceedance probabilites [%]',xy=(x,y),ha='left', va='center', fontsize=9,fontweight='bold')
 y-=0.5
 legax.plot([x+0,x+4.5],[y-0.5,y-0.5],'k')
 y-=1.5
-for name in ['<-50','<-20','<-10','<-3',' ','>3','>10','>20','>50']:
+for name in ['<-50','<-20','<-10','<-2',' ','>2','>10','>20','>50']:
 	pc = PatchCollection([Polygon([(x-0.5,y-0.5),(x+0.5,y-0.5),(x+0.5,y+0.5),(x-0.5,y+0.5)])], color=color_dict[name]['color'], alpha=1, edgecolor='k', linewidth=1)
 	legax.add_collection(pc)
-	legax.annotate(name,xy=(x,y),ha='center', va='center', fontsize=6,fontweight='bold')
+	legax.annotate(name,xy=(x,y),ha='center', va='center', fontsize=8,fontweight='bold', color=color_dict[name]['fontcolor'])
 
 	x+=1
 y-=2.5
-legax.annotate('14-day warm periods\n14-day dry periods\n14-day dry-warm periods\n7-day rain periods',xy=(5,y),ha='center', va='center', fontsize=7,fontweight='bold')
+legax.annotate('14-day warm periods\n14-day dry periods\n14-day dry-warm periods\n7-day rain periods',xy=(5,y),ha='center', va='center', fontsize=9,fontweight='bold')
 
 
 
