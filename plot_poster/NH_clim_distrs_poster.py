@@ -6,7 +6,7 @@ for home_path in ['/Users/peterpfleiderer/Projects/Persistence','Dokumente/klima
 	except:
 		pass
 
-os.chdir('persistence_in_HAPPI/plot_paper')
+os.chdir('persistence_in_HAPPI/plot')
 import __plot_imports; reload(__plot_imports); from __plot_imports import *
 os.chdir('../../')
 
@@ -130,12 +130,12 @@ info_dict = {
 plt.close('all')
 fig,ax_map=regional_panels_on_map.regional_panels_on_map(distrs, axis_settings, polygons=polygons, reg_info=all_regs, x_ext=[-180,180], y_ext=[0,85], small_plot_size=0.1, info_dict = info_dict, title=None)
 
-ax_map.annotate('d', xy=(0.01, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=13)
+ax_map.annotate('d', xy=(0.01, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=13, backgroundcolor='w')
 
 
 with sns.axes_style("white"):
-	legax = fig.add_axes([0.89,0.01,0.105,0.98], facecolor='w')
-plt.setp(legax.spines.values(), color='k', linewidth=2)
+	legax = fig.add_axes([0.89,0.01,0.105,0.98], facecolor='w', zorder=4)
+legax.axis('off')
 legax.set_yticklabels([])
 legax.set_xticklabels([])
 
@@ -154,10 +154,10 @@ legend_elements.append(Line2D([0], [0], color='w', label='EOBS'))
 for state,details in info_dict.items():
 	legend_elements.append(Line2D([0], [0], color=details['color'], linestyle='-', label=state))
 
-legax.legend(handles=legend_elements, loc='upper right',fontsize=9,ncol=1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
+legax.legend(handles=legend_elements, loc='upper right',fontsize=9,ncol=1, frameon=True, facecolor='w', framealpha=1, edgecolor='w')
 
 
-plt.tight_layout(); plt.savefig('plots/NH_clim_distrs.png',dpi=600); plt.close()
+plt.tight_layout(); plt.savefig('plots/poster/NH_clim_distrs_poster.png',dpi=600, transparent=True); plt.close()
 
 
 

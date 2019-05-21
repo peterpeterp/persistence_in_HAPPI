@@ -164,7 +164,7 @@ for state,details in info_dict.items():
 
 legax.legend(handles=legend_elements , loc='upper right',fontsize=8,ncol=1, frameon=True, facecolor='w', framealpha=1, edgecolor='w')
 
-plt.tight_layout(); plt.savefig('plots/NH_changes_'+'-'.join([str(tt) for tt in info_dict.keys()])+'.png',dpi=600, transparent=True)
+plt.tight_layout(); plt.savefig('plots/poster/NH_changes_'+'-'.join([str(tt) for tt in info_dict.keys()])+'.png',dpi=600, transparent=True)
 
 
 

@@ -35,7 +35,7 @@ color_range={'warm':{14:(-15,15),21:(-15,15)},
 
 # ------------------- cold-warm mean
 plt.close('all')
-fig,axes = plt.subplots(nrows=5,ncols=1,figsize=(4,6),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[4,4,4,4,4]})
+fig,axes = plt.subplots(nrows=5,ncols=1,figsize=(4,5),subplot_kw={'projection': ccrs.Robinson(central_longitude=0, globe=None)}, gridspec_kw = {'height_ratios':[4,4,4,4,2]})
 
 for ax in axes[:-1].flatten():
 	ax.coastlines(edgecolor='black')
@@ -58,10 +58,10 @@ for model,ax,letter in zip(['MIROC5','NorESM1','ECHAM6-3-LR','CAM4-2degree'],axe
 
 axes[-1].outline_patch.set_edgecolor('white')
 legend_elements=[]
-legend_elements.append(Patch(facecolor='#CD1076', label='$\uparrow$ dry & $\uparrow$ rainy'))
-legend_elements.append(Patch(facecolor='#FF6A6A', label='$\uparrow$ dry & $\uparrow$ rainy & $\uparrow$ warm'))
+legend_elements.append(Patch(facecolor='#CD1076', label='$\uparrow$ dry & $\uparrow$ rain'))
+legend_elements.append(Patch(facecolor='#FF6A6A', label='$\uparrow$ dry & $\uparrow$ rain & $\uparrow$ warm'))
 # legend_elements.append(Patch(facecolor='yellow', label='$\downarrow$ dry & $\uparrow$ rainy OR $\uparrow$ dry & $\downarrow$ rainy'))
-legend_elements.append(Patch(facecolor='#00FA9A', label='$\downarrow$ dry & $\downarrow$ rainy'))
+legend_elements.append(Patch(facecolor='#00FA9A', label='$\downarrow$ dry & $\downarrow$ rain'))
 axes[-1].legend(handles=legend_elements, fontsize=8)
 
 #plt.suptitle('ensemble mean difference +2$^\circ$C vs 2006-2015', fontweight='bold')
