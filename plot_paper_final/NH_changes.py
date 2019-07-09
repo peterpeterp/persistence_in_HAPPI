@@ -1,32 +1,21 @@
 import os,sys,glob,time,collections,gc
-import numpy as np
-from netCDF4 import Dataset,num2date
-import cPickle as pickle
-import dimarray as da
-from scipy.optimize import curve_fit
-import pandas as pd
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-from scipy import stats
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
-import matplotlib.ticker as mticker
-
-import seaborn as sns
-sns.set_style("whitegrid")
-
 
 sys.path.append('/Users/peterpfleiderer/Projects/git-packages/regional_panels_on_map')
 import regional_panels_on_map as regional_panels_on_map; reload(regional_panels_on_map)
 os.chdir('/Users/peterpfleiderer/Projects/Persistence')
 
-os.chdir('persistence_in_HAPPI/plot_paper')
+os.chdir('persistence_in_HAPPI/plot_paper_final')
 import __plot_imports; reload(__plot_imports); from __plot_imports import *
 os.chdir('../../')
 
+import seaborn as sns
+sns.set_style("whitegrid")
+#
+from matplotlib import rc
+rc('text', usetex=True)
+
+from matplotlib import rcParams
+rcParams['font.family'] = "Times New Roman"
 
 pkl_file = open('data/srex_dict.pkl', 'rb')
 srex = pickle.load(pkl_file)	;	pkl_file.close()
@@ -95,7 +84,7 @@ def axis_settings(subax,info_dict,label=False,region=None):
 	if region == 'mid-lat':
 		subax.set_xticklabels(['7','14','21','35'])
 		subax.set_xlabel('Period length [days]',fontsize=10)
-		subax.set_ylabel('rel. change in\nExceedence probability [%]',fontsize=10)
+		subax.set_ylabel('rel. change in\nExceedence probability [\%]',fontsize=10)
 		subax.tick_params(axis='x',labelsize=10, colors='k',size=1)
 		subax.tick_params(axis='y',labelsize=10, colors='k',size=1)
 		subax.yaxis.get_label().set_backgroundcolor('w')
@@ -136,7 +125,7 @@ for name,info_dict in info_dicts.items():
 	ax_map.annotate(info_dict['letter'], xy=(0.01, 0.95), xycoords='axes fraction', color='black', weight='bold', fontsize=13)
 
 
-	legax = fig.add_axes([0.85,0.05,0.145,0.9])
+	legax = fig.add_axes([0.85,0.05,0.145,0.9], zorder=100)
 	legax.axis('off')
 	legend_elements=[]
 	legend_elements.append(Line2D([0], [0], color=info_dict['color'], linestyle='-', label='ensemble mean'))
@@ -145,7 +134,7 @@ for name,info_dict in info_dicts.items():
 	legax.legend(handles=legend_elements ,title=info_dict['name']+' persistence', loc='upper right',fontsize=10,ncol=1, frameon=True, facecolor='w', framealpha=1, edgecolor='w').set_zorder(1)
 
 
-	plt.tight_layout(); plt.savefig('plots/NH_changes_'+name+'.png',dpi=600); plt.close()
+	plt.tight_layout(); plt.savefig('plots/final/NH_changes_'+name+'.pdf'); plt.close()
 
 
 

@@ -29,6 +29,7 @@ sns.set_style("whitegrid")
 plt.rcParams["font.weight"] = "bold"
 plt.rcParams["axes.labelweight"] = "bold"
 
+
 icon_dict = {
 	'avoided':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/avoided.png')),'scale':1},
 	'mitigated':{'icon':plt.imread(get_sample_data('/Users/peterpfleiderer/Projects/Persistence/plots/icons/mitigated.png')),'scale':1},
