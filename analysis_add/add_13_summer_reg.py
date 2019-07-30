@@ -10,7 +10,7 @@ except:
 	os.chdir('/Users/peterpfleiderer/Projects/Persistence/')
 
 sys.path.append('weather_persistence/')
-import persistence_support as persistence_support; reload(persistence_support)
+import persistence_support as persistence_support; importlib.reload(persistence_support)
 from persistence_support import *
 
 sys.path.append('persistence_in_models/')

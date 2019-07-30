@@ -42,7 +42,7 @@ except:
 	os.chdir('/global/homes/p/pepflei/')
 
 sys.path.append('weather_persistence/')
-import persistence_functions as prsfc; reload(prsfc)
+import persistence_functions as prsfc; importlib.reload(prsfc)
 
 start_time=time.time()
 

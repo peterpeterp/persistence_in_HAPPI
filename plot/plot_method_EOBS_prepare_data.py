@@ -12,13 +12,14 @@ mpl.use('Agg')
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	os.chdir('/global/homes/p/pepflei/')
+	# os.chdir('/global/homes/p/pepflei/')
+	os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
 
 data_path='data/EOBS/All-Hist/'
 
 events = {
 	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
-	'BerlinHW2018':{'lon':13.25, 'lat':53.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
+	'BerlinHW2018':{'lon':13.25, 'lat':52.25, 'years':[2018.24,2018.75], 'name':'Berlin 2018'},
 	# 'BerlinFL2017':{'lon':13.25, 'lat':53.25, 'years':[2017.24,2017.75], 'name':'Berlin 2017'},
 	# # 'Berlin2017-2018':{'lon':13.25, 'lat':53.25, 'years':[2017,2018.8], 'name':'Berlin 2017-2018'},
 	# 'balkanFL2014':{'lon':19.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Valjevo 2014'},
@@ -38,6 +39,7 @@ for event_name,event in events.items():
 		os.system('mkdir '+data_path+event_name)
 		for filename in glob.glob(data_path+'*merged*.nc'):
 			os.system('cdo -O -sellonlatbox,'+','.join([str(i) for i in [lon_,lon_+0.5,lat_,lat_+0.5]]) + ' '+filename+' '+filename.replace('All-Hist/','All-Hist/'+event_name+'/'))
+
 
 	periods={}
 	nc_period=da.read_nc(data_path+event_name+'/'+'tg_0.50deg_reg_merged_period_warm.nc')
