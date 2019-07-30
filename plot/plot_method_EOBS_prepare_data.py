@@ -12,10 +12,10 @@ mpl.use('Agg')
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	os.chdir('/global/homes/p/pepflei/')
-	# os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
+	# os.chdir('/global/homes/p/pepflei/')
+	os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
 
-data_path='data/EOBS/All-Hist/'
+data_path='/p/tmp/pepflei/HAPPI/raw_data/EOBS/All-Hist/'
 
 events = {
 	# 'russianHW2010':{'lon':37.25, 'lat':55.25, 'year':2010, 'name':'Moscow 2010'},
@@ -170,5 +170,5 @@ for event_name,event in events.items():
 
 	out = {'tas':tas, 'tas_anom':tas_anom, 'pr':pr, 'tas_time_axis': tas_time_axis, 'pr_time_axis':pr_time_axis, 'months':months, 'ticks':ticks, 'periods':periods, 'pr_time_id':pr_time_id, 'tas_time_id':tas_time_id, 'states':states, 'pr_time':pr_time, 'tas_time':tas_time, 'thresholds':thresholds}
 
-	output = open('data/EOBS/snapshots/'+event_name+'.pkl', 'wb')
+	output = open('/p/tmp/pepflei/HAPPI/raw_data/EOBS/snapshots/'+event_name+'.pkl', 'wb')
 	pickle.dump(out, output); output.close()
