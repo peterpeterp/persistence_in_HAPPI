@@ -12,8 +12,8 @@ mpl.use('Agg')
 try:
 	os.chdir('/Users/peterpfleiderer/Documents/Projects/Persistence/')
 except:
-	# os.chdir('/global/homes/p/pepflei/')
-	os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
+	os.chdir('/global/homes/p/pepflei/')
+	# os.chdir('/p/projects/tumble/carls/shared_folder/Persistence/')
 
 data_path='data/EOBS/All-Hist/'
 
@@ -26,7 +26,7 @@ events = {
 	# 'Kragujevac2014':{'lon':20.75, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Kragujevac 2014'},
 	# 'Cacak2014':{'lon':20.25, 'lat':44.25, 'years':[2014.24,2014.75],'name':'Serbia 2014'},
 	# 'euroFL2016':{'lon':9.25, 'lat':48.75, 'year':2016,'name':'Stuttgart 2016'},
-	'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016'},
+	# 'ParisFL2016':{'lon':2.25, 'lat':48.75, 'years':[2016.24,2016.75],'name':'Paris 2016'},
 	# 'OrleansFL2016':{'lon':1.75, 'lat':47.75, 'years':[2016.24,2016.75],'name':u'Orleans 2016'},
 	#'euroFL2010':{'lon':18.75, 'lat':49.25, 'year':2010, 'name': 'Ostrau 2010'},
 	# 'euroHW2003':{'lon':2.75, 'lat':48.25, 'years':[2003.24,2003.75],'name': 'Paris 2003'},
